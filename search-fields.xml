@@ -1,0 +1,20 @@
+<facets>
+	<facet>
+		<group></group>
+		<name>title</name>
+		<field>title</field>
+		<label>Title</label>
+	</facet>
+	<facet>
+		<group></group>
+		<name>description</name>
+		<field>description</field>
+		<label>Description</label>
+	</facet>
+	<facet>
+		<group></group>
+		<name>text</name>
+		<field>text</field>
+		<label>Text</label>
+	</facet>
+</facets>
