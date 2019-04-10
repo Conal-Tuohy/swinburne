@@ -41,7 +41,13 @@
 	<!-- the search and browse interface -->
 	<p:import href="search.xpl"/>
 	<!-- dispatch the request to the appropriate pipeline, depending on the request URI -->
-	<p:variable name="relative-uri" select="substring-after(/c:request/@href, '/xproc-z/')"/>
+	<p:variable name="relative-uri" select="
+		replace(
+			/c:request/@href, 
+			'([^/]+//)([^/]+/)(.*)', 
+			'$3'
+		)
+	"/>
 	<!--
 	<cx:message>
 		<p:with-option name="message" select="$relative-uri"/>
