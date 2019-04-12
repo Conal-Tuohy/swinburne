@@ -1,0 +1,11 @@
+# TEI files are not versioned in git, only in Xubmit
+# The XML files in "p4" are just a temporary cache, but the DTD and other external entities are version controlled in git
+/p4/*.xml
+# except don't ignore this file, which is also an external entity
+!/p4/iu.dlp.letrs.teiRenditionElements.xml
+# The XML files in "p5" are just a temporary cache of stand-alone TEI files
+/p5
+
+# Backup files automatically created by JEdit text editor
+/**/*.*~
+
