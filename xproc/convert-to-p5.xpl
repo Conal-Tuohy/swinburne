@@ -62,7 +62,8 @@
 				<p:pipe step="manifest" port="result"/>
 			</p:input>
 		</z:make-http-response>
-		</p:declare-step>
+	</p:declare-step>
+	
 	<p:declare-step xmlns:p="http://www.w3.org/ns/xproc" name="convert-p4-to-p5" version="1.0" type="chymistry:convert-p4-to-p5"
 		xmlns:chymistry="tag:conaltuohy.com,2018:chymistry"
 		xmlns:z="https://github.com/Conal-Tuohy/XProc-Z" 
@@ -74,13 +75,12 @@
 		<p:output port="result"/>
 		<p:directory-list name="list-p4-files" path="../p4/"/>
 		<p:add-xml-base relative="false" all="true"/>
-		<p:for-each>
-			<p:iteration-source select="
-				//c:file
-					[ends-with(@name, '.xml')]
-					[not(starts-with(@name, 'iu.'))]
-					[not(@name='schemas.xml')]
-			"/>
+		<p:viewport name="p4-file" match="
+			//c:file
+				[ends-with(@name, '.xml')]
+				[not(starts-with(@name, 'iu.'))]
+				[not(@name='schemas.xml')]
+		">
 			<p:variable name="file-name" select="/c:file/@name"/>
 			<p:variable name="file-uri" select="encode-for-uri($file-name)"/>
 			<p:variable name="input-file" select="resolve-uri($file-uri, /c:file/@xml:base)"/>
@@ -88,50 +88,77 @@
 			<cx:message>
 				<p:with-option name="message" select="$file-name"/>
 			</cx:message>
-			<p:load name="read-p4" dtd-validate="true">
-				<p:with-option name="href" select="$input-file"/>
-			</p:load>
-			<p:xslt>
-				<p:input port="parameters"><p:empty/></p:input>
-				<p:input port="stylesheet">
-					<p:document href="../xslt/convert-to-p5/links.xsl"/>
-				</p:input>
-			</p:xslt>
-			<p:xslt>
-				<p:input port="parameters"><p:empty/></p:input>
-				<p:input port="stylesheet">
-					<p:document href="../xslt/convert-to-p5/remove-dubious-default.xsl"/>
-				</p:input>
-			</p:xslt>
-			<p:xslt>
-				<p:input port="parameters"><p:empty/></p:input>
-				<p:input port="stylesheet">
-					<p:document href="../xslt/convert-to-p5/purge-foreign.xsl"/>
-				</p:input>
-			</p:xslt>
-			<p:xslt>
-				<p:input port="parameters"><p:empty/></p:input>
-				<p:input port="stylesheet">
-					<p:document href="../xslt/convert-to-p5/regularize-dates.xsl"/>
-				</p:input>
-			</p:xslt>
-			<p:xslt>
-				<p:input port="parameters"><p:empty/></p:input>
-				<p:input port="stylesheet">
-					<p:document href="../xslt/convert-to-p5/p4_to_p5_newton.xsl"/>
-				</p:input>
-			</p:xslt>
-			<p:xslt>
-				<p:input port="parameters"><p:empty/></p:input>
-				<p:input port="stylesheet">
-					<p:document href="../xslt/convert-to-p5/select-non-emoji-glyphs.xsl"/>
-				</p:input>
-			</p:xslt>
-			<p:store name="save-p5-file">
-				<p:with-option name="href" select="$output-file"/>
-			</p:store>
-		</p:for-each>
-		<p:directory-list name="list-p5-files" path="../p5/"/>
+			<p:try>
+				<p:group>
+					<p:load name="read-p4" dtd-validate="true">
+						<p:with-option name="href" select="$input-file"/>
+					</p:load>
+					<chymistry:transform-p4-to-p5/>
+					<p:store name="save-p5-file">
+						<p:with-option name="href" select="$output-file"/>
+					</p:store>
+					<p:add-attribute match="/*" attribute-name="converted" attribute-value="true">
+						<p:input port="source">
+							<p:pipe step="p4-file" port="current"/>
+						</p:input>
+					</p:add-attribute>
+				</p:group>
+				<p:catch>
+					<p:add-attribute match="/*" attribute-name="converted" attribute-value="false">
+						<p:input port="source">
+							<p:pipe step="p4-file" port="current"/>
+						</p:input>
+					</p:add-attribute>
+				</p:catch>
+			</p:try>
+		</p:viewport>
+		<p:xslt>
+			<p:input port="parameters"><p:empty/></p:input>
+			<p:input port="stylesheet">
+				<p:document href="../xslt/p4-to-p5-conversion-report.xsl"/>
+			</p:input>
+		</p:xslt>
 		<z:make-http-response content-type="application/xml"/>
+	</p:declare-step>
+	
+	<p:declare-step name="transform-p4-to-p5" type="chymistry:transform-p4-to-p5">
+		<p:input port="source"/>
+		<p:output port="result"/>
+		<p:xslt>
+			<p:input port="parameters"><p:empty/></p:input>
+			<p:input port="stylesheet">
+				<p:document href="../xslt/convert-to-p5/links.xsl"/>
+			</p:input>
+		</p:xslt>
+		<p:xslt>
+			<p:input port="parameters"><p:empty/></p:input>
+			<p:input port="stylesheet">
+				<p:document href="../xslt/convert-to-p5/remove-dubious-default.xsl"/>
+			</p:input>
+		</p:xslt>
+		<p:xslt>
+			<p:input port="parameters"><p:empty/></p:input>
+			<p:input port="stylesheet">
+				<p:document href="../xslt/convert-to-p5/purge-foreign.xsl"/>
+			</p:input>
+		</p:xslt>
+		<p:xslt>
+			<p:input port="parameters"><p:empty/></p:input>
+			<p:input port="stylesheet">
+				<p:document href="../xslt/convert-to-p5/regularize-dates.xsl"/>
+			</p:input>
+		</p:xslt>
+		<p:xslt>
+			<p:input port="parameters"><p:empty/></p:input>
+			<p:input port="stylesheet">
+				<p:document href="../xslt/convert-to-p5/p4_to_p5_newton.xsl"/>
+			</p:input>
+		</p:xslt>
+		<p:xslt>
+			<p:input port="parameters"><p:empty/></p:input>
+			<p:input port="stylesheet">
+				<p:document href="../xslt/convert-to-p5/select-non-emoji-glyphs.xsl"/>
+			</p:input>
+		</p:xslt>		
 	</p:declare-step>
 </p:library>
