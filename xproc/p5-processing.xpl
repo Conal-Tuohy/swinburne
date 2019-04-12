@@ -58,7 +58,7 @@
 	<p:declare-step name="p5-as-xml" type="chymistry:p5-as-xml">
 		<p:input port="source"/>
 		<p:output port="result"/>
-		<p:variable name="text" select="substring-before(substring-after(/c:request/@href, 'xproc-z/p5/'), '/')"/>
+		<p:variable name="text" select="substring-before(substring-after(/c:request/@href, '/p5/'), '/')"/>
 		<p:load name="text">
 			<p:with-option name="href" select="concat('../p5/', $text, '.xml')"/>
 		</p:load>
