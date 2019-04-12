@@ -1,0 +1,193 @@
+<!ENTITY absque "<abbr expan='absque'>abs&que-squiggle;</abbr>">
+<!ENTITY acap "&#x00e2;">
+<!ENTITY aCirc "&#x00e2;">
+<!ENTITY ae "&#x00e6;">
+<!ENTITY AE "&#x00c6;">
+<!ENTITY aes "<orig reg='aes'>æs</orig>">
+<!ENTITY Aes "<orig reg='Aes'>Æs</orig>">
+<!ENTITY agrave "&#x00e0;">
+<!ENTITY alij "<orig reg='alii'>alij</orig>">
+<!ENTITY antim- "Anti&#x006d;&#x0305;">
+<!ENTITY antimonij "&antimony;<hi rend='super'><orig reg='ii'>ij</orig></hi>">
+<!ENTITY atque "<abbr expan='atque'>at&que-squiggle;</abbr>">
+<!ENTITY auris "&sun;<hi rend='super'>is</hi>">
+
+<!ENTITY blankentirely "<note type='editorial'>This page is blank except for possible shelfmarks and indications of library ownership.</note>">
+<!ENTITY blankwithnumber "<note type='editorial'>Apart from the page number, this page is blank except for possible shelfmarks and indications of library ownership.</note>">
+<!ENTITY blankremainder "<note type='editorial'>The remainder of this page is blank except for possible shelfmarks and indications of library ownership.</note>">
+
+<!ENTITY blotch "<gap reason='cancelled and illegible' extent='1 letter'/>">
+<!ENTITY blotch2 "<gap reason='cancelled and illegible' extent='2 letters'/>">
+<!ENTITY blotch3 "<gap reason='cancelled and illegible' extent='3 letters'/>">
+<!ENTITY blotch4 "<gap reason='cancelled and illegible' extent='4 letters'/>">
+<!ENTITY blotch5 "<gap reason='cancelled and illegible' extent='5 letters'/>">
+<!ENTITY blotch6 "<gap reason='cancelled and illegible' extent='6 letters'/>">
+<!ENTITY blotch7 "<gap reason='cancelled and illegible' extent='7 letters'/>">
+<!ENTITY blotch8 "<gap reason='cancelled and illegible' extent='8 letters'/>">
+<!ENTITY blotch9 "<gap reason='cancelled and illegible' extent='9 letters'/>">
+<!ENTITY blotch10 "<gap reason='cancelled and illegible' extent='10 letters'/>">
+<!ENTITY blotch12 "<gap reason='cancelled and illegible' extent='12 letters'/>">
+<!ENTITY blotch15 "<gap reason='cancelled and illegible' extent='15 letters'/>">
+<!ENTITY blotch20 "<gap reason='cancelled and illegible' extent='20 letters'/>">
+<!ENTITY blotch30 "<gap reason='cancelled and illegible' extent='30 letters'/>">
+
+<!ENTITY BM "B M">
+<!ENTITY B.M. "B.M. ">
+<!ENTITY BMcolon "B: M:">
+
+<!ENTITY bullet "&#x00b7;">
+
+<!ENTITY cross "&#x0086;">
+<!ENTITY cum "<abbr expan='cum'>c&u-macron;</abbr>">
+
+<!ENTITY dagger "&#x2020;">
+<!ENTITY dhy "="><!-- &#173; -->
+
+<!ENTITY eAcute "&#x00e9;">
+<!ENTITY earth-ii "<abbr  expan='Antimonii'>&antimony;<hi rend='super'>ii</hi></abbr>"><!--added by cespasto; cespasto -->
+<!ENTITY egrave "&#x00e8;">
+<!ENTITY eGrave "&#x00e8;">
+<!ENTITY em-dash "&#x2014;">
+<!ENTITY etc "<abbr expan='etc'>&amp;c</abbr>">
+<!ENTITY euml "&#x00eb;">
+
+<!ENTITY ff "<orig reg='F'>ff</orig>">
+<!ENTITY five-pointed-star "&#x2605;">
+
+<!ENTITY gr "<abbr expan='grains'>gr</abbr>">
+
+<!ENTITY haec "<orig reg='haec'>hæc</orig>">
+<!ENTITY Haec "<orig reg='Haec'>Hæc</orig>">
+
+<!ENTITY ib "<abbr expan='ibid.'>ib</abbr>">
+<!ENTITY ib. "<abbr expan='ibid.'>ib.</abbr>">
+<!ENTITY Ib. "<abbr expan='Ibid.'>Ib.</abbr>">
+
+<!ENTITY icirc "&#x00ee;">
+<!ENTITY iCirc "&#x00ee;">
+
+<!ENTITY idque "<abbr expan='idque'>id&que-squiggle;</abbr>">
+
+<!ENTITY igrave "&#x00ec;">
+<!ENTITY iGrave "&#x00ec;">
+
+<!ENTITY Iovem "<orig reg='Jovem'>Iovem</orig>">
+<!ENTITY Iove "<orig reg='Jove'>Iove</orig>">
+<!ENTITY Iovis "<orig reg='Jovis'>Iovis</orig>">
+
+<!ENTITY itaque "<abbr expan='itaque'>ita&que-squiggle;</abbr>">
+
+<!ENTITY Iupiter "<orig reg='Jupiter'>Iupiter</orig>">
+
+<!ENTITY jovis "&jupiter;<hi rend='super'>is</hi>">
+
+<!ENTITY lun-a "&backward-moon;<hi rend='super'>a</hi>">
+<!ENTITY lunae "&backward-moon;<hi rend='super'><orig reg='ae'>&#x00e6;</orig></hi>">
+<!ENTITY Lunae "&Luna;<hi rend='super'><orig reg='ae'>&#x00e6;</orig></hi>"><!--tlcamero - this entity so like lunae above needs a more meaningful name - it might also be worthwhile to check the manuscripts using lunae above to see that the moon symbol should in fact be a backward moon and not a 'forward' moon as Luna signifies - review w/cpastori -->
+
+<!ENTITY m- "&#x006d;&#x0305;">
+<!ENTITY martis "&mars;<hi rend='super'>tis</hi>">
+<!ENTITY mart-is "&mars;<hi rend='super'>is</hi>">
+<!ENTITY mercurij "&mercury;<hi rend='super'><orig reg='ii'>ij</orig></hi>">
+<!ENTITY mercur-ium "&mercury;<hi rend='super'>ium</hi>">
+<!ENTITY mercur-ius "&mercury;<hi rend='super'>ius</hi>">
+<!ENTITY mercuri-o "&mercury;<hi rend='super'>o</hi>">
+<!ENTITY mercuri-um "&mercury;<hi rend='super'>um</hi>">
+<!ENTITY mercuri-us "&mercury;<hi rend='super'>us</hi>">
+<!ENTITY mercur-io "&mercury;<hi rend='super'>io</hi>">
+<!ENTITY mercuriali "<abbr expan='mercuriali'>&mercury;ali</abbr>">
+
+<!ENTITY n- "&#x006e;&#x0305;">
+<!ENTITY nacute "&#x0144;">
+<!ENTITY NB "<abbr expan='Nota Bene'>&nota-bene;</abbr>"><!-- tlcamero: how to handle graphic symbols that need expansions? -->
+
+<!ENTITY neque "<abbr expan='neque'>ne&que-squiggle;</abbr>">
+
+<!ENTITY oacute "&#x00f3;">
+<!ENTITY Ocirc "&#x00d4;">
+<!ENTITY ocirc "&#x00f4;">
+<!ENTITY oe "&#x0153;">
+<!ENTITY ograve "&#x00f2;">
+<!ENTITY oGrave "&#x00f2;">
+<!ENTITY ore "<abbr expan='ore'>o<hi rend='super'>e</hi></abbr>" >
+<!ENTITY our "<abbr expan='our'>o<hi rend='super'>r</hi></abbr>">
+<!ENTITY Our "<abbr expan='Our'>O<hi rend='super'>r</hi></abbr>">
+
+<!ENTITY part "<abbr expan='part'>pt</abbr>">
+<!ENTITY parte "<abbr expan='parte'>&p-underbar;te</abbr>">
+<!ENTITY partem "<abbr expan='partem'>&p-underbar;tem</abbr>">
+<!ENTITY partes "<abbr expan='partes'>&p-underbar;tes</abbr>">
+<!ENTITY partibus "<abbr expan='partibus'>&p-underbar;tibus</abbr>">
+<!ENTITY parts "<abbr expan='parts'>&p-underbar;ts</abbr>">
+<!ENTITY pe "p<hi rend='super'>e</hi>">
+<!ENTITY Pe "P<hi rend='super'>e</hi>">
+<!ENTITY per "<abbr expan='per'>p<hi rend='super'>r</hi></abbr>">
+<!ENTITY Per "<abbr expan='Per'>P<hi rend='super'>r</hi></abbr>">
+<!ENTITY pre "<abbr expan='pre'>p<hi rend='super'>r</hi></abbr>">
+<!ENTITY Pre "<abbr expan='Pre'>P<hi rend='super'>r</hi></abbr>">
+
+<!ENTITY quae "<orig reg='quae'>quæ</orig>">
+<!ENTITY Quae "<orig reg='Quae'>Quæ</orig>">
+<!ENTITY quium-squiggle "[quium squiggle]">
+<!ENTITY quod "<abbr expan='quod'>qd</abbr>">
+<!ENTITY quoque "<abbr expan='quoque'>quo&que-squiggle;</abbr>">
+<!ENTITY quousque "<abbr expan='quousque'>quous&que-squiggle;</abbr>">
+<!ENTITY q-e "<abbr expan='que'>&que-squiggle;</abbr>"> 
+<!ENTITY qus "<abbr expan='qus'>&que-squiggle;</abbr>"> 
+
+<!ENTITY sal-ammoniae "<abbr expan='Sal Ammoniae'>&SalAmmoniae;</abbr>">
+<!ENTITY saturnus "<abbr expan='Saturnus'>&saturn;</abbr>">
+<!ENTITY saturni "<abbr expan='Saturni'>&saturn;<hi rend='super'>i</hi></abbr>">
+<!ENTITY satur-ni "<abbr expan='Saturni'>&saturn;<hi rend='super'>ni</hi></abbr>">
+
+<!ENTITY shy "-"><!-- &#173; -->
+<!ENTITY sol-e "&sun;<hi rend='super'>e</hi>">
+<!ENTITY sol-em "&sun;<hi rend='super'>em</hi>">
+<!ENTITY soli "&sun;<hi rend='super'>i</hi>">
+<!ENTITY solis "&sun;<hi rend='super'>is</hi>">
+<!ENTITY sols "&sun;<hi rend='super'>s</hi>">
+<!ENTITY square "&#x25a1;">
+<!ENTITY sulphure "&Sulphur;<hi rend='super'>e</hi>">
+<!ENTITY sulphuribus "&Sulphur;<hi rend='super'>ibus</hi>">
+<!ENTITY sulphuris "&Sulphur;<hi rend='super'>is</hi>">
+
+<!ENTITY than "[than]" >
+<!ENTITY that "<abbr expan='that'>y<hi rend='super'>t</hi></abbr>">
+<!ENTITY the "<abbr  expan='the'>y<hi rend='super'>e</hi></abbr>">
+<!ENTITY them "<abbr  expan='them'>y<hi rend='super'>m</hi></abbr>">
+<!ENTITY then "<abbr  expan='then'>y<hi rend='super'>n</hi></abbr>">
+<!ENTITY there "<abbr  expan='there'>y<hi rend='super'>r</hi></abbr>">
+<!ENTITY their "<abbr expan='their'>y<hi rend='super'>r</hi></abbr>">
+<!ENTITY trident "[trident]"> <!-- I think that this should be replaced by Neptune TCameron-->
+
+<!ENTITY uCirc "&#x00fb;">
+<!ENTITY ucirc "&#x00fb;">
+<!ENTITY uGrave "&#x00f9;">
+<!ENTITY ugrave "&#x00f9;">
+<!ENTITY um-squiggle "[um squiggled]"><!--added by cespasto; cespasto -->
+<!ENTITY uncia "<abbr expan='uncia'>&ounce;</abbr>">
+<!ENTITY unknown-symbol "[unknown symbol]">
+<!ENTITY unknown-symbol-2 "[unknown symbol 2]">
+<!ENTITY usque "<abbr expan='usque'>us&que-squiggle;</abbr>">
+<!ENTITY utique "<abbr expan='utique'>uti&que-squiggle;</abbr>">
+<!ENTITY utraque "<abbr expan='utraque'>utra&que-squiggle;</abbr>">
+
+<!ENTITY Vbi "<orig reg='Ubi'>Vbi</orig>">
+<!ENTITY veneris "&venus;<hi rend='super'>is</hi>">
+<!ENTITY viz "viz<hi rend='super'>t</hi>">
+<!ENTITY vizt "<abbr expan='videlicet'>viz<hi rend='super'>t</hi></abbr>">
+<!ENTITY Vnde "<orig reg='Unde'>Vnde</orig>">
+
+<!ENTITY what "<abbr expan='what'>w<hi rend='super'>t</hi></abbr>">
+<!ENTITY when "<abbr expan='when'>w<hi rend='super'>n</hi></abbr>">
+<!ENTITY which "<abbr  expan='which'>w<hi rend='super'>ch</hi></abbr>">
+<!ENTITY Which "<abbr expan='Which'>W<hi rend='super'>ch</hi></abbr>">
+<!ENTITY with "<abbr expan='with'>w<hi rend='super'>th</hi></abbr>">
+<!ENTITY With "<abbr expan='With'>W<hi rend='super'>th</hi></abbr>">
+
+<!ENTITY yet "<abbr expan='that'>y<hi rend='super'>t</hi></abbr>"> 
+<!-- the entity "yet" is represented in the same way of the entity "that" above; cespasto -->
+<!ENTITY yor "[yor]" >
+<!ENTITY yoe "[yoe]" >
+<!ENTITY your "<abbr expan='your'>y<hi rend='super'>r</hi></abbr>">
+

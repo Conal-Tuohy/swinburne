@@ -1,0 +1,25 @@
+    <p>The Chymistry of Isaac Newton as a whole, as well as the texts and images available in it, are provided for non-commercial, personal, or 
+        research use only and are protected under the copyright laws of the United States and the Universal Copyright Convention. All other use, 
+        including but not limited to commercial or scholarly reproductions, redistribution, publication or transmission, whether by electronic means or 
+        otherwise, without prior written permission of the copyright holder is strictly prohibited. Copyright to The Chymistry of Isaac Newton is held by the 
+        general editor, William R. Newman. Copyrights to manuscript images are held by the institutions who have generously contributed them.
+    </p>
+    <p>
+        To request the right to use materials (transcriptions or supporting text, illustrations, photographs and video) from The Chymistry of Isaac Newton, 
+        please submit a request in writing to the Indiana University Digital Library Program, 1320 East Tenth Street, Herman Wells Library E170, 
+        Bloomington, IN 47405. For permission to use manuscript page images, contact the holding institution directly. Information about the holding institution 
+        for each manuscript is indicated within the display title of individual manuscript pages, for example Portsmouth Collection Add. MS. 3973, Cambridge 
+        University Library, Cambridge University.
+    </p>
+    <p>
+        Permission to link to The Chymistry of Isaac Newton or to individual items within The Chymistry of Isaac Newton is granted without request. 
+        Please direct links to The Chymistry of Isaac Newton project in its entirety to the main page, http://www.dlib.indiana.edu/collections/newton, 
+        and please accompany links to individual items with a link to the main page.
+    </p>
+    <p>
+        To identify The Chymistry of Isaac Newton as a source within a paper, article, or book, please include the complete title of the project, its 
+        URL, and the date of access, along with other relevant information. For example:
+        
+        <bibl><author>Newton, Issac</author>.<title> "Newton's Most Complete Laboratory Notebook"</title>. The Chymistry of Isaac Newton.
+            Ed. Newman, W.R. 11 February 2006. http://www.dlib.indiana.edu/collections/newton. </bibl>
+   </p>

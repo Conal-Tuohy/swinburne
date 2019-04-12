@@ -1,0 +1,1133 @@
+<!-- $Id: iu.dlp.letrs.teiExtensions.dtd,v 1.4 2012-04-18 17:55:34 tdbowman Exp $ -->
+<!--  The following declarations define new extensions    -->
+<!ELEMENT code       %om.RR; (#PCDATA)                             >
+<!ATTLIST code               %a.global;                            > 
+
+<!-- gi, att, tag, and val, are include from the TEI Tag Set
+     Documentation DTD, which is an "auxilarly DTD" not an 
+		 "additional tag set," which could simply be invoked with 
+     an "INCLUDE" in the the DOCTYPE declaration. 
+-->
+<!ELEMENT gi %om.RO;  (#PCDATA)>
+<!ATTLIST gi
+      %a.global;
+      tei (yes|no) "yes"
+      TEIform CDATA 'gi'  >
+
+<!ELEMENT att %om.RR;  (#PCDATA)>
+<!ATTLIST att
+      %a.global;
+      tei (yes|no) "yes"
+      TEIform CDATA 'att'  >
+
+<!ELEMENT tag %om.RR;  (#PCDATA)>
+<!ATTLIST tag
+      %a.global;
+      TEI ( yes | no ) "yes"
+      TEIform CDATA 'tag'  >
+
+<!ELEMENT val %om.RO;  (#PCDATA)>
+<!ATTLIST val
+      %a.global;
+      TEIform CDATA 'val'  >
+
+<!--  The following declarations define revised tags      -->
+
+<!-- Added persName and placeName to dateline content model -->
+
+<!ELEMENT%n.dateline; %om.RO;  ( #PCDATA | %n.date; | %n.time;
+                            | %n.name; | %n.persName; | %n.placeName; | %n.address; | %m.Incl; )* > 
+<!ATTLIST %n.dateline;
+      %a.global;
+      TEIform CDATA 'dateline' >
+
+
+<!ELEMENT rendition   (#PCDATA)                             > 
+<!ATTLIST rendition   %a.global;                           
+                      type CDATA #IMPLIED
+                      TEIform CDATA 'rendition'             >
+
+<!-- added type to text ATTLIST -->
+<!ELEMENT %n.text; %om.RR;  ((%m.Incl;)*, ((%n.front;), (%m.Incl;)*)?,
+         ((%n.body;) | %n.group;), (%m.Incl;)*, ((%n.back;), (%m.Incl;)*)?)>
+
+<!ATTLIST text    %a.global;
+                  %a.declaring;
+                  type CDATA #IMPLIED  
+                  TEIform CDATA 'text'                      >
+                  
+<!-- added xlink stuff to figure ATTLIST -->
+<!ELEMENT %n.figure; %om.RR;  ((%m.Incl;)*,
+                              ((%n.head;), (%m.Incl;)*)?,
+                              ((%n.p;), (%m.Incl;)*)*,
+                              ((%n.figDesc;), (%m.Incl;)*)?,
+                              ((%n.text;), (%m.Incl;)*)?) >
+
+<!ATTLIST figure
+      %a.global;
+      entity ENTITY #IMPLIED
+      xmlns:xlink CDATA #FIXED "http://www.w3.org/1999/xlink"
+      xlink:href CDATA #IMPLIED> 
+
+<!-- made measure a typed element -->
+<!ELEMENT %n.measure; %om.RR; %phrase.seq;> 
+
+<!ATTLIST %n.measure;
+					%a.global;
+					%a.names;
+					%a.typed; >
+      
+      
+<!-- back: replaced first divtop with component elements, minus
+     epigraph, to remove ambiguous content model related to 
+     modification of m.front.    
+ -->
+               
+<!--        
+<!ELEMENT back (  (%m.front; | %m.Incl;)*,
+                 ( ( (%x.divtop; %n.argument; | %n.byline; | %n.dateline; | 
+%n.docAuthor; | %n.docDate; | %n.head; | %n.opener; | %n.salute; | 
+%n.signed; ), (%m.divtop; | titlePage | %m.Incl;)*) 
+                 | ( div, (div | %m.front; | %m.Incl;)*)
+                 | ( div1, (div1 | %m.front; | %m.Incl;)*) )?,
+                 (trailer | closer)* ) > 
+
+<!ATTLIST back  
+      %a.global;
+      %a.declaring;> 
+-->
+
+<!-- Stuff for P5 style MS Description -->
+
+<!ELEMENT %n.sourceDesc; %om.RR; 
+	(p | bibl | biblFull | biblStruct | listBibl | recordingStmt 
+	| scriptStmt | msDescription)+ >  
+<!ATTLIST sourceDesc  
+      %a.global;
+      %a.declarable;>
+      
+      <!ELEMENT accMat 
+	(p)+ >
+
+
+<!ATTLIST accMat 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST accMat 
+    %a.global;
+	type CDATA #IMPLIED
+	TEIform CDATA "accMat" >
+	
+	
+<!ELEMENT acquisition 
+	(p)+ >
+
+
+<!ATTLIST acquisition 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST acquisition 
+    %a.global;
+	notBefore NMTOKEN #IMPLIED
+	notAfter NMTOKEN #IMPLIED
+	certainty CDATA #IMPLIED
+	evidence CDATA #IMPLIED
+	TEIform CDATA "acquisition" >
+	
+<!ELEMENT additions 
+	(p)+ >
+
+
+<!ATTLIST additions 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST additions 
+    %a.global;
+	TEIform CDATA "additions" >
+
+
+<!ELEMENT adminInfo 
+	(p+ | (recordHist?, availability?, custodialHist?, note?)) >
+
+
+<!ATTLIST adminInfo 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST adminInfo 
+    %a.global;
+	TEIform CDATA "adminInfo" >
+
+
+<!ELEMENT altIdentifier 
+	(country?, region?, settlement, institution?, repository, 
+	collection?, idno) >
+
+
+<!ATTLIST altIdentifier 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST altIdentifier 
+    %a.global;
+	TEIform CDATA "altIdentifier" >
+
+
+<!ELEMENT altName 
+	(#PCDATA) >
+
+
+<!ATTLIST altName 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST altName 
+    %a.global;
+	type CDATA #REQUIRED
+	TEIform CDATA "altName" >
+
+
+<!ELEMENT binding 
+	(p | decoNote)+ >
+
+
+<!ATTLIST binding 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST binding 
+    %a.global;
+	notBefore NMTOKEN #IMPLIED
+	notAfter NMTOKEN #IMPLIED
+	certainty CDATA #IMPLIED
+	evidence CDATA #IMPLIED
+	contemporary (true | false | unknown | unspecified) #IMPLIED
+	TEIform CDATA "binding" >
+
+
+<!ELEMENT bindingDesc 
+	((p | decoNote)+ | (summary?, binding+)) >
+
+
+<!ATTLIST bindingDesc 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST bindingDesc 
+    %a.global;
+	TEIform CDATA "bindingDesc" >
+
+
+<!ELEMENT collation 
+	(p)+ >
+
+
+<!ATTLIST collation 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST collation 
+    %a.global;
+	TEIform CDATA "collation" >
+
+<!ELEMENT collection 
+	(#PCDATA) >
+
+
+<!ATTLIST collection 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST collection 
+    %a.global;
+    %a.names;
+	TEIform CDATA "collection" >
+
+
+<!ELEMENT colophon 
+	(#PCDATA | graphic | c | cl | m | phr | s | w | seg | distinct 
+	| emph | foreign | gloss | hi | mentioned | soCalled | term 
+	| title | abbr | address | date | dateRange | expan | measure 
+	| name | num | rs | time | timeRange | dimensions | dateStruct 
+	| geogName | orgName | persName | placeName | timeStruct 
+	| add | choice | corr | del | orig | reg | sic | unclear 
+	| damage | restore | space | supplied | app | ptr | ref 
+	| xptr | xref | heraldry | material | origDate | origPlace 
+	| secfol | signatures | watermark | handShift | formula 
+	| index | interp | interpGrp | span | spanGrp | certainty 
+	| respons | alt | altGrp | join | joinGrp | link | linkGrp 
+	| timeline | cb | lb | milestone | pb | fw | gap | addSpan 
+	| delSpan | anchor)* >
+
+
+<!ATTLIST colophon 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST colophon 
+    %a.global;
+	TEIform CDATA "colophon" >
+
+
+<!ELEMENT condition 
+	(p)+ >
+
+
+<!ATTLIST condition 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST condition 
+    %a.global;
+	TEIform CDATA "condition" >
+
+
+<!ELEMENT custEvent 
+	(p)+ >
+
+
+<!ATTLIST custEvent 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST custEvent 
+    %a.global;
+	notBefore NMTOKEN #IMPLIED
+	notAfter NMTOKEN #IMPLIED
+	certainty CDATA #IMPLIED
+	evidence CDATA #IMPLIED
+	type CDATA #IMPLIED
+	TEIform CDATA "custEvent" >
+
+
+<!ELEMENT custodialHist 
+	(p+ | custEvent+) >
+
+
+<!ATTLIST custodialHist 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST custodialHist 
+    %a.global;
+	TEIform CDATA "custodialHist" >
+
+<!ELEMENT decoDesc 
+	(p+ | decoNote+) >
+
+
+<!ATTLIST decoDesc 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST decoDesc 
+    %a.global;
+	TEIform CDATA "decoDesc" >
+
+
+<!ELEMENT decoNote 
+	(p)+ >
+
+
+<!ATTLIST decoNote 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST decoNote 
+    %a.global;
+    %a.typed;
+	TEIform CDATA "decoNote" >
+
+<!-- NEW July 2016 -->
+<!-- WHOOPER -->
+<!ELEMENT del %om.RR; (#PCDATA | %m.phrase; | bibl | %m.Incl;)* >
+<!ATTLIST del
+    %a.global;
+    type CDATA #IMPLIED
+    status CDATA "unremarkable"
+    resp IDREF %INHERITED;
+    cert CDATA #IMPLIED
+    hand IDREF %INHERITED;>
+<!-- WHOOPER -->
+
+<!ELEMENT depth 
+	(#PCDATA) >
+
+
+<!ATTLIST depth 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST depth 
+    %a.global;
+	units CDATA #IMPLIED
+	scope CDATA #IMPLIED
+	TEIform CDATA "depth" >
+
+
+<!ELEMENT dimensions 
+	(height?, width?, depth?)+ >
+
+
+<!ATTLIST dimensions 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST dimensions 
+    %a.global;
+	units CDATA #IMPLIED
+	scope CDATA #IMPLIED
+	type CDATA #IMPLIED
+	TEIform CDATA "dimensions" >
+
+<!ELEMENT explicit 
+	(#PCDATA | graphic | c | cl | m | phr | s | w | seg | distinct 
+	| emph | foreign | gloss | hi | mentioned | soCalled | term 
+	| title | abbr | address | date | dateRange | expan | measure 
+	| name | num | rs | time | timeRange | dimensions | dateStruct 
+	| geogName | orgName | persName | placeName | timeStruct 
+	| add | choice | corr | del | orig | reg | sic | unclear 
+	| damage | restore | space | supplied | app | ptr | ref 
+	| xptr | xref | heraldry | material | origDate | origPlace 
+	| secfol | signatures | watermark | handShift | formula 
+	| index | interp | interpGrp | span | spanGrp | certainty 
+	| respons | alt | altGrp | join | joinGrp | link | linkGrp 
+	| timeline | cb | lb | milestone | pb | fw | gap | addSpan 
+	| delSpan | anchor)* >
+
+
+<!ATTLIST explicit 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST explicit 
+    %a.global;
+	defective (true | false | unknown | unspecified) #IMPLIED
+	type CDATA #IMPLIED
+	TEIform CDATA "explicit" >
+
+
+<!ELEMENT filiation 
+	(#PCDATA | graphic | c | cl | m | phr | s | w | seg | distinct 
+	| emph | foreign | gloss | hi | mentioned | soCalled | term 
+	| title | abbr | address | date | dateRange | expan | measure 
+	| name | num | rs | time | timeRange | dimensions | dateStruct 
+	| geogName | orgName | persName | placeName | timeStruct 
+	| add | choice | corr | del | orig | reg | sic | unclear 
+	| damage | restore | space | supplied | app | ptr | ref 
+	| xptr | xref | heraldry | material | origDate | origPlace 
+	| secfol | signatures | watermark | handShift | formula 
+	| stage | cit | q | quote | bibl | biblFull | biblStruct 
+	| label | list | listBibl | note | witDetail | text | figure 
+	| table | l | lg | p | sp | ab | witList | index | interp 
+	| interpGrp | span | spanGrp | certainty | respons | alt 
+	| altGrp | join | joinGrp | link | linkGrp | timeline | 
+	cb | lb | milestone | pb | fw | gap | addSpan | delSpan 
+	| anchor)* >
+
+
+<!ATTLIST filiation 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST filiation 
+    %a.global;
+    %a.typed;
+	TEIform CDATA "filiation" >
+
+
+<!ELEMENT foliation 
+	(p)+ >
+
+
+<!ATTLIST foliation 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST foliation 
+    %a.global;
+	TEIform CDATA "foliation" >
+
+
+<!ELEMENT handDesc 
+	(handNote | p)+ >
+
+
+<!ATTLIST handDesc 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST handDesc 
+    %a.global;
+	hands CDATA #IMPLIED
+	TEIform CDATA "handDesc" >
+
+
+<!ELEMENT handNote 
+	(p)+ >
+
+
+<!ATTLIST handNote 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST handNote 
+    %a.global;
+	scribe CDATA #IMPLIED
+	script CDATA #IMPLIED
+	medium CDATA #IMPLIED
+	scope CDATA #IMPLIED
+	TEIform CDATA "handNote" >
+
+
+<!ELEMENT height 
+	(#PCDATA) >
+
+
+<!ATTLIST height 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST height 
+    %a.global;
+	units CDATA #IMPLIED
+	scope CDATA #IMPLIED
+	TEIform CDATA "height" >
+
+
+<!ELEMENT heraldry 
+	(#PCDATA | graphic | c | cl | m | phr | s | w | seg | distinct 
+	| emph | foreign | gloss | hi | mentioned | soCalled | term 
+	| title | abbr | address | date | dateRange | expan | measure 
+	| name | num | rs | time | timeRange | dimensions | dateStruct 
+	| geogName | orgName | persName | placeName | timeStruct 
+	| add | choice | corr | del | orig | reg | sic | unclear 
+	| damage | restore | space | supplied | app | ptr | ref 
+	| xptr | xref | heraldry | material | origDate | origPlace 
+	| secfol | signatures | watermark | handShift | formula 
+	| index | interp | interpGrp | span | spanGrp | certainty 
+	| respons | alt | altGrp | join | joinGrp | link | linkGrp 
+	| timeline | cb | lb | milestone | pb | fw | gap | addSpan 
+	| delSpan | anchor)* >
+
+
+<!ATTLIST heraldry 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST heraldry 
+    %a.global;
+	TEIform CDATA "heraldry" >
+
+
+<!ELEMENT history 
+	(p+ | (origin?, provenance*, acquisition?)) >
+
+
+<!ATTLIST history 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST history 
+    %a.global;
+	TEIform CDATA "history" >
+	
+<!ELEMENT additional (adminInfo?, surrogates?, listBibl?) >
+
+<!ATTLIST additional 
+    %a.global;
+	TEIform CDATA "additional" >
+	
+<!ELEMENT incipit 
+	(#PCDATA | graphic | c | cl | m | phr | s | w | seg | distinct 
+	| emph | foreign | gloss | hi | mentioned | soCalled | term 
+	| title | abbr | address | date | dateRange | expan | measure 
+	| name | num | rs | time | timeRange | dimensions | dateStruct 
+	| geogName | orgName | persName | placeName | timeStruct 
+	| add | choice | corr | del | orig | reg | sic | unclear 
+	| damage | restore | space | supplied | app | ptr | ref 
+	| xptr | xref | heraldry | material | origDate | origPlace 
+	| secfol | signatures | watermark | handShift | formula 
+	| index | interp | interpGrp | span | spanGrp | certainty 
+	| respons | alt | altGrp | join | joinGrp | link | linkGrp 
+	| timeline | cb | lb | milestone | pb | fw | gap | addSpan 
+	| delSpan | anchor)* >
+
+
+<!ATTLIST incipit 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST incipit 
+    %a.global;
+	defective (true | false | unknown | unspecified) #IMPLIED
+	type CDATA #IMPLIED
+	TEIform CDATA "incipit" >
+
+
+<!ELEMENT institution 
+	(#PCDATA) >
+
+
+<!ATTLIST institution 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST institution 
+    %a.global;
+    %a.names;
+	TEIform CDATA "institution" >
+
+
+<!ELEMENT layout 
+	(p)+ >
+
+
+<!ATTLIST layout 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST layout 
+    %a.global;
+	columns CDATA #IMPLIED
+	ruledLines CDATA #IMPLIED
+	writtenLines CDATA #IMPLIED
+	TEIform CDATA "layout" >
+
+
+<!ELEMENT layoutDesc 
+	(p+ | layout+) >
+
+
+<!ATTLIST layoutDesc 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST layoutDesc 
+    %a.global;
+	TEIform CDATA "layoutDesc" >
+
+
+<!ELEMENT locus 
+	(#PCDATA) >
+
+
+<!ATTLIST locus 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST locus 
+    %a.global;
+	scheme CDATA #IMPLIED
+	from CDATA #IMPLIED
+	to CDATA #IMPLIED
+	targets IDREFS #IMPLIED
+	TEIform CDATA "locus" >
+
+
+<!ELEMENT material 
+	(#PCDATA | graphic | c | cl | m | phr | s | w | seg | distinct 
+	| emph | foreign | gloss | hi | mentioned | soCalled | term 
+	| title | abbr | address | date | dateRange | expan | measure 
+	| name | num | rs | time | timeRange | dimensions | dateStruct 
+	| geogName | orgName | persName | placeName | timeStruct 
+	| add | choice | corr | del | orig | reg | sic | unclear 
+	| damage | restore | space | supplied | app | ptr | ref 
+	| xptr | xref | heraldry | material | origDate | origPlace 
+	| secfol | signatures | watermark | handShift | formula 
+	| index | interp | interpGrp | span | spanGrp | certainty 
+	| respons | alt | altGrp | join | joinGrp | link | linkGrp 
+	| timeline | cb | lb | milestone | pb | fw | gap | addSpan 
+	| delSpan | anchor)* >
+
+
+<!ATTLIST material 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST material 
+    %a.global;
+	TEIform CDATA "material" >
+
+
+<!ELEMENT msContents 
+	(p+ | (summary?, msItem+)) >
+
+
+<!ATTLIST msContents 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST msContents 
+    %a.global;
+	class IDREFS #IMPLIED
+	defective (true | false | unknown | unspecified) #IMPLIED
+	TEIform CDATA "msContents" >
+	
+<!ELEMENT msDescription 
+	(msIdentifier, head*, (p+ | (msContents?, physDesc?, history?, 
+	additional?, msPart*))) >
+
+
+<!ATTLIST msDescription 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST msDescription 
+    %a.global;
+	type CDATA #IMPLIED
+	status CDATA "uni"
+	TEIform CDATA "msDescription" >
+
+
+<!ELEMENT msIdentifier 
+	(country?, region?, settlement, institution?, repository, 
+	collection?, idno, (altIdentifier | altName)*) >
+
+
+<!ATTLIST msIdentifier 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST msIdentifier 
+    %a.global;
+	TEIform CDATA "msIdentifier" >
+
+
+<!ELEMENT msItem 
+	(locus?, (p+ | (author*, respStmt*, title*, rubric?, incipit?, 
+	explicit?, colophon*, decoNote*, langUsage*, listBibl*, 
+	q*, bibl*, filiation*, note*, textLang?, msItem*))) >
+
+
+<!ATTLIST msItem 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST msItem 
+    %a.global;
+	class IDREFS #IMPLIED
+	defective (true | false | unknown | unspecified) "false"
+	TEIform CDATA "msItem" >
+
+<!ELEMENT msPart 
+	(altIdentifier, head*, (p+ | (msContents?, physDesc?, history?, 
+	additional?, msPart*))) >
+
+
+<!ATTLIST msPart 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST msPart 
+    %a.global;
+	TEIform CDATA "msPart" >
+	
+	<!ELEMENT musicNotation 
+	(p)+ >
+
+
+<!ATTLIST musicNotation 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST musicNotation 
+    %a.global;
+	TEIform CDATA "musicNotation" >
+
+
+<!ELEMENT objectDesc 
+	(p+ | (supportDesc?, layoutDesc?)) >
+
+
+<!ATTLIST objectDesc 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST objectDesc 
+    %a.global;
+	form CDATA #IMPLIED
+	TEIform CDATA "objectDesc" >
+
+
+<!-- NEW April 2012 -->
+<!-- TDBOWMAN -->
+<!ELEMENT %n.orig; %om.RR;  (#PCDATA | %n.note; | %m.phrase; | %m.Incl;)*> 
+<!ATTLIST %n.orig;  
+      %a.global;
+      reg CDATA #IMPLIED
+      resp CDATA #IMPLIED>
+<!-- TDBOWMAN -->
+
+
+<!ELEMENT origDate 
+	(#PCDATA) >
+
+
+<!ATTLIST origDate 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST origDate 
+    %a.global;
+	notBefore NMTOKEN #IMPLIED
+	notAfter NMTOKEN #IMPLIED
+	certainty CDATA #IMPLIED
+	evidence CDATA #IMPLIED
+	TEIform CDATA "origDate" >
+
+
+<!ELEMENT origPlace 
+	(#PCDATA) >
+
+
+<!ATTLIST origPlace 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST origPlace 
+    %a.global;
+	TEIform CDATA "origPlace" >
+
+
+<!ELEMENT origin 
+	(p)+ >
+
+
+<!ATTLIST origin 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST origin 
+    %a.global;
+	notBefore NMTOKEN #IMPLIED
+	notAfter NMTOKEN #IMPLIED
+	certainty CDATA #IMPLIED
+	evidence CDATA #IMPLIED
+	TEIform CDATA "origin" >
+
+
+<!ELEMENT physDesc 
+	(p+ | (objectDesc?, handDesc?, musicNotation?, decoDesc?, 
+	additions?, bindingDesc?, sealDesc?, accMat?)) >
+
+
+<!ATTLIST physDesc 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST physDesc 
+    %a.global;
+	TEIform CDATA "physDesc" >
+
+
+<!ELEMENT provenance 
+	(p)+ >
+
+
+<!ATTLIST provenance 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST provenance 
+    %a.global;
+	notBefore NMTOKEN #IMPLIED
+	notAfter NMTOKEN #IMPLIED
+	certainty CDATA #IMPLIED
+	evidence CDATA #IMPLIED
+	TEIform CDATA "provenance" >
+
+
+<!ELEMENT recordHist 
+	(source, change*) >
+
+
+<!ATTLIST recordHist 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST recordHist 
+    %a.global;
+	TEIform CDATA "recordHist" >
+
+
+<!-- NEW April 2012 -->
+<!-- TDBOWMAN -->
+<!-- jawalsh updated on 2018-04-18 to allow bibl, biblStruct, biblFull in reg -->
+<!ELEMENT %n.reg; %om.RR;  (#PCDATA | %n.note; | %m.phrase; | %m.bibl; | %m.Incl;)*> 
+<!ATTLIST %n.reg;  
+      %a.global;
+      reg CDATA #IMPLIED
+      resp CDATA #IMPLIED>
+<!-- TDBOWMAN -->
+
+
+
+<!ELEMENT repository 
+	(#PCDATA) >
+
+
+<!ATTLIST repository 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST repository 
+    %a.global;
+	TEIform CDATA "repository" >
+
+
+<!ELEMENT rubric 
+	(#PCDATA | graphic | c | cl | m | phr | s | w | seg | distinct 
+	| emph | foreign | gloss | hi | mentioned | soCalled | term 
+	| title | abbr | address | date | dateRange | expan | measure 
+	| name | num | rs | time | timeRange | dimensions | dateStruct 
+	| geogName | orgName | persName | placeName | timeStruct 
+	| add | choice | corr | del | orig | reg | sic | unclear 
+	| damage | restore | space | supplied | app | ptr | ref 
+	| xptr | xref | heraldry | material | origDate | origPlace 
+	| secfol | signatures | watermark | handShift | formula 
+	| index | interp | interpGrp | span | spanGrp | certainty 
+	| respons | alt | altGrp | join | joinGrp | link | linkGrp 
+	| timeline | cb | lb | milestone | pb | fw | gap | addSpan 
+	| delSpan | anchor)* >
+
+
+<!ATTLIST rubric 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST rubric 
+    %a.global;
+	type CDATA #IMPLIED
+	TEIform CDATA "rubric" >
+
+
+<!ELEMENT seal 
+	(p | decoNote)+ >
+
+
+<!ATTLIST seal 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST seal 
+    %a.global;
+	notBefore NMTOKEN #IMPLIED
+	notAfter NMTOKEN #IMPLIED
+	certainty CDATA #IMPLIED
+	evidence CDATA #IMPLIED
+	contemporary (true | false | unknown | unspecified) #IMPLIED
+	TEIform CDATA "seal" >
+
+
+<!ELEMENT sealDesc 
+	(p+ | (decoNote | seal)+) >
+
+
+<!ATTLIST sealDesc 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST sealDesc 
+    %a.global;
+	TEIform CDATA "sealDesc" >
+
+
+<!ELEMENT secfol 
+	(#PCDATA | graphic | c | cl | m | phr | s | w | seg | distinct 
+	| emph | foreign | gloss | hi | mentioned | soCalled | term 
+	| title | abbr | address | date | dateRange | expan | measure 
+	| name | num | rs | time | timeRange | dimensions | dateStruct 
+	| geogName | orgName | persName | placeName | timeStruct 
+	| add | choice | corr | del | orig | reg | sic | unclear 
+	| damage | restore | space | supplied | app | ptr | ref 
+	| xptr | xref | heraldry | material | origDate | origPlace 
+	| secfol | signatures | watermark | handShift | formula 
+	| index | interp | interpGrp | span | spanGrp | certainty 
+	| respons | alt | altGrp | join | joinGrp | link | linkGrp 
+	| timeline | cb | lb | milestone | pb | fw | gap | addSpan 
+	| delSpan | anchor)* >
+
+
+<!ATTLIST secfol 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST secfol 
+    %a.global;
+	TEIform CDATA "secfol" >
+
+
+<!ELEMENT signatures 
+	(#PCDATA | graphic | c | cl | m | phr | s | w | seg | distinct 
+	| emph | foreign | gloss | hi | mentioned | soCalled | term 
+	| title | abbr | address | date | dateRange | expan | measure 
+	| name | num | rs | time | timeRange | dimensions | dateStruct 
+	| geogName | orgName | persName | placeName | timeStruct 
+	| add | choice | corr | del | orig | reg | sic | unclear 
+	| damage | restore | space | supplied | app | ptr | ref 
+	| xptr | xref | heraldry | material | origDate | origPlace 
+	| secfol | signatures | watermark | handShift | formula 
+	| index | interp | interpGrp | span | spanGrp | certainty 
+	| respons | alt | altGrp | join | joinGrp | link | linkGrp 
+	| timeline | cb | lb | milestone | pb | fw | gap | addSpan 
+	| delSpan | anchor)* >
+
+
+<!ATTLIST signatures 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST signatures 
+    %a.global;
+	TEIform CDATA "signatures" >
+
+
+<!ELEMENT source 
+	(p)+ >
+
+
+<!ATTLIST source 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST source 
+    %a.global;
+	TEIform CDATA "source" >
+
+
+<!ELEMENT summary 
+	(#PCDATA | graphic | c | cl | m | phr | s | w | seg | distinct 
+	| emph | foreign | gloss | hi | mentioned | soCalled | term 
+	| title | abbr | address | date | dateRange | expan | measure 
+	| name | num | rs | time | timeRange | dimensions | dateStruct 
+	| geogName | orgName | persName | placeName | timeStruct 
+	| add | choice | corr | del | orig | reg | sic | unclear 
+	| damage | restore | space | supplied | app | ptr | ref 
+	| xptr | xref | heraldry | material | origDate | origPlace 
+	| secfol | signatures | watermark | handShift | formula 
+	| index | interp | interpGrp | span | spanGrp | certainty 
+	| respons | alt | altGrp | join | joinGrp | link | linkGrp 
+	| timeline | cb | lb | milestone | pb | fw | gap | addSpan 
+	| delSpan | anchor)* >
+
+
+<!ATTLIST summary 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST summary 
+    %a.global;
+	TEIform CDATA "summary" >
+
+
+<!ELEMENT support 
+	(p)+ >
+
+
+<!ATTLIST support 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST support 
+    %a.global;
+	TEIform CDATA "support" >
+
+
+<!ELEMENT supportDesc 
+	(p+ | (support?, extent?, foliation?, collation?, condition?)) >
+
+
+<!ATTLIST supportDesc 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST supportDesc 
+    %a.global;
+	material CDATA #IMPLIED
+	TEIform CDATA "supportDesc" >
+
+
+<!ELEMENT surrogates 
+	(p)+ >
+
+
+<!ATTLIST surrogates 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST surrogates 
+    %a.global;
+	TEIform CDATA "surrogates" >
+
+
+<!ELEMENT textLang 
+	(#PCDATA | graphic | c | cl | m | phr | s | w | seg | distinct 
+	| emph | foreign | gloss | hi | mentioned | soCalled | term 
+	| title | abbr | address | date | dateRange | expan | measure 
+	| name | num | rs | time | timeRange | dimensions | dateStruct 
+	| geogName | orgName | persName | placeName | timeStruct 
+	| add | choice | corr | del | orig | reg | sic | unclear 
+	| damage | restore | space | supplied | app | ptr | ref 
+	| xptr | xref | heraldry | material | origDate | origPlace 
+	| secfol | signatures | watermark | handShift | formula 
+	| index | interp | interpGrp | span | spanGrp | certainty 
+	| respons | alt | altGrp | join | joinGrp | link | linkGrp 
+	| timeline | cb | lb | milestone | pb | fw | gap | addSpan 
+	| delSpan | anchor)* >
+
+
+<!ATTLIST textLang 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST textLang 
+    %a.global;
+	langKey IDREF #IMPLIED
+	otherLangs IDREFS #IMPLIED
+	TEIform CDATA "textLang" >
+
+
+<!ELEMENT watermark 
+	(#PCDATA | graphic | c | cl | m | phr | s | w | seg | distinct 
+	| emph | foreign | gloss | hi | mentioned | soCalled | term 
+	| title | abbr | address | date | dateRange | expan | measure 
+	| name | num | rs | time | timeRange | dimensions | dateStruct 
+	| geogName | orgName | persName | placeName | timeStruct 
+	| add | choice | corr | del | orig | reg | sic | unclear 
+	| damage | restore | space | supplied | app | ptr | ref 
+	| xptr | xref | heraldry | material | origDate | origPlace 
+	| secfol | signatures | watermark | handShift | formula 
+	| index | interp | interpGrp | span | spanGrp | certainty 
+	| respons | alt | altGrp | join | joinGrp | link | linkGrp 
+	| timeline | cb | lb | milestone | pb | fw | gap | addSpan 
+	| delSpan | anchor)* >
+
+
+<!ATTLIST watermark 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST watermark 
+    %a.global;
+	TEIform CDATA "watermark" >
+
+
+<!ELEMENT width 
+	(#PCDATA) >
+
+
+<!ATTLIST width 
+	xmlns:ns1 CDATA #FIXED "http://www.tei-c.org/ns/1.0" >
+
+
+<!ATTLIST width 
+    %a.global;
+	units CDATA #IMPLIED
+	scope CDATA #IMPLIED
+	TEIform CDATA "width" >
+
+
