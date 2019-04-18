@@ -70,7 +70,7 @@
 		</p:when>
 		<p:when test="$relative-uri = 'p5/' ">
 			<p:choose>
-				<p:when test="/c:request/@method='post'"><!-- re-convert local P4 files to P5 -->
+				<p:when test="matches(/c:request/@method, 'POST', 'i')"><!-- re-convert local P4 files to P5 -->
 					<chymistry:convert-p4-to-p5/>
 				</p:when>
 				<p:otherwise>
