@@ -38,6 +38,8 @@
 	<p:import href="administration.xpl"/>	
 	<!-- pipelines that process TEI P5 text -->
 	<p:import href="p5-processing.xpl"/>	
+	<!-- pipelines that serve HTML text -->
+	<p:import href="html.xpl"/>	
 	<!-- the search and browse interface -->
 	<p:import href="search.xpl"/>
 	<!-- dispatch the request to the appropriate pipeline, depending on the request URI -->
@@ -54,6 +56,10 @@
 	</cx:message>
 	-->
 	<p:choose>
+		<p:when test="$relative-uri = '' ">
+			<!-- home page -->
+			<chymistry:html-page page="home"/>
+		</p:when>
 		<p:when test="$relative-uri = 'admin' ">
 			<!-- Form includes commands to download P4, convert to P5, reindex Solr -->
 			<chymistry:admin-form/>
@@ -63,8 +69,15 @@
 			<chymistry:download-p4/>
 		</p:when>
 		<p:when test="$relative-uri = 'p5/' ">
-			<!-- Convert local P4 files to P5 -->
-			<chymistry:convert-p4-to-p5/>
+			<p:choose>
+				<p:when test="/c:request/@method='post'"><!-- re-convert local P4 files to P5 -->
+					<chymistry:convert-p4-to-p5/>
+				</p:when>
+				<p:otherwise>
+					<!-- list already-converted files -->
+					<chymistry:list-p5/>
+				</p:otherwise>
+			</p:choose>
 		</p:when>
 		<p:when test="$relative-uri = 'reindex/' ">
 			<!-- Update the search index -->

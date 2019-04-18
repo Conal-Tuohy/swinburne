@@ -22,8 +22,11 @@
 						<xsl:template match="/">
 							<collection>
 								<xsl:for-each select="$xubmit-manifest?results?*">
-									<text id="{.('@rdf:about')}" date="{.('cvs:date')}">
-										<c:request href="{concat($base-uri, .('@rdf:about'), '.xml')}" method="GET" detailed="true" override-content-type="application/octet-stream"/>
+									<xsl:variable name="href" select="concat($base-uri, .('@rdf:about'), '.xml')"/>
+									<xsl:variable name="id" select=".('@rdf:about')"/>
+									<xsl:variable name="date" select=".('cvs:date')"/>
+									<text id="{$id}" date="{$date}" href="{$href}">
+										<c:request href="{$href}" method="GET" detailed="true" override-content-type="application/octet-stream"/>
 									</text>
 								</xsl:for-each>
 							</collection>
@@ -32,16 +35,15 @@
 				</p:inline>
 			</p:input>
 		</p:xslt>
-		<p:for-each name="text-to-download">
-			<p:iteration-source select="/collection/text"/>
+		<p:viewport name="text-to-download" match="/collection/text">
 			<p:variable name="id" select="/text/@id"/>
-			<p:http-request name="download">
-				<p:input port="source" select="/text/c:request">
-					<p:pipe step="text-to-download" port="current"/>
-				</p:input>
-			</p:http-request>
+			<p:variable name="href" select="/text/@href"/>
+			<p:variable name="date" select="/text/@date"/>
+			<p:viewport name="download" match="c:request">
+				<p:http-request/>
+			</p:viewport>
 			<p:for-each name="successful-download">
-				<p:iteration-source select="/c:response[@status='200']/c:body">
+				<p:iteration-source select="/text/c:response[@status='200']/c:body">
 					<p:pipe step="download" port="result"/>
 				</p:iteration-source>
 				<p:store method="text" cx:decode="true">
@@ -49,19 +51,36 @@
 				</p:store>
 			</p:for-each>
 			<p:for-each name="unsuccessful-download">
-				<p:iteration-source select="/c:response[@status!='200']/c:body">
+				<p:iteration-source select="/text/c:response[@status!='200']/c:body">
 					<p:pipe step="download" port="result"/>
 				</p:iteration-source>
 				<p:store method="text" cx:decode="true">
 					<p:with-option name="href" select="concat('../p4/errors/', $id, '.json')"/>
 				</p:store>
 			</p:for-each>
-		</p:for-each>
-		<z:make-http-response content-type="application/xml">
-			<p:input port="source">
-				<p:pipe step="manifest" port="result"/>
+			<!-- discard the actual TEI P4 content of a successful download, retaining the body only if the download failed -->
+			<p:delete match="/text/c:response[@status='200']/c:body">
+				<p:input port="source">
+					<p:pipe step="download" port="result"/>
+				</p:input>
+			</p:delete>
+			<p:add-attribute match="/*" attribute-name="id">
+				<p:with-option name="attribute-value" select="$id"/>
+			</p:add-attribute>
+			<p:add-attribute match="/*" attribute-name="date">
+				<p:with-option name="attribute-value" select="$date"/>
+			</p:add-attribute>
+			<p:add-attribute match="/*" attribute-name="href">
+				<p:with-option name="attribute-value" select="$href"/>
+			</p:add-attribute>
+		</p:viewport>
+		<p:xslt>
+			<p:input port="parameters"><p:empty/></p:input>
+			<p:input port="stylesheet">
+				<p:document href="../xslt/xubmit-downloads-report.xsl"/>
 			</p:input>
-		</z:make-http-response>
+		</p:xslt>
+		<z:make-http-response content-type="application/xml"/>
 	</p:declare-step>
 	
 	<p:declare-step xmlns:p="http://www.w3.org/ns/xproc" name="convert-p4-to-p5" version="1.0" type="chymistry:convert-p4-to-p5"

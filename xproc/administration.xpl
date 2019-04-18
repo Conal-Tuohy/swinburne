@@ -21,7 +21,6 @@
 								</head>
 								<body>
 									<h1>Chymistry admin</h1>
-									<p>Site updating</p>
 									<form method="post" action="p4/">
 										<button>Download P4 files from Xubmit</button>
 									</form>
@@ -31,6 +30,7 @@
 									<form method="post" action="reindex/">
 										<button>Rebuild Solr index from P5 files</button>
 									</form>
+									<p><a href="../p5/">View texts</a></p>
 								</body>
 							</html>
 						</c:body>

@@ -42,7 +42,7 @@
 	<p:declare-step name="p5-as-html" type="chymistry:p5-as-html">
 		<p:input port="source"/>
 		<p:output port="result"/>
-		<p:variable name="text" select="substring-before(substring-after(/c:request/@href, 'xproc-z/text/'), '/')"/>
+		<p:variable name="text" select="substring-before(substring-after(/c:request/@href, '/text/'), '/')"/>
 		<p:load name="text">
 			<p:with-option name="href" select="concat('../p5/', $text, '.xml')"/>
 		</p:load>
@@ -62,6 +62,19 @@
 		<p:load name="text">
 			<p:with-option name="href" select="concat('../p5/', $text, '.xml')"/>
 		</p:load>
+		<z:make-http-response content-type="application/xml"/>
+	</p:declare-step>
+	
+	<p:declare-step name="list-p5" type="chymistry:list-p5">
+		<p:input port="source"/>
+		<p:output port="result"/>
+		<p:directory-list name="list-p5-files" path="../p5/"/>
+		<p:xslt>
+			<p:input port="parameters"><p:empty/></p:input>
+			<p:input port="stylesheet">
+				<p:document href="../xslt/html-directory-listing.xsl"/>
+			</p:input>
+		</p:xslt>
 		<z:make-http-response content-type="application/xml"/>
 	</p:declare-step>
 
