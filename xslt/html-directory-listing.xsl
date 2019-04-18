@@ -35,6 +35,7 @@
 							<td><a href="{$xubmit-base-url}{@name}">Download source P4 from Xubmit</a></td>
 							<td><a href="{$name}/">View converted TEI P5</a></td>
 							<td><a href="../text/{$name}/">View as simple HTML</a></td>
+							<td><a href="../solr/{$name}/">View Solr record update message</a></td>
 						</tr>
 					</xsl:for-each>
 				</table>

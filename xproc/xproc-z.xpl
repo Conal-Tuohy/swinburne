@@ -79,6 +79,9 @@
 				</p:otherwise>
 			</p:choose>
 		</p:when>
+		<p:when test="starts-with($relative-uri, 'solr/')">
+			<chymistry:p5-as-solr/>
+		</p:when>
 		<p:when test="$relative-uri = 'reindex/' ">
 			<!-- Update the search index -->
 			<chymistry:reindex/>

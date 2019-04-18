@@ -38,6 +38,21 @@
 		<z:make-http-response/>
 	</p:declare-step>
 	
+	<p:declare-step name="p5-as-solr" type="chymistry:p5-as-solr">
+		<p:input port="source"/>
+		<p:output port="result"/>
+		<p:variable name="text" select="substring-before(substring-after(/c:request/@href, '/solr/'), '/')"/>
+		<p:load name="text">
+			<p:with-option name="href" select="concat('../p5/', $text, '.xml')"/>
+		</p:load>
+		<p:xslt>
+			<p:input port="parameters"><p:empty/></p:input>
+			<p:input port="stylesheet">
+				<p:document href="../xslt/p5-to-solr-index-request.xsl"/>
+			</p:input>
+		</p:xslt>
+		<z:make-http-response content-type="application/xhtml+xml"/>
+	</p:declare-step>	
 
 	<p:declare-step name="p5-as-html" type="chymistry:p5-as-html">
 		<p:input port="source"/>
