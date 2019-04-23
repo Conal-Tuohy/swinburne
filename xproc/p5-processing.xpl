@@ -46,7 +46,7 @@
 			<p:with-option name="href" select="concat('../p5/', $text, '.xml')"/>
 		</p:load>
 		<p:xslt>
-			<p:input port="parameters"><p:empty/></p:input>
+			<p:with-param name="id" select="$text"/>
 			<p:input port="stylesheet">
 				<p:document href="../xslt/p5-to-solr-index-request.xsl"/>
 			</p:input>
