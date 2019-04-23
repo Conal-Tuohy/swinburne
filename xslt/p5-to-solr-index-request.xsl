@@ -18,10 +18,15 @@
 						<field name="description"><xsl:value-of select="
 							/tei:TEI/tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:msDesc/tei:msContents/tei:msItem/tei:note[@type='description']
 						"/></field>
-						<field name="text"><xsl:value-of select="/tei:TEI/tei:text"/></field>
+						<field name="text"><xsl:apply-templates mode="text" select="/tei:TEI/tei:text"/></field>
 					</doc>
 				</add>
 			</c:body>
 		</c:request>
+	</xsl:template>
+	<!-- insert a space after each alternative option within a choice, so that they don't run together -->
+	<xsl:template mode="text" match="tei:choice/*">
+		<xsl:apply-templates mode="text"/>
+		<xsl:text> </xsl:text>
 	</xsl:template>
 </xsl:stylesheet>
