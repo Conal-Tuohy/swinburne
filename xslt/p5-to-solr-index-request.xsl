@@ -18,7 +18,7 @@
 						<field name="description"><xsl:value-of select="
 							/tei:TEI/tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:msDesc/tei:msContents/tei:msItem/tei:note[@type='description']
 						"/></field>
-						<field name="text"><xsl:value-of select="."/></field>
+						<field name="text"><xsl:value-of select="/tei:TEI/tei:text"/></field>
 					</doc>
 				</add>
 			</c:body>
