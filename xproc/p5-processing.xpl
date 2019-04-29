@@ -11,6 +11,7 @@
 	<p:declare-step name="reindex" type="chymistry:reindex">
 		<p:input port="source"/>
 		<p:output port="result"/>
+		<p:option name="solr-base-uri" required="true"/>
 		<p:directory-list name="list-p5-files" path="../p5/"/>
 		<p:add-xml-base relative="false" all="true"/>
 		<p:for-each>
@@ -28,6 +29,7 @@
 			</p:load>
 			<p:xslt>
 				<p:with-param name="id" select="$file-id"/>
+				<p:with-param name="solr-base-uri" select="$solr-base-uri"/>
 				<p:input port="stylesheet">
 					<p:document href="../xslt/p5-to-solr-index-request.xsl"/>
 				</p:input>
@@ -41,12 +43,14 @@
 	<p:declare-step name="p5-as-solr" type="chymistry:p5-as-solr">
 		<p:input port="source"/>
 		<p:output port="result"/>
+		<p:option name="solr-base-uri" required="true"/>
 		<p:variable name="text" select="substring-before(substring-after(/c:request/@href, '/solr/'), '/')"/>
 		<p:load name="text">
 			<p:with-option name="href" select="concat('../p5/', $text, '.xml')"/>
 		</p:load>
 		<p:xslt>
 			<p:with-param name="id" select="$text"/>
+			<p:with-param name="solr-base-uri" select="$solr-base-uri"/>
 			<p:input port="stylesheet">
 				<p:document href="../xslt/p5-to-solr-index-request.xsl"/>
 			</p:input>

@@ -50,11 +50,24 @@
 			'$3'
 		)
 	"/>
+	<p:parameters name="configuration">
+		<p:input port="parameters">
+			<p:pipe step="main" port="parameters"/>
+		</p:input>
+	</p:parameters>
+	<p:identity>
+		<p:input port="source">
+			<p:pipe step="main" port="source"/>
+		</p:input>
+	</p:identity>
 	<!--
 	<cx:message>
-		<p:with-option name="message" select="$relative-uri"/>
+		<p:with-option name="message" select="serialize(/)">
+			<p:pipe step="configuration" port="result"/>
+		</p:with-option>
 	</cx:message>
 	-->
+	
 	<p:choose>
 		<p:when test="$relative-uri = '' ">
 			<!-- home page -->
@@ -80,11 +93,19 @@
 			</p:choose>
 		</p:when>
 		<p:when test="starts-with($relative-uri, 'solr/')">
-			<chymistry:p5-as-solr/>
+			<chymistry:p5-as-solr>
+				<p:with-option name="solr-base-uri" select="/c:param-set/c:param[@name='solr-base-uri']/@value">
+					<p:pipe step="configuration" port="result"/>
+				</p:with-option>
+			</chymistry:p5-as-solr>
 		</p:when>
 		<p:when test="$relative-uri = 'reindex/' ">
 			<!-- Update the search index -->
-			<chymistry:reindex/>
+			<chymistry:reindex>
+				<p:with-option name="solr-base-uri" select="/c:param-set/c:param[@name='solr-base-uri']/@value">
+					<p:pipe step="configuration" port="result"/>
+				</p:with-option>
+			</chymistry:reindex>
 		</p:when>
 		<p:when test="starts-with($relative-uri, 'p5/') ">
 			<!-- Represent an individual P5 text as XML (i.e. raw) -->
@@ -96,7 +117,11 @@
 		</p:when>
 		<p:when test="starts-with($relative-uri, 'search/')">
 			<!-- Display a search form or search results -->
-			<chymistry:search/>
+			<chymistry:search>
+				<p:with-option name="solr-base-uri" select="/c:param-set/c:param[@name='solr-base-uri']/@value">
+					<p:pipe step="configuration" port="result"/>
+				</p:with-option>
+			</chymistry:search>
 		</p:when>
 		<p:when test="$relative-uri = 'parameters/'">
 			<!-- for debugging - show details of the request -->

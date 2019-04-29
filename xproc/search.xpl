@@ -12,9 +12,12 @@
 	<p:declare-step name="search" type="chymistry:search">
 		<p:input port="source"/>
 		<p:output port="result"/>
+		<p:option name="solr-base-uri" required="true"/>
 		<p:choose>
 			<p:when test="substring-after(/c:request/@href, '?')">
-				<chymistry:search-results/>
+				<chymistry:search-results>
+					<p:with-option name="solr-base-uri" select="$solr-base-uri"/>
+				</chymistry:search-results>
 			</p:when>
 			<p:otherwise>
 				<!-- ... otherwise display a search form -->
@@ -28,6 +31,7 @@
 	<p:declare-step name="search-results" type="chymistry:search-results">
 		<p:input port="source"/>
 		<p:output port="result"/>
+		<p:option name="solr-base-uri" required="true"/>
 		<!-- TODO, if there are URL parameters, perform a search and display results -->
 		<p:www-form-urldecode name="fields">
 			<p:with-option name="value" select="substring-after(/c:request/@href, '?')"/>
@@ -40,7 +44,7 @@
 			</p:input>
 		</p:wrap-sequence>
 		<p:xslt name="prepare-solr-request">
-			<p:input port="parameters"><p:empty/></p:input>
+			<p:with-param name="solr-base-uri" select="$solr-base-uri"/>
 			<p:input port="stylesheet"><p:document href="../xslt/search-parameters-to-solr-request.xsl"/></p:input>
 		</p:xslt>
 		<p:xslt name="convert-xml-to-json">

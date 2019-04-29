@@ -7,7 +7,7 @@
 	xmlns:f="http://www.w3.org/2005/xpath-functions"
 	exclude-result-prefixes="xs nma">
 
-	<xsl:variable name="base-url" select=" 'http://localhost:8983' "/>
+	<xsl:param name="solr-base-uri"/>
 	
 	<xsl:variable name="facet-spec" select="/*/facets"/>
 
@@ -15,15 +15,7 @@
 	<!-- transform the incoming HTTP request into an outgoing HTTP request to Solr -->
 	<!-- the incoming request has been parsed into a set of parameters i.e. c:param-set -->
 	<xsl:template match="/">
-		<c:request 
-			method="post"
-			href="{
-				concat(
-					$base-url,
-					'/solr/index/query?'
-				)
-			}"
-		>
+		<c:request method="post" href="{$solr-base-uri}query">
 			<c:body content-type="application/xml">
 				<xsl:apply-templates select="/*/c:param-set"/>
 			</c:body>

@@ -3,8 +3,9 @@
 	xmlns:tei="http://www.tei-c.org/ns/1.0">
 	<!-- transform a TEI document into an HTTP request to Solr to add it to the index -->
 	<xsl:param name="id"/>
+	<xsl:param name="solr-base-uri"/>
 	<xsl:template match="/">
-		<c:request method="post" href="http://localhost:8983/solr/index/update">
+		<c:request method="post" href="{$solr-base-uri}update">
 			<c:body content-type="application/xml">
 				<add commitWithin="5000">
 					<doc>
