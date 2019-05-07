@@ -115,6 +115,10 @@
 			<!-- Represent an individual P5 text as an HTML page -->
 			<chymistry:p5-as-html/>
 		</p:when>
+		<p:when test="starts-with($relative-uri, 'iiif/') ">
+			<!-- Represent an individual P5 text as a IIIF manifest -->
+			<chymistry:p5-as-iiif/>
+		</p:when>
 		<p:when test="starts-with($relative-uri, 'search/')">
 			<!-- Display a search form or search results -->
 			<chymistry:search>

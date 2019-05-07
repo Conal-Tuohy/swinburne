@@ -57,6 +57,28 @@
 		</p:xslt>
 		<z:make-http-response content-type="application/xhtml+xml"/>
 	</p:declare-step>	
+	
+	<p:declare-step name="p5-as-iiif" type="chymistry:p5-as-iiif">
+		<p:input port="source"/>
+		<p:output port="result"/>
+		<p:variable name="text" select="substring-before(substring-after(/c:request/@href, '/iiif/'), '/')"/>
+		<p:variable name="id" select="/c:request/@href"/>
+		<p:load name="text">
+			<p:with-option name="href" select="concat('../p5/', $text, '.xml')"/>
+		</p:load>
+		<p:xslt>
+			<p:with-param name="id" select="$id"/>
+			<p:input port="stylesheet">
+				<p:document href="../xslt/p5-to-iiif-manifest.xsl"/>
+			</p:input>
+		</p:xslt>
+		<p:xslt>
+			<p:input port="parameters"><p:empty/></p:input>
+			<p:input port="stylesheet">
+				<p:document href="../xslt/xml-to-json.xsl"/>
+			</p:input>
+		</p:xslt>
+	</p:declare-step>
 
 	<p:declare-step name="p5-as-html" type="chymistry:p5-as-html">
 		<p:input port="source"/>
