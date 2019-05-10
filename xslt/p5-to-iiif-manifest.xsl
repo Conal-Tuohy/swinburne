@@ -2,12 +2,14 @@
 	xmlns="http://www.w3.org/2005/xpath-functions"
 	xmlns:tei="http://www.tei-c.org/ns/1.0">
 	<!-- transform a TEI document into a IIIF manifest -->
-	<xsl:param name="id"/>
+	<xsl:param name="base-uri"/>
+	<xsl:param name="text-id"/>
+	<xsl:key name="folio-for-surface" match="tei:milestone[@unit='folio']" use="substring-after(@facs, '#')"/>
 	<xsl:template match="/">
 		<map>
 			<xsl:comment>Metadata about this manifest</xsl:comment>
 			<string key="@context">http://iiif.io/api/presentation/2/context.json</string>
-			<string key="@id"><xsl:value-of select="$id"/></string>
+			<string key="@id"><xsl:value-of select="concat($base-uri, $text-id, '/manifest')"/></string>
 			<string key="@type">sc:Manifest</string>
 			<xsl:comment>Descriptive metadata about the text</xsl:comment>
 			<string key="label"><xsl:value-of select="
@@ -37,12 +39,13 @@
 			<xsl:comment>pages and images</xsl:comment>
 			<array key="sequences">
 				<map>
-					<string key="@id"><xsl:value-of select="$id"/>/sequence/only</string>
+					<string key="@id"><xsl:value-of select="concat($base-uri, $text-id, '/sequence/only')"/></string>
 					<string key="@type">sc:Sequence</string>
 					<array key="canvases">
 						<xsl:for-each select="/tei:TEI/tei:facsimile/tei:surface">
-							<xsl:variable name="page-id" select="@xml:id"/>
-							<xsl:variable name="canvas-id" select="concat($id, '/canvas/', $page-id)"/>
+							<xsl:variable name="surface-id" select="@xml:id"/>
+							<xsl:variable name="folio-id" select="key('folio-for-surface', $surface-id)[1]/@xml:id"/>
+							<xsl:variable name="canvas-id" select="concat($base-uri, $text-id, '/canvas/', $surface-id)"/>
 							<map>
 								<string key="@id"><xsl:value-of select="$canvas-id"/></string>
 								<string key="@type">sc:Canvas</string>
@@ -56,7 +59,7 @@
 								<array key="images">
 									<xsl:for-each select="tei:graphic[@type='screen']">
 										<map>
-											<string key="@id"><xsl:value-of select="concat($id, '/annotation/', $page-id, '-', @type)"/></string>
+											<string key="@id"><xsl:value-of select="concat($base-uri, $text-id, '/annotation/', $surface-id)"/></string>
 											<string key="@type">oa:Annotation</string>
 											<string key="motivation">sc:painting</string>
 											<string key="on"><xsl:value-of select="$canvas-id"/></string>
@@ -66,6 +69,13 @@
 											</map>
 										</map>
 									</xsl:for-each>
+								</array>
+								<array key="otherContent">
+									<map>
+										<!-- Reference to list of other Content resources, _not included directly_ -->
+										<string key="@id"><xsl:value-of select="concat($base-uri, $text-id, '/list/', $folio-id)"/></string>
+										<string key="@type">sc:AnnotationList</string>
+									</map>
 								</array>
 							</map>
 						</xsl:for-each>

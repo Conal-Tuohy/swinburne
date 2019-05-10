@@ -61,15 +61,54 @@
 	<p:declare-step name="p5-as-iiif" type="chymistry:p5-as-iiif">
 		<p:input port="source"/>
 		<p:output port="result"/>
-		<p:variable name="text" select="substring-before(substring-after(/c:request/@href, '/iiif/'), '/')"/>
-		<p:variable name="id" select="/c:request/@href"/>
+		<p:variable name="base-uri" select="concat(substring-before(/c:request/@href, '/iiif/'), '/iiif/')"/>
+		<p:variable name="text-id" select="substring-before(substring-after(/c:request/@href, '/iiif/'), '/')"/>
 		<p:load name="text">
-			<p:with-option name="href" select="concat('../p5/', $text, '.xml')"/>
+			<p:with-option name="href" select="concat('../p5/', $text-id, '.xml')"/>
 		</p:load>
 		<p:xslt>
-			<p:with-param name="id" select="$id"/>
+			<p:with-param name="base-uri" select="$base-uri"/>
+			<p:with-param name="text-id" select="$text-id"/>
 			<p:input port="stylesheet">
 				<p:document href="../xslt/p5-to-iiif-manifest.xsl"/>
+			</p:input>
+		</p:xslt>
+		<p:xslt>
+			<p:input port="parameters"><p:empty/></p:input>
+			<p:input port="stylesheet">
+				<p:document href="../xslt/xml-to-json.xsl"/>
+			</p:input>
+		</p:xslt>
+	</p:declare-step>
+	
+	<p:declare-step name="iiif-annotation-list" type="chymistry:iiif-annotation-list">
+		<p:documentation>
+			Generates a IIIF annotation list for a particular folio (IIIF Canvas), consisting of links to the related page of transcription,
+			in both a diplomatic and a normalized form.
+		</p:documentation>
+		<p:input port="source"/>
+		<p:output port="result"/>
+		<!-- request URI something like http://localhost:8080/iiif/ALCH00001/list/folio-3v -->
+		<p:variable name="base-uri" select="concat(substring-before(/c:request/@href, '/iiif/'), '/')"/>
+		<p:variable name="text-id" select="substring-before(substring-after(/c:request/@href, '/iiif/'), '/')"/>
+		<p:variable name="folio-id" select="
+			substring-after(
+				substring-after(
+					/c:request/@href, 
+					'/iiif/'
+				), 
+				'/list/'
+			)
+		"/>
+		<p:load name="text">
+			<p:with-option name="href" select="concat('../p5/', $text-id, '.xml')"/>
+		</p:load>
+		<p:xslt>
+			<p:with-param name="base-uri" select="$base-uri"/>
+			<p:with-param name="text-id" select="$text-id"/>
+			<p:with-param name="folio-id" select="$folio-id"/>
+			<p:input port="stylesheet">
+				<p:document href="../xslt/p5-to-iiif-annotation-list.xsl"/>
 			</p:input>
 		</p:xslt>
 		<p:xslt>
@@ -84,11 +123,20 @@
 		<p:input port="source"/>
 		<p:output port="result"/>
 		<p:variable name="text" select="substring-before(substring-after(/c:request/@href, '/text/'), '/')"/>
+		<p:variable name="view" select="
+			substring-after(
+				substring-after(
+					/c:request/@href, 
+					'/text/'
+				), 
+				'/'
+			)
+		"/>
 		<p:load name="text">
 			<p:with-option name="href" select="concat('../p5/', $text, '.xml')"/>
 		</p:load>
 		<p:xslt>
-			<p:input port="parameters"><p:empty/></p:input>
+			<p:with-param name="view" select="$view"/>
 			<p:input port="stylesheet">
 				<p:document href="../xslt/p5-to-html.xsl"/>
 			</p:input>

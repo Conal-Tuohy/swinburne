@@ -23,7 +23,7 @@
 	<xsl:template name="generate-facsimile">
 		<facsimile>
 			<xsl:for-each select="//tei:milestone[@unit='folio']">
-				<surface xml:id="folio-{@n}" n="{@n}">
+				<surface xml:id="surface-{@n}" n="{@n}">
 					<!-- what to do about image dimensions? they are not standard -->
 					<!-- dimensions are optional in a IIIF manifest, but presumably a viewer will need to know them, for optimal bandwidth use -->
 					<graphic type="thumbnail" url="{$base-url}thumbnail/{/tei:TEI/@xml:id}-{@n}"/>

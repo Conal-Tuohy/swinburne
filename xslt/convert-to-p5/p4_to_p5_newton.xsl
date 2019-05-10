@@ -27,6 +27,14 @@
 
 
    <!-- TRANSFORMATION TEMPLATES -->
+   
+   <xsl:template match="milestone[@unit='folio']/@n">
+   	<xsl:copy/>
+   	<xsl:attribute name="xml:id" select="concat('folio-', .)"/>
+   	<xsl:attribute name="facs" select="concat('#surface-', .)"/>
+   </xsl:template>
+   
+   <!-- generate an xml:id for folio breaks -->
 
    <xsl:template match="msDescription">
       <!-- Change <msDescription> to <msDesc> -->

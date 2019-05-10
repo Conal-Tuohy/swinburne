@@ -116,8 +116,16 @@
 			<chymistry:p5-as-html/>
 		</p:when>
 		<p:when test="starts-with($relative-uri, 'iiif/') ">
-			<!-- Represent an individual P5 text as a IIIF manifest -->
-			<chymistry:p5-as-iiif/>
+			<!-- International Image Interoperability API -->
+			<p:choose>
+				<p:when test="ends-with($relative-uri, '/manifest')">
+					<!-- Represent an individual P5 text as a IIIF manifest -->
+					<chymistry:p5-as-iiif/>
+				</p:when>
+				<p:when test="matches($relative-uri, '[^/]*/list/.*')">
+					<chymistry:iiif-annotation-list/>
+				</p:when>
+			</p:choose>
 		</p:when>
 		<p:when test="starts-with($relative-uri, 'search/')">
 			<!-- Display a search form or search results -->

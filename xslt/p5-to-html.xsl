@@ -3,6 +3,7 @@
 	xmlns:tei="http://www.tei-c.org/ns/1.0"
 	xmlns="http://www.w3.org/1999/xhtml">
 	<!-- transform a TEI document into an HTML page-->
+	<xsl:param name="view"/><!-- 'diplomatic' or 'normalized' -->
 	<xsl:variable name="title" select="/tei:TEI/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title"/>
 	<xsl:template match="/">
 		<html>
@@ -11,6 +12,7 @@
 			</head>
 			<body>
 				<h1><xsl:value-of select="$title"/></h1>
+				<xsl:comment>view: <xsl:value-of select="$view"/></xsl:comment>
 				<xsl:apply-templates/>
 			</body>
 		</html>
@@ -23,5 +25,8 @@
 	</xsl:template>
 	<xsl:template match="tei:p">
 		<p><xsl:apply-templates/></p>
+	</xsl:template>
+	<xsl:template match="tei:milestone[@unit='folio'][@xml:id]">
+		<a id="{@xml:id}"/>
 	</xsl:template>
 </xsl:stylesheet>
