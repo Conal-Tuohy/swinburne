@@ -122,6 +122,7 @@
 	<p:declare-step name="p5-as-html" type="chymistry:p5-as-html">
 		<p:input port="source"/>
 		<p:output port="result"/>
+		<p:variable name="base-uri" select="concat(substring-before(/c:request/@href, '/text/'), '/')"/>
 		<p:variable name="text" select="substring-before(substring-after(/c:request/@href, '/text/'), '/')"/>
 		<p:variable name="view" select="
 			substring-after(
@@ -139,6 +140,12 @@
 			<p:with-param name="view" select="$view"/>
 			<p:input port="stylesheet">
 				<p:document href="../xslt/p5-to-html.xsl"/>
+			</p:input>
+		</p:xslt>
+		<p:xslt>
+			<p:with-param name="manifest-uri" select="concat($base-uri, 'iiif/', $text, '/manifest')"/>
+			<p:input port="stylesheet">
+				<p:document href="../xslt/embed-universal-viewer.xsl"/>
 			</p:input>
 		</p:xslt>
 		<z:make-http-response content-type="application/xhtml+xml"/>
