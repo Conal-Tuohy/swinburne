@@ -33,14 +33,14 @@
 		<p:output port="result"/>
 		<p:option name="solr-base-uri" required="true"/>
 		<!-- TODO, if there are URL parameters, perform a search and display results -->
-		<p:www-form-urldecode name="fields">
+		<p:www-form-urldecode name="field-values">
 			<p:with-option name="value" select="substring-after(/c:request/@href, '?')"/>
 		</p:www-form-urldecode>
-		<p:load name="facets" href="../search-fields.xml"/>
-		<p:wrap-sequence name="facets-and-fields" wrapper="facets-and-fields">
+		<p:load name="field-definitions" href="../search-fields.xml"/>
+		<p:wrap-sequence name="field-definitions-and-values" wrapper="search">
 			<p:input port="source">
-				<p:pipe step="facets" port="result"/>
-				<p:pipe step="fields" port="result"/>
+				<p:pipe step="field-definitions" port="result"/>
+				<p:pipe step="field-values" port="result"/>
 			</p:input>
 		</p:wrap-sequence>
 		<p:xslt name="prepare-solr-request">
@@ -58,9 +58,9 @@
 		</p:xslt>
 		<p:wrap-sequence name="request-and-response" wrapper="request-and-reponse">
 			<p:input port="source">
-				<p:pipe step="fields" port="result"/>
+				<p:pipe step="field-values" port="result"/>
 				<p:pipe step="convert-json-to-xml" port="result"/>
-				<p:pipe step="facets" port="result"/>
+				<p:pipe step="field-definitions" port="result"/>
 			</p:input>
 		</p:wrap-sequence>
 		<p:xslt name="render-solr-response">
@@ -69,12 +69,13 @@
 		</p:xslt>
 		<z:make-http-response content-type="application/xhtml+xml"/>
 		<!-- TODO query solr, transform results to html -->
-		<!--<z:make-http-response/>--><!-- for now, just dump search request -->
+		<!--<z:make-http-response/>-->
 	</p:declare-step>
 	
 	<p:declare-step name="search-form" type="chymistry:search-form">
 		<p:input port="source"/>
 		<p:output port="result"/>
+		<!-- TODO replace with a stylesheet that generates a search form from the field definition file -->
 		<p:identity>
 			<p:input port="source">
 				<p:inline>

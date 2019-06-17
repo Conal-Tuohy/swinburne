@@ -1,20 +1,43 @@
-<facets>
-	<facet>
-		<group></group>
-		<name>title</name>
-		<field>title</field>
-		<label>Title</label>
-	</facet>
-	<facet>
-		<group></group>
-		<name>description</name>
-		<field>description</field>
-		<label>Description</label>
-	</facet>
-	<facet>
-		<group></group>
-		<name>text</name>
-		<field>text</field>
-		<label>Text</label>
-	</facet>
-</facets>
+<!-- 
+	This file contains field definitions for the search and browse functions of the site.
+	
+	The definition controls three aspects of the fields:
+	1	the field types in the Solr schema (how Solr should interpret the content)
+	2	the field content (how the fields are populated from the TEI XML)
+	3	the field display (how they are queried and displayed)
+	
+	The @name attribute defines the name of the field in Solr and in the HTTP query URIs. Use lower case, single token with no spaces.
+	
+	The @label attribute provides the field's label in the UI. Fields with no @label will not appear in the UI at all.
+	
+	The @xpath attribute defines the content of the field. 
+	An XPath which returns a sequence of more than one item will produce a multi-valued field.
+	The TEI namespace is the default. 
+	The XPath version supported is 3.1.
+-->
+
+<fields>
+	<field name="id" xpath="/TEI/@xml:id"/>
+	<field name="title"
+		label="Title"
+		xpath="
+			(
+				/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msContents/msItem/title[@type='main'],
+				/TEI/teiHeader/fileDesc/titleStmt/title
+			)[1]
+		"
+	/>
+	<field name="description" label="Description"
+		xpath="/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msContents/msItem/note[@type='description']"
+	/>
+	<!-- "text" field populated with two distinct values: a normalized and a diplomatic version of the text -->
+	<!-- or this could be done as two distinctly named fields; one called "normalized" and the other "diplomatic" -->
+	<field name="text" label="Text" xpath="
+		(
+			string-join(/TEI/text//text()[not(ancestor::orig)], ' '),
+			string-join(/TEI/text//text()[not(ancestor::reg)], ' ')
+		)
+	"/>
+	<field name="institution" label="Institution" xpath="/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/institution"/>
+	<field name="repository" label="Repository" xpath="/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/repository"/>
+</fields>

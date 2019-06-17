@@ -13,7 +13,7 @@
 	<xsl:variable name="request" select="/*/c:param-set"/>
 	
 	<!-- the specification of the searchable facets; previously used to convert the above request parameters into a Solr search -->
-	<xsl:variable name="facet-spec" select="/*/facets"/>
+	<xsl:variable name="field-definitions" select="/*/fields"/>
 
 	<!-- the response from Solr to the above search -->
 	<xsl:variable name="response" select="/*/c:body"/>
@@ -42,20 +42,19 @@
 				<h1>Chymistry Search</h1>
 				
 				<form method="GET" action="">
-					<!-- render each facet as a <select> -->
-					<xsl:for-each select="$facet-spec/facet">
-						<xsl:variable name="facet-name" select="name"/>
-						<xsl:variable name="facet-label" select="label"/>
-						<xsl:variable name="field-name" select="field"/>
-						<xsl:variable name="facet-range" select="range"/><!-- e.g. MONTH, DAY -->
-						<xsl:variable name="facet-format" select="format"/><!-- e.g. "month", "day", "http status" -->
+					<!-- render each facet as a <select> (exclude unlabelled fields which should be hidden from the UI) -->
+					<xsl:for-each select="$field-definitions/field[@label]">
+						<xsl:variable name="field-name" select="@name"/>
+						<xsl:variable name="field-label" select="@label"/>
+						<xsl:variable name="field-range" select="@range"/><!-- e.g. MONTH, DAY -->
+						<xsl:variable name="field-format" select="@format"/><!-- e.g. "month", "day", "http status" -->
 						<!-- retrieve the matching Solr facet -->
-						<xsl:comment>facet: <xsl:value-of select="$facet-name"/></xsl:comment>
-						<xsl:variable name="solr-facet" select="$solr-facets[@key=$facet-name]"/>
+						<xsl:comment>facet: <xsl:value-of select="$field-name"/></xsl:comment>
+						<xsl:variable name="solr-facet" select="$solr-facets[@key=$field-name]"/>
 						<xsl:if test="$solr-facet"><!-- facet returned some result; this means that Solr results match the facet -->
 							<div class="facet">
-								<label for="{$facet-name}"><xsl:value-of select="$facet-label"/></label>
-								<select id="{$facet-name}" name="{$facet-name}">
+								<label for="{$field-name}"><xsl:value-of select="$field-label"/></label>
+								<select id="{$field-name}" name="{$field-name}">
 									<option value="">				
 										<xsl:text>(any)</xsl:text>
 									</option>
@@ -67,11 +66,11 @@
 										<xsl:variable name="value" select="f:string[@key='val']"/>
 										<xsl:variable name="count" select="f:number[@key='count']"/>
 										<!-- list all the non-blank values of this facet as options -->
-										<xsl:variable name="selected" select="$request/c:param[@name = $facet-name]/@value = $value"/>
+										<xsl:variable name="selected" select="$request/c:param[@name = $field-name]/@value = $value"/>
 										<option value="{$value}">
 											<xsl:if test="$selected"><xsl:attribute name="selected">selected</xsl:attribute></xsl:if>
 											<!-- format the value for display -->
-											<xsl:value-of select="dashboard:display-value($value, $facet-format)"/>
+											<xsl:value-of select="dashboard:display-value($value, $field-format)"/>
 											<xsl:value-of select="concat(' (', $count, ')')"/>
 										</option>
 									</xsl:for-each>
@@ -82,21 +81,21 @@
 					<button>Apply filter</button>
 				</form>
 				<!-- render each facet as a bar chart, in which each bucket within a facet is rendered as a link which constrains that facet -->
-				<xsl:for-each-group select="$facet-spec/facet" group-by="group">
+				<xsl:for-each-group select="$field-definitions/field" group-by="@group">
 					<xsl:variable name="solr-facets-in-group" select="$solr-facets[@key=current-group()/name]"/>
 					<xsl:if test="$solr-facets-in-group">
 						<div class="chart-group">
-							<h2><xsl:value-of select="current-group()[1]/group"/></h2>
+							<h2><xsl:value-of select="current-group()[1]/@group"/></h2>
 							<div class="charts">
 								<xsl:for-each select="$solr-facets-in-group">
 									<xsl:sort select="count(f:array[@key='buckets']/f:map)"/>
 									<xsl:variable name="solr-facet" select="."/>
 									<xsl:variable name="solr-facet-key" select="@key"/>
-									<xsl:variable name="facet" select="$facet-spec/facet[name=$solr-facet-key]"/>
+									<xsl:variable name="facet" select="$field-definitions/field[@name=$solr-facet-key]"/>
 									<xsl:if test="$solr-facet"><!-- facet returned some result; this means that Solr results match the facet -->
 										<div class="chart">
 											<h3>
-												<xsl:value-of select="$facet/label"/>
+												<xsl:value-of select="$facet/@label"/>
 												<xsl:for-each select="$solr-facet/f:number[@key='numBuckets']">
 													<xsl:choose>
 														<xsl:when test=".=1"> (1 value)</xsl:when>
@@ -104,7 +103,7 @@
 													</xsl:choose>
 												</xsl:for-each>
 											</h3>
-											<xsl:variable name="selected-value" select="$request/c:param[@name=$facet/name]/@value"/>
+											<xsl:variable name="selected-value" select="$request/c:param[@name=$facet/@name]/@value"/>
 											<xsl:variable name="all-buckets" select="$solr-facet/f:array[@key='buckets']/f:map[f:string[@key='val']/text()]"/>
 											<!-- the buckets to list for this facet are either the currently selected bucket, or if no bucket selected, all non-empty buckets -->
 											<xsl:variable name="buckets" select="
@@ -121,7 +120,7 @@
 											<xsl:for-each select="$buckets">
 												<xsl:variable name="value" select="f:string[@key='val']"/>
 												<xsl:variable name="count" select="xs:unsignedInt(f:number[@key='count'])"/>
-												<xsl:variable name="label" select="dashboard:display-value($value, $facet/format)"/>
+												<xsl:variable name="label" select="dashboard:display-value($value, $facet/@format)"/>
 												<div class="bucket">
 													<div class="bar" style="width: {100 * $count div $maximum-value}%"> </div>
 													<div class="label">
@@ -132,9 +131,9 @@
 																	'?',
 																	string-join(
 																		(
-																			concat($facet/name, '=', $value),
+																			concat($facet/@name, '=', $value),
 																			for $param in $request/c:param
-																				[not(@name=$facet/name)]
+																				[not(@name=$facet/@name)]
 																				[normalize-space(@value)] 
 																			return 
 																				concat($param/@name, '=', $param/@value)

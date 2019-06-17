@@ -12,6 +12,9 @@
 		<p:input port="source"/>
 		<p:output port="result"/>
 		<p:option name="solr-base-uri" required="true"/>
+		<chymistry:generate-indexer name="indexing-stylesheet">
+			<p:with-option name="solr-base-uri" select="$solr-base-uri"/>
+		</chymistry:generate-indexer>
 		<p:directory-list name="list-p5-files" path="../p5/"/>
 		<p:add-xml-base relative="false" all="true"/>
 		<p:for-each>
@@ -31,7 +34,7 @@
 				<p:with-param name="id" select="$file-id"/>
 				<p:with-param name="solr-base-uri" select="$solr-base-uri"/>
 				<p:input port="stylesheet">
-					<p:document href="../xslt/p5-to-solr-index-request.xsl"/>
+					<p:pipe step="indexing-stylesheet" port="result"/>
 				</p:input>
 			</p:xslt>
 			<p:http-request/>
@@ -40,11 +43,28 @@
 		<z:make-http-response/>
 	</p:declare-step>
 	
+	<p:declare-step name="generate-indexer" type="chymistry:generate-indexer">
+		<p:output port="result"/>
+		<p:option name="solr-base-uri" required="true"/>
+		<p:xslt>
+			<p:with-param name="solr-base-uri" select="$solr-base-uri"/>
+			<p:input port="source">
+				<p:document href="../search-fields.xml"/>
+			</p:input>
+			<p:input port="stylesheet">
+				<p:document href="../xslt/field-definition-to-solr-indexing-stylesheet.xsl"/>
+			</p:input>
+		</p:xslt>
+	</p:declare-step>
+	
 	<p:declare-step name="p5-as-solr" type="chymistry:p5-as-solr">
 		<p:input port="source"/>
 		<p:output port="result"/>
 		<p:option name="solr-base-uri" required="true"/>
 		<p:variable name="text" select="substring-before(substring-after(/c:request/@href, '/solr/'), '/')"/>
+		<chymistry:generate-indexer name="indexing-stylesheet">
+			<p:with-option name="solr-base-uri" select="$solr-base-uri"/>
+		</chymistry:generate-indexer>
 		<p:load name="text">
 			<p:with-option name="href" select="concat('../p5/', $text, '.xml')"/>
 		</p:load>
@@ -52,7 +72,7 @@
 			<p:with-param name="id" select="$text"/>
 			<p:with-param name="solr-base-uri" select="$solr-base-uri"/>
 			<p:input port="stylesheet">
-				<p:document href="../xslt/p5-to-solr-index-request.xsl"/>
+				<p:pipe step="indexing-stylesheet" port="result"/>
 			</p:input>
 		</p:xslt>
 		<z:make-http-response content-type="application/xhtml+xml"/>

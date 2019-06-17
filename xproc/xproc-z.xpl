@@ -127,6 +127,15 @@
 				</p:when>
 			</p:choose>
 		</p:when>
+		<!-- temporary; for viewing XSLT -->
+		<p:when test="$relative-uri='admin/indexer'">
+			<chymistry:generate-indexer>
+				<p:with-option name="solr-base-uri" select="/c:param-set/c:param[@name='solr-base-uri']/@value">
+					<p:pipe step="configuration" port="result"/>
+				</p:with-option>
+			</chymistry:generate-indexer>
+			<z:make-http-response/>
+		</p:when>
 		<p:when test="starts-with($relative-uri, 'search/')">
 			<!-- Display a search form or search results -->
 			<chymistry:search>
