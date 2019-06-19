@@ -8,6 +8,38 @@
 	
 	<p:import href="http://xmlcalabash.com/extension/steps/library-1.0.xpl"/>
 	
+	<p:declare-step name="update-schema" type="chymistry:update-schema">
+		<p:input port="source"/>
+		<p:output port="result"/>
+		<p:option name="solr-base-uri" required="true"/>
+		<p:template name="query-for-current-solr-schema">
+			<p:with-param name="solr-base-uri" select="$solr-base-uri"/>
+			<p:input port="template">
+				<p:inline>
+					<c:request method="get" href="{$solr-base-uri}schema/fields?wt=xml">
+						<c:header name="Accept" value="application/xml"/>
+					</c:request>
+				</p:inline>
+			</p:input>
+		</p:template>
+		<p:http-request name="current-solr-schema"/>
+		<p:wrap-sequence name="current-solr-schema-and-new-search-fields" wrapper="current-solr-schema-and-new-search-fields">
+			<p:input port="source">
+				<p:pipe step="current-solr-schema" port="result"/>
+				<p:document href="../search-fields.xml"/>
+			</p:input>
+		</p:wrap-sequence>
+		<!-- TODO transform to a Solr schema API update request (either updating, or adding each field, as appropriate), make request, format result -->
+		<p:xslt name="prepare-schema-update-request">
+			<p:with-param name="solr-base-uri" select="$solr-base-uri"/>
+			<p:input port="stylesheet">
+				<p:document href="../xslt/update-schema-from-field-definitions.xsl"/>
+			</p:input>
+		</p:xslt>
+		<p:http-request name="update-schema-in-solr"/>
+		<z:make-http-response/>
+	</p:declare-step>
+	
 	<p:declare-step name="reindex" type="chymistry:reindex">
 		<p:input port="source"/>
 		<p:output port="result"/>

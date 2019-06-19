@@ -99,6 +99,13 @@
 				</p:with-option>
 			</chymistry:p5-as-solr>
 		</p:when>
+		<p:when test="$relative-uri = 'update-schema/' ">
+			<chymistry:update-schema>
+				<p:with-option name="solr-base-uri" select="/c:param-set/c:param[@name='solr-base-uri']/@value">
+					<p:pipe step="configuration" port="result"/>
+				</p:with-option>
+			</chymistry:update-schema>
+		</p:when>
 		<p:when test="$relative-uri = 'reindex/' ">
 			<!-- Update the search index -->
 			<chymistry:reindex>

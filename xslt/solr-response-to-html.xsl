@@ -48,35 +48,47 @@
 						<xsl:variable name="field-label" select="@label"/>
 						<xsl:variable name="field-range" select="@range"/><!-- e.g. MONTH, DAY -->
 						<xsl:variable name="field-format" select="@format"/><!-- e.g. "month", "day", "http status" -->
-						<!-- retrieve the matching Solr facet -->
-						<xsl:comment>facet: <xsl:value-of select="$field-name"/></xsl:comment>
-						<xsl:variable name="solr-facet" select="$solr-facets[@key=$field-name]"/>
-						<xsl:if test="$solr-facet"><!-- facet returned some result; this means that Solr results match the facet -->
-							<div class="facet">
-								<label for="{$field-name}"><xsl:value-of select="$field-label"/></label>
-								<select id="{$field-name}" name="{$field-name}">
-									<option value="">				
-										<xsl:text>(any)</xsl:text>
-									</option>
-									<xsl:for-each select="
-										$solr-facet
-											/f:array[@key='buckets']
-												/f:map[f:string[@key='val']/text()][f:number[@key='count'] != '0']
-									">
-										<xsl:variable name="value" select="f:string[@key='val']"/>
-										<xsl:variable name="count" select="f:number[@key='count']"/>
-										<!-- list all the non-blank values of this facet as options -->
-										<xsl:variable name="selected" select="$request/c:param[@name = $field-name]/@value = $value"/>
-										<option value="{$value}">
-											<xsl:if test="$selected"><xsl:attribute name="selected">selected</xsl:attribute></xsl:if>
-											<!-- format the value for display -->
-											<xsl:value-of select="dashboard:display-value($value, $field-format)"/>
-											<xsl:value-of select="concat(' (', $count, ')')"/>
-										</option>
-									</xsl:for-each>
-								</select>
-							</div>
-						</xsl:if>
+						<xsl:variable name="field-is-facet" select="@facet='true'"/>
+						<xsl:comment>field: <xsl:value-of select="$field-name"/></xsl:comment>
+						<xsl:choose>
+							<xsl:when test="$field-is-facet">
+								<!-- retrieve the matching Solr facet -->
+								<xsl:variable name="solr-facet" select="$solr-facets[@key=$field-name]"/>
+								<xsl:if test="$solr-facet"><!-- facet returned some result; this means that Solr results match the facet -->
+									<div class="field">
+										<label for="{$field-name}"><xsl:value-of select="$field-label"/></label>
+										<select id="{$field-name}" name="{$field-name}">
+											<option value="">				
+												<xsl:text>(any)</xsl:text>
+											</option>
+											<xsl:for-each select="
+												$solr-facet
+													/f:array[@key='buckets']
+														/f:map[f:string[@key='val']/text()][f:number[@key='count'] != '0']
+											">
+												<xsl:variable name="value" select="f:string[@key='val']"/>
+												<xsl:variable name="count" select="f:number[@key='count']"/>
+												<!-- list all the non-blank values of this facet as options -->
+												<xsl:variable name="selected" select="$request/c:param[@name = $field-name]/@value = $value"/>
+												<option value="{$value}">
+													<xsl:if test="$selected"><xsl:attribute name="selected">selected</xsl:attribute></xsl:if>
+													<!-- format the value for display -->
+													<xsl:value-of select="dashboard:display-value($value, $field-format)"/>
+													<xsl:value-of select="concat(' (', $count, ')')"/>
+												</option>
+											</xsl:for-each>
+										</select>
+									</div>
+								</xsl:if>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:variable name="field-value-sought" select="$request/c:param[@name=$field-name]/@value"/>
+								<div class="field">
+									<label for="{$field-name}"><xsl:value-of select="$field-label"/></label>
+									<input type="text" id="{$field-name}" name="{$field-name}" value="{$field-value-sought}"/>
+								</div>
+							</xsl:otherwise>
+						</xsl:choose>
 					</xsl:for-each>
 					<button>Apply filter</button>
 				</form>
@@ -211,16 +223,16 @@
 			img {
 				border: none;
 			}
-			div.facet label {
+			div.field label {
 				font-weight: bold;
 				display: inline-block;
 				text-align: right;
 				width: 15em;
 			}
-			div.facet select {
+			div.field select {
 				width: 30em;
 			}
-			div.facet {
+			div.field {
 				margin-bottom: 0.5em;
 			}
 			div.chart-group {
