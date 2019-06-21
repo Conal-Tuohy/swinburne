@@ -176,6 +176,12 @@
 		<p:xslt>
 			<p:input port="parameters"><p:empty/></p:input>
 			<p:input port="stylesheet">
+				<p:document href="../xslt/convert-to-p5/insert-char-into-empty-g.xsl"/>
+			</p:input>
+		</p:xslt>
+		<p:xslt>
+			<p:input port="parameters"><p:empty/></p:input>
+			<p:input port="stylesheet">
 				<p:document href="../xslt/convert-to-p5/select-non-emoji-glyphs.xsl"/>
 			</p:input>
 		</p:xslt>	
