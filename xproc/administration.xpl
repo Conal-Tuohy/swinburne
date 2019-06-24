@@ -30,6 +30,9 @@
 									<form method="post" action="reindex/">
 										<button>Rebuild Solr index from P5 files</button>
 									</form>
+									<form method="post" action="update-schema/">
+										<button>Update Solr schema to reflect search-fields.xml</button>
+									</form>
 									<p><a href="../p5/">View texts</a></p>
 								</body>
 							</html>
