@@ -8,7 +8,7 @@
 		<c:request method="post" href="{$solr-base-uri}schema">
 			<c:body content-type="application/json">
 				<xsl:text>{</xsl:text>
-				<!-- update "text_general" field type to use the "Classic" rather than the "Standard" tokenizer, which eats alchemical symbols -->
+				<!-- update "text_general" field type to use a regex-based tokenizer, rather than the "Standard" tokenizer which eats alchemical symbols -->
 				<xsl:text>
 					"replace-field-type": {
 						"name":"text_general",
