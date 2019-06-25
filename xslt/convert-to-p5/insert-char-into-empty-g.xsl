@@ -15,7 +15,7 @@
 	<xsl:template match="tei:g[not(text())]">
 		<xsl:copy>
 			<xsl:copy-of select="@*"/>
-			<xsl:value-of select="key('char-by-id', substring-after(@ref, '#'))/tei:mapping[@type='unicode']"/>
+			<xsl:value-of select="key('char-by-id', substring-after(@ref, '#'))/tei:mapping"/>
 		</xsl:copy>
 	</xsl:template>
 	
