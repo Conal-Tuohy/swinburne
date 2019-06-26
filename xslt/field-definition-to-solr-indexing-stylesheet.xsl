@@ -15,7 +15,7 @@
 							<doc>
 								<xsl:for-each select="fields/field[@name][@xpath]">
 									<output:for-each select="{@xpath}">
-										<field name="{@name}"><output:value-of select="."/></field>
+										<field name="{@name}"><output:value-of select="normalize-space(.)"/></field>
 									</output:for-each>
 								</xsl:for-each>
 							</doc>
