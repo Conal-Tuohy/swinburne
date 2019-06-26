@@ -26,6 +26,10 @@
 	
 	<xsl:template match="c:param-set">
 		<f:map>
+			<f:map key="params">
+				<f:string key="hl">true</f:string>
+				<f:string key="hl.fl">text</f:string>
+			</f:map>
 			<f:string key="query">*:*</f:string>
 			<f:array key="filter">
 				<xsl:for-each select="c:param[normalize-space(@value)]">
@@ -57,7 +61,7 @@
 				</xsl:for-each>
 			</f:array>
 			<f:map key="facet">
-				<xsl:for-each select="$fields-definition/field">
+				<xsl:for-each select="$fields-definition/field[@facet='true']">
 					<f:map key="{@name}">
 						<xsl:if test="@missing"><!-- include a count of records which are missing a value for this facet -->
 							<f:boolean key="missing">true</f:boolean>
