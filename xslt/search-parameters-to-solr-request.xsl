@@ -32,7 +32,7 @@
 			</f:map>
 			<f:string key="query">*:*</f:string>
 			<f:array key="filter">
-				<xsl:for-each select="c:param[normalize-space(@value)]">
+				<xsl:for-each-group group-by="@name" select="c:param[normalize-space(@value)]">
 					<!-- the param/@name specifies the field's name; look up the field by name and get field's definition -->
 					<xsl:variable name="field-name" select="@name"/>
 					<xsl:variable name="field-value" select="@value"/>
@@ -43,22 +43,37 @@
 							<f:string><xsl:value-of select="
 								concat(
 									'{!tag=', $field-name, '}', 
-									$field-name, 
-									':[&quot;', 
-									@value,
-									'/', $field-range,
-									'&quot; TO &quot;',
-									@value,
-									'/', $field-range, '+1', $field-range,
-									'&quot;]'
+									string-join(
+										for $field-value in current-group()/@value return concat(
+											$field-name, 
+											':[&quot;', 
+											$field-value,
+											'/', $field-range,
+											'&quot; TO &quot;',
+											$field-value,
+											'/', $field-range, '+1', $field-range,
+											'&quot;]'
+										),
+										' OR '
+									)
 								)
 							"/></f:string>
 						</xsl:when>
 						<xsl:otherwise>
-							<f:string><xsl:value-of select="concat('{!tag=', $field-name, '}', $field-name, ':&quot;', @value, '&quot;')"/></f:string>
+							<f:string><xsl:value-of select="
+								concat(
+									'{!tag=', $field-name, '}', 
+									string-join(
+										for $field-value in current-group()/@value return concat(
+											$field-name, ':&quot;', $field-value, '&quot;'
+										),
+										' OR '
+									)
+								)
+							"/></f:string>
 						</xsl:otherwise>
 					</xsl:choose>
-				</xsl:for-each>
+				</xsl:for-each-group>
 			</f:array>
 			<f:map key="facet">
 				<xsl:for-each select="$fields-definition/field[@facet='true']">

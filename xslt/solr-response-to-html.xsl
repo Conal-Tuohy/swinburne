@@ -32,7 +32,7 @@
 					]
 	"/>	
 	
-			
+	<xsl:variable name="search-base-url" select=" '/search/' "/>
 	<xsl:template match="/">
 		<html>
 			<head>
@@ -42,7 +42,25 @@
 			</head>
 			<body>
 				<h1>Chymistry Search</h1>
-				<form method="GET" action="">
+				<!-- the main search button submits all the current facet values as URL parameters; if the user
+				clicks a facet button instead, then a different set of facet values are posted -->
+				<form method="POST" action="{
+					concat(
+						$search-base-url, '?',
+						string-join(
+							(
+								for $parameter 
+								in $request/c:param
+									[@name=$facet-definitions/@name] 
+									[normalize-space(@value)]
+								return concat(
+									encode-for-uri($parameter/@name), '=', encode-for-uri($parameter/@value)
+								)
+							),
+							'&amp;'
+						)
+					)
+				}">
 					<div class="fields">
 						<xsl:call-template name="render-search-fields"/>
 					</div>
@@ -130,43 +148,49 @@
 			<xsl:if test="$solr-facet"><!-- facet returned some result; this means that Solr results match the facet -->
 				<div class="chart">
 					<h3><xsl:value-of select="$facet/@label"/></h3>
-					<xsl:variable name="selected-value" select="$request/c:param[@name=$solr-facet-key]/@value"/>
+					<xsl:variable name="selected-values" select="$request/c:param[@name=$solr-facet-key]/@value"/>
 					<xsl:variable name="buckets" select="$solr-facet/f:array[@key='buckets']/f:map[f:string[@key='val']/text()]"/>
-					<!-- list all the buckets for this facet; if a bucket is currently selected, then hightlight it, and link it to a search in which it's not selected -->
-					<!-- the buckets to list for this facet are either the currently selected bucket, or if no bucket selected, all non-empty buckets
-					<xsl:variable name="buckets" select="
-						if (normalize-space($selected-value)) then
-							$all-buckets[f:string[@key='val']/text() = $selected-value]
-						else
-							$all-buckets[f:number[@key='count'] != '0']
-					"/> -->
+					<!-- list all the buckets for this facet; if a bucket is currently selected, then clicking the button deselects it. -->
 					<xsl:for-each select="$buckets">
 						<xsl:variable name="value" select="string(f:string[@key='val'])"/>
 						<xsl:variable name="count" select="xs:unsignedInt(f:number[@key='count'])"/>
 						<xsl:variable name="label" select="dashboard:display-value($value, $facet/@format)"/>
-						<xsl:variable name="bucket-is-selected" select="$selected-value = $value"/>
-						<xsl:comment><xsl:value-of select="concat(
+						<xsl:variable name="bucket-is-selected" select="$selected-values = $value"/>
+						<!--<xsl:comment><xsl:value-of select="concat(
 							'$selected-value=[',
-							$selected-value,
+							string-join($selected-values, ', '),
 							'] $value=[',
 							$value,
 							']'
-						)"/></xsl:comment>
+						)"/></xsl:comment>-->
 						<div class="bucket">
-							<div class="label">
-								<button 
-									title="{if ($bucket-is-selected) then 'deselect' else 'select'}"
-									class="{if ($bucket-is-selected) then 'selected' else 'unselected'}"
-									name="{$facet/@name}"
-									value="{
-										if ($bucket-is-selected) then
-											()
-										else
-											$value
-									}"
-								><xsl:value-of select="$label"/></button>
-								<span> (<xsl:value-of select="$count"/>)</span>
-							</div>
+							<button
+								type="submit"
+								formaction="{
+									concat(
+										$search-base-url, '?',
+										string-join(
+											(
+												for $parameter 
+												in $request/c:param
+													[normalize-space(@value)]
+													[@name=$facet-definitions/@name] 
+													[not(@name=$facet/@name and @value=$value)] 
+												return concat(
+													encode-for-uri($parameter/@name), '=', encode-for-uri($parameter/@value)
+												)											
+											),
+											'&amp;'
+										)
+									)
+								}"
+								title="{if ($bucket-is-selected) then 'deselect' else 'select'}"
+								class="{if ($bucket-is-selected) then 'selected' else 'unselected'}"
+								name="{$facet/@name}"
+								value="{if ($bucket-is-selected) then '' else $value}">
+								<xsl:value-of select="$label"/>
+								<span class="bucket-cardinality"> (<xsl:value-of select="$count"/>)</span>
+							</button>
 						</div>
 					</xsl:for-each>
 				</div>
@@ -199,6 +223,19 @@
 	
 	<xsl:template name="css">
 		<style type="text/css">
+			form {
+				display: grid;
+				grid-template-columns: 1fr 3fr;
+			}
+			.fields {
+				grid-column: 2 / 4;
+			}
+			.facets {
+				grid-column: 1 / 2;
+			}
+			.results {
+				grid-column: 2 / 4
+			}
 			.bucket button /* reset so it doesn't look like a button */
 			{
 				border-width: 0;
@@ -206,6 +243,7 @@
 				text-align: left;
 				text-indent: 0;
 				padding: 0;
+				cursor: pointer;
 			}
 			.selected {
 				font-style: italic;
