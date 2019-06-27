@@ -45,4 +45,9 @@
 	"/>
 	<field name="institution" label="Institution" xpath="/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/institution" facet="true"/>
 	<field name="repository" label="Repository" xpath="/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/repository" facet="true"/>
+	<field 
+		name="symbol" 
+		label="Symbol" 
+		xpath="/TEI/teiHeader/encodingDesc/charDecl/char[charProp[localName='type']/value='symbol']/charName" 
+		facet="true"/>
 </fields>
