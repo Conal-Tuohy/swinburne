@@ -368,6 +368,12 @@ becomes
                <xsl:for-each-group select="//c" group-by="normalize-space(.)">
                   <char xml:id="{normalize-space(.)}">
                      <charName><xsl:value-of select="@n"/></charName>
+                     <xsl:for-each select="@type">
+                     	<charProp>
+                     		<localName>type</localName>
+                     		<value><xsl:value-of select="."/></value>
+                     	</charProp>
+                     </xsl:for-each>
                      <!-- The <c> element contains a unicode codepoint, in hexadecimal, with the prefix 'UNx'  -->
                      <xsl:variable name="char" select="codepoints-to-string(xs:integer(hex:dec(substring-after(.,'UNx'))))"/>
                      <xsl:variable name="private-use-regex">\p{Co}</xsl:variable>
