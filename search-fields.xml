@@ -48,6 +48,10 @@
 	<field 
 		name="symbol" 
 		label="Symbol" 
-		xpath="/TEI/teiHeader/encodingDesc/charDecl/char[charProp[localName='type']/value='symbol']/charName" 
+		xpath="
+			for $character 
+			in /TEI/teiHeader/encodingDesc/charDecl/char[charProp[localName='type']/value='symbol']
+			return concat($character/mapping, ' ', $character/charName)
+		"
 		facet="true"/>
 </fields>
