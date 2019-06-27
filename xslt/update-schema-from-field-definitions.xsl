@@ -63,9 +63,9 @@
 					</xsl:choose>
 					<xsl:text>:{"name":"</xsl:text>
 					<xsl:value-of select="$field-name"/>
-					<!-- facets are indexed as Solr "string" type (i.e. untokenized), others are tokenized as "text_general" type -->
+					<!-- facets are indexed as Solr "strings" type (i.e. untokenized), others are tokenized as "text_general" type -->
 					<xsl:text>","type":"</xsl:text>
-					<xsl:value-of select="if (@name='id' or @facet='true') then 'string' else 'text_general'"/>
+					<xsl:value-of select="if (@name='id') then 'string' else if (@facet='true') then 'strings' else 'text_general'"/>
 					<xsl:text>"}</xsl:text>
 				</xsl:for-each>
 				<xsl:text>}</xsl:text>
