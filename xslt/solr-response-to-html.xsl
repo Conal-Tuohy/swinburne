@@ -163,35 +163,37 @@
 							$value,
 							']'
 						)"/></xsl:comment>-->
-						<div class="bucket">
-							<button
-								type="submit"
-								formaction="{
-									concat(
-										$search-base-url, '?',
-										string-join(
-											(
-												for $parameter 
-												in $request/c:param
-													[normalize-space(@value)]
-													[@name=$facet-definitions/@name] 
-													[not(@name=$facet/@name and @value=$value)] 
-												return concat(
-													encode-for-uri($parameter/@name), '=', encode-for-uri($parameter/@value)
-												)											
-											),
-											'&amp;'
+						<xsl:if test="$count &gt; 0 or $bucket-is-selected">
+							<div class="bucket">
+								<button
+									type="submit"
+									formaction="{
+										concat(
+											$search-base-url, '?',
+											string-join(
+												(
+													for $parameter 
+													in $request/c:param
+														[normalize-space(@value)]
+														[@name=$facet-definitions/@name] 
+														[not(@name=$facet/@name and @value=$value)] 
+													return concat(
+														encode-for-uri($parameter/@name), '=', encode-for-uri($parameter/@value)
+													)											
+												),
+												'&amp;'
+											)
 										)
-									)
-								}"
-								title="{if ($bucket-is-selected) then 'deselect' else 'select'}"
-								class="{if ($bucket-is-selected) then 'selected' else 'unselected'}"
-								name="{$facet/@name}"
-								value="{if ($bucket-is-selected) then '' else $value}">
-								<xsl:value-of select="$label"/>
-								<span class="bucket-cardinality"> (<xsl:value-of select="$count"/>)</span>
-							</button>
-						</div>
+									}"
+									title="{if ($bucket-is-selected) then 'deselect' else 'select'}"
+									class="{if ($bucket-is-selected) then 'selected' else 'unselected'}"
+									name="{$facet/@name}"
+									value="{if ($bucket-is-selected) then '' else $value}">
+									<xsl:value-of select="$label"/>
+									<span class="bucket-cardinality"> (<xsl:value-of select="$count"/>)</span>
+								</button>
+							</div>
+						</xsl:if>
 					</xsl:for-each>
 				</div>
 			</xsl:if>
