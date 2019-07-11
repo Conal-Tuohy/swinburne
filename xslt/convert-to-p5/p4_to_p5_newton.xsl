@@ -30,8 +30,18 @@
    
    <xsl:template match="milestone[@unit='folio']/@n">
    	<xsl:copy/>
-   	<xsl:attribute name="xml:id" select="concat('folio-', .)"/>
-   	<xsl:attribute name="facs" select="concat('#surface-', .)"/>
+   	<!-- We need to generate an identifier for this milestone so we can link to this point in the html -->
+   	<!-- We use the @n attribute as the basis for the new identifier, though the @n may contain some free text enclosed in square brackets, -->
+   	<!-- which we discard, e.g. "3v [wiki description: 4v]" ⇒ "3v" -->
+   	<xsl:variable name="bracketed-text" select=" '\[[^\]]*\]' "/>
+   	<xsl:variable name="n" select="normalize-space(replace(., $bracketed-text, ''))"/>
+   	<!-- However, there may be multiple folio milestones with the same @n, since they may be alternatives within a choice, -->
+   	<!-- so we have to ensure that each alternative is uniquely identified. -->
+   	<xsl:variable name="preceding-alternatives" select="preceding::milestone[@unit='folio'][normalize-space(replace(@n, $bracketed-text, ''))=$n]"/>
+   	<xsl:if test="$n">
+	   	<xsl:attribute name="xml:id" select="concat('folio-', $n, '-', count($preceding-alternatives))"/>
+	</xsl:if>
+   	<xsl:attribute name="facs" select="concat('#surface-', $n)"/>
    </xsl:template>
    
    <!-- generate an xml:id for folio breaks -->

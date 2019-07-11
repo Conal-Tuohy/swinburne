@@ -24,7 +24,7 @@
 				normalize-space(/tei:TEI/tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:msDesc/tei:msContents/tei:msItem/tei:note[@type='description'])
 			"/></string>
 			<map key="thumbnail">
-				<string key="@id"><xsl:value-of select="/tei:TEI/tei:facsimile/tei:surface[1]/tei:graphic[@type='thumbnail']/@url"/></string>
+				<string key="@id"><xsl:value-of select="/tei:TEI/tei:facsimile/tei:surface[1]/tei:graphic[@rend='thumbnail']/@url"/></string>
 				<string key="@type">dctypes:Image</string>
 			</map>
 			<array key="metadata">
@@ -53,7 +53,7 @@
 								<number key="height">3</number>
 								<number key="width">2</number>
 								<map key="thumbnail">
-									<string key="@id"><xsl:value-of select="tei:graphic[@type='thumbnail']/@url"/></string>
+									<string key="@id"><xsl:value-of select="tei:graphic[@rend='thumbnail']/@url"/></string>
 									<string key="@type">dctypes:Image</string>
 								</map>
 								<array key="images">

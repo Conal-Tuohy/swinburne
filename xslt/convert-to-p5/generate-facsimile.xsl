@@ -21,14 +21,18 @@
 		</surface>
 	-->
 	<xsl:template name="generate-facsimile">
+		<!-- generate a <surface> for every unique value of //tei:milestone[@unit='folio']/@n -->
+		<!-- NB there may be multiple milestones with the same @n as alternatives within a <choice> -->
 		<facsimile>
-			<xsl:for-each select="//tei:milestone[@unit='folio']">
-				<surface xml:id="surface-{@n}" n="{@n}">
+			<xsl:for-each select="//tei:milestone[@unit='folio'][not(@n=preceding::tei:milestone[@unit='folio']/@n)]/@n">
+				<xsl:variable name="bracketed-text" select=" '\[[^\]]*\]' "/>
+				<xsl:variable name="n" select="normalize-space(replace(., $bracketed-text, ''))"/>
+				<surface xml:id="surface-{$n}" n="{.}">
 					<!-- what to do about image dimensions? they are not standard -->
 					<!-- dimensions are optional in a IIIF manifest, but presumably a viewer will need to know them, for optimal bandwidth use -->
-					<graphic type="thumbnail" url="{$base-url}thumbnail/{/tei:TEI/@xml:id}-{@n}"/>
-					<graphic type="large" url="{$base-url}large/{/tei:TEI/@xml:id}-{@n}"/>
-					<graphic type="screen" url="{$base-url}screen/{/tei:TEI/@xml:id}-{@n}"/>
+					<graphic rend="thumbnail" url="{$base-url}thumbnail/{/tei:TEI/@xml:id}-{$n}"/>
+					<graphic rend="large" url="{$base-url}large/{/tei:TEI/@xml:id}-{$n}"/>
+					<graphic rend="screen" url="{$base-url}screen/{/tei:TEI/@xml:id}-{$n}"/>
 				</surface>
 			</xsl:for-each>
 		</facsimile>
