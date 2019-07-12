@@ -1,0 +1,9 @@
+@font-face {
+  font-family: "Newton Sans";
+  src: url("/font/NewtonSans-2015-11-04.ttf");
+}
+
+body {
+	font-family: "Newton Sans";
+}
+

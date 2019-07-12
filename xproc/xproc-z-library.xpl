@@ -14,16 +14,13 @@
 			<p:input port="template">
 				<!-- sanitize path by removing ".." segments -->
 				<p:inline>
-					<c:request method="get" href="{
+					<c:request detailed="true" method="get" href="{
 						concat(
-							'../static/', 
-							substring-after(
-								replace(
-									/c:param-set/c:param[@name='path']/@value, 
-									'\.\.',
-									''
-								),
-								'/static/'
+							'../static', 
+							replace(
+								/c:param-set/c:param[@name='path']/@value, 
+								'\.\.',
+								''
 							)
 						)
 					}"/>
@@ -40,7 +37,7 @@
 								<c:header name="X-Powered-By" value="XProc using XML Calabash"/>
 								<c:header name="Server" value="XProc-Z"/>
 								<c:header name="Cache-Control" value="max-age=3600"/>
-								{/c:body}
+								{//c:body}
 							</c:response>
 						</p:inline>
 					</p:input>

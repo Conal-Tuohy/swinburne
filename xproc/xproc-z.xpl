@@ -73,6 +73,9 @@
 			<!-- home page -->
 			<chymistry:html-page page="home"/>
 		</p:when>
+		<p:when test="matches($relative-uri, 'css/|font/')">
+			<z:static/>
+		</p:when>
 		<p:when test="$relative-uri = 'admin' ">
 			<!-- Form includes commands to download P4, convert to P5, reindex Solr -->
 			<chymistry:admin-form/>
