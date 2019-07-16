@@ -9,7 +9,7 @@
 	<xsl:key name="char-by-ref" match="char[@xml:id]" use="concat('#', @xml:id)"/>
 	<xsl:variable name="title" select="/tei:TEI/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title"/>
 	
-	<xsl:template match="/">
+	<xsl:template match="/tei:TEI">
 		<html>
 			<head>
 				<title><xsl:value-of select="$title"/></title>
@@ -18,9 +18,120 @@
 			<body>
 				<h1><xsl:value-of select="$title"/></h1>
 				<xsl:comment>view: <xsl:value-of select="$view"/></xsl:comment>
-				<xsl:apply-templates select="tei:TEI/tei:text"/>
+				<xsl:apply-templates select="tei:teiHeader"/>
+				<xsl:apply-templates select="tei:text"/>
 			</body>
 		</html>
+	</xsl:template>
+	
+	<xsl:template match="teiHeader">
+		<details class="tei-teiHeader">
+			<summary>Manuscript Information</summary>
+			<div class="expansion">
+				<xsl:variable name="now" select="current-dateTime()"/>
+				<xsl:apply-templates select="fileDesc/sourceDesc/msDesc/msContents/msItem/author" />
+				<xsl:apply-templates select="fileDesc/sourceDesc/msDesc/msContents/msItem/title" />
+				<xsl:apply-templates select="fileDesc/sourceDesc/msDesc/msContents/msItem/note[@type='description']" />
+				<xsl:apply-templates select="fileDesc/sourceDesc/msDesc/physDesc/objectDesc/supportDesc" />
+				<xsl:apply-templates select="profileDesc/langUsage"/>
+				<xsl:apply-templates select="fileDesc/sourceDesc/msDesc/history" />
+				<!-- identifiers -->
+				<xsl:variable name="msIdentifier" select="fileDesc/sourceDesc/msDesc/msIdentifier"/>
+				<div>
+					<h2 class="inline">Physical Location:</h2>
+					<xsl:value-of select="string-join(
+						(
+							$msIdentifier/collection, 
+							$msIdentifier/idno, 
+							$msIdentifier/repository, 
+							$msIdentifier/institution, 
+							string-join(
+								(
+									$msIdentifier/settlement, 
+									$msIdentifier/region, 
+									$msIdentifier/country
+								),
+								', '
+							)
+						),
+						'&#160;'
+					)"/>
+				</div>
+				<div>
+					<h2 class="inline">Electronic Publication:</h2>
+					<xsl:value-of select="concat(
+						$msIdentifier/altIdentifier/idno[@type='collection'], 
+						'&#160;', 
+						$msIdentifier/idno, 
+						'. '
+					)"/>
+					<xsl:for-each select="fileDesc/publicationStmt">
+						<xsl:value-of select="concat('Published ', date, ', ', publisher, '&#160;', pubPlace, '.')"/>
+					</xsl:for-each>
+				</div>
+				<xsl:apply-templates select="fileDesc/titleStmt/respStmt" /><br/>
+				<div>
+					<h2>Preferred Citation:</h2>
+					<xsl:for-each select="fileDesc/sourceDesc/msDesc/msContents/msItem/author">
+						<xsl:value-of select="concat(., '. ')"/>
+					</xsl:for-each>
+					<xsl:value-of select="
+						concat(
+							'&quot;',
+							fileDesc/sourceDesc/msDesc/msIdentifier/altIdentifier/idno[@type='collection'],
+							'&#160;',
+							fileDesc/sourceDesc/msDesc/msIdentifier/idno,
+							'&quot;.'
+						)
+					"/>
+					<em>The Chymistry of Isaac Newton</em>
+					<xsl:text>.  Ed. </xsl:text>
+					<xsl:value-of select="titleStmt/respStmt/name[@type='editor']"/>
+					<xsl:text>&#160;</xsl:text>
+					<xsl:value-of select="fileDesc/publicationStmt/date"/>
+					<xsl:text>. Retrieved </xsl:text>
+					<xsl:value-of select="format-dateTime($now, '[MNn] [D], [Y]', 'en', (),() )"/>
+					<xsl:text> from: http://purl.dlib.indiana.edu/iudl/newton/</xsl:text>
+					<xsl:value-of select="//altIdentifier/idno[@type='iunp']"/>
+				</div>
+			</div>
+		</details>
+	</xsl:template>
+	<xsl:template match="titleStmt/respStmt" mode="create-content">
+		<xsl:if test="name/@type=('editor', 'reviewer', 'transcriber')">
+			<h2 class="inline"><xsl:value-of select="resp"/>:</h2>
+			<xsl:value-of select="name"/>
+		</xsl:if>
+	</xsl:template>
+	<xsl:template match="history" mode="create-content">
+		<h2 class="inline">Custodial History:</h2>
+		<xsl:apply-templates/>
+	</xsl:template>
+	<xsl:template match="msItem/author" mode="create-content">
+		<h2 class="inline">Author:</h2>
+		<xsl:apply-templates/>
+	</xsl:template>
+	<xsl:template match="msItem/title" mode="create-content">
+		<xsl:if test="position()=1"><!-- only add "TItle:" before the first title -->
+			<h2 class="inline">Title:</h2>
+		</xsl:if>
+		<xsl:apply-templates/>
+	</xsl:template>	
+	<xsl:template match="msItem/note[@type='description']" mode="create-content">
+		<h2 class="inline">Contents:</h2>
+		<xsl:apply-templates/>
+	</xsl:template>
+	<xsl:template match="support" mode="create-content">
+		<h2 class="inline">Physical Description:</h2>
+		<xsl:apply-templates/>
+	</xsl:template>	
+	<xsl:template match="langUsage" mode="create-content">
+		<h2 class="inline">Languages:</h2>
+		<xsl:value-of select="string-join(language, ', ')"/>
+	</xsl:template>
+	
+	<xsl:template match="langUsage/language">
+		<xsl:value-of select="."/><xsl:if test="not(position()=last())">, </xsl:if>
 	</xsl:template>
 	
 	<!-- https://www.tei-c.org/release/doc/tei-p5-doc/en/html/ST.html#STBTC -->
@@ -65,7 +176,8 @@
 				(
 					concat('tei-', local-name()),
 					for $rend in tokenize(@rend) return concat('rend-', $rend),
-					for $type in tokenize(@type) return concat('type-', $type)
+					for $type in tokenize(@type) return concat('type-', $type),
+					for $place in tokenize(@place) return concat('place-', $place)
 				),
 				' '
 			)
@@ -81,13 +193,42 @@
 		<xsl:apply-templates/>
 	</xsl:template>
 	
+	<xsl:template match="gap" mode="create-content">
+		<xsl:text>illeg.</xsl:text>
+	</xsl:template>
+	<xsl:template match="gap" mode="create-attributes">
+		<xsl:next-match/>
+		<xsl:attribute name="title" select="
+			string-join(
+				(
+					'illegible; reason:',
+					@reason,
+					@extent
+				),
+				' '
+			)
+		"/>
+	</xsl:template>
+	<xsl:template match="add">
+		<xsl:element name="ins">
+			<xsl:apply-templates mode="create-attributes" select="."/>
+			<xsl:apply-templates mode="create-content" select="."/>
+		</xsl:element>
+	</xsl:template>
+
+	<xsl:template match="del">
+		<xsl:element name="del">
+			<xsl:apply-templates mode="create-attributes" select="."/>
+			<xsl:apply-templates mode="create-content" select="."/>
+		</xsl:element>
+	</xsl:template>	
 	<!-- elements rendered only in diplomatic view -->
-	<xsl:template match="orig" priority="1">
+	<xsl:template match="choice/orig" priority="1">
 		<xsl:if test="$view = 'diplomatic' ">
 			<xsl:next-match/>
 		</xsl:if>
 	</xsl:template>
-	<xsl:template match="abbr" priority="1">
+	<xsl:template match="choice/abbr" priority="1">
 		<xsl:if test="$view = 'diplomatic' ">
 			<xsl:element name="abbr">
 				<xsl:apply-templates/>
@@ -96,12 +237,12 @@
 	</xsl:template>
 	
 	<!-- elements rendered only in normalized view -->
-	<xsl:template match="reg" priority="1">
+	<xsl:template match="choice/reg" priority="1">
 		<xsl:if test="$view = 'normalized' ">
 			<xsl:next-match/>
 		</xsl:if>
 	</xsl:template>
-	<xsl:template match="expan" priority="1">
+	<xsl:template match="choice/expan" priority="1">
 		<xsl:if test="$view = 'normalized' ">
 			<xsl:next-match/>
 		</xsl:if>
@@ -111,7 +252,10 @@
 	<xsl:template match="space[@dim='horizontal']" mode="create-attributes">
 		<xsl:attribute name="style" select="concat('display: inline-block; width: ', @quantity div 2, 'em;')"/>
 	</xsl:template>
-	<xsl:template match="space[@dim='horizontal']" mode="create-content">
+	<xsl:template match="space[@dim='vertical']" mode="create-attributes">
+		<xsl:attribute name="style" select="concat('display: block; height: ', @quantity, 'em;')"/>
+	</xsl:template>
+	<xsl:template match="space" mode="create-content">
 		<xsl:text> </xsl:text>
 	</xsl:template>
 	<xsl:template match="lb">
@@ -141,8 +285,8 @@
 		<li>
 			<xsl:apply-templates mode="create-attributes" select="."/>
 			<xsl:variable name="current-item" select="."/>
-			<!-- include a rendition of the preceding non-<item> siblings as part of this <li> -->
-			<xsl:apply-templates select="preceding-sibling::*[not(self::tei:item)][following-sibling::tei:item[1] is $current-item]"/>
+			<!-- include a rendition of the preceding non-<item>, non-<head> siblings as part of this <li> -->
+			<xsl:apply-templates select="preceding-sibling::*[not(self::tei:item | self::tei:head)][following-sibling::tei:item[1] is $current-item]"/>
 			<xsl:apply-templates mode="create-content" select="."/>
 		</li>
 	</xsl:template>

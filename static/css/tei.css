@@ -5,7 +5,11 @@
 
 body {
 	font-family: "Newton Sans";
-	line-height: 1.063em;
+	line-height: 1.5em;
+}
+
+div.tei-text {
+	width: 50em;
 }
 
 div.tei-bibl {
@@ -15,12 +19,73 @@ div.tei-bibl {
 div.tei-milestone {
 	text-align: center;
 }
-div.tei-milestone::before {
+/* flag editorial interventions by wrapping in angle brackets */
+div.tei-milestone::before,
+span.tei-gap::before,
+span.tei-title.type-supplied::before
+{
 	content: "<";
 }
-div.tei-milestone::after {
+div.tei-milestone::after,
+span.tei-gap::after,
+span.tei-title.type-supplied::after
+{
 	content: ">";
+}
+span.tei-gap {
+	font-style: italic;
+}
+span.tei-gap {
+	color: rgb(1, 139, 132);
+}
+del {
+	color: #A0A0A0;
+}
+ins {
+	text-decoration: none;
+}
+.rend-strike {
+	text-decoration: line-through;
 }
 ul.type-simple {
 	list-style-type: none; /* no bullet */
+	margin-left: 0;
+	padding-left: 0;
+}
+ul.tei-list {
+	margin: 0;
+}
+li {
+	margin-bottom: 0.25em;
+}
+.place-infralinear {
+	vertical-align: sub;
+	font-size: 0.85em;
+}
+.place-supralinear {
+	vertical-align: super;
+	font-size: 0.85em;
+}
+/* Manuscript metadata */
+.tei-teiHeader {
+	border-style: solid;
+	border-width: 1pt;
+	border-color: black;
+	padding: 1em;
+}
+.tei-teiHeader h2,
+.tei-teiHeader .tei-head {
+	font-size: 1em;
+	padding-right: 0.5em;
+	padding-top: 1pt;
+	font-weight: bold;
+}
+.inline {
+	display: inline;
+}
+summary {
+	cursor: pointer;
+}
+details div.expansion {
+	padding-top: 1em;
 }
