@@ -69,7 +69,7 @@
 						<xsl:value-of select="concat('Published ', date, ', ', publisher, '&#160;', pubPlace, '.')"/>
 					</xsl:for-each>
 				</div>
-				<xsl:apply-templates select="fileDesc/titleStmt/respStmt" /><br/>
+				<xsl:apply-templates select="fileDesc/titleStmt/respStmt" />
 				<div>
 					<h2>Preferred Citation:</h2>
 					<xsl:for-each select="fileDesc/sourceDesc/msDesc/msContents/msItem/author">
