@@ -9,44 +9,64 @@
 	
 	<!-- serve static resources from inside the "static" folder-->
 	<p:pipeline type="z:static">
-		<z:parse-request-uri/>
-		<p:template name="request-spec">
-			<p:input port="template">
-				<!-- sanitize path by removing ".." segments -->
-				<p:inline>
-					<c:request detailed="true" method="get" href="{
-						concat(
-							'../static', 
-							replace(
-								/c:param-set/c:param[@name='path']/@value, 
-								'\.\.',
-								''
-							)
-						)
-					}"/>
-				</p:inline>
-			</p:input>
-		</p:template>
-		<p:try>
-			<p:group name="serve-file">
-				<p:http-request/>
-				<p:template name="http-response">
-					<p:input port="template">
-						<p:inline>
-							<c:response status="200">
-								<c:header name="X-Powered-By" value="XProc using XML Calabash"/>
-								<c:header name="Server" value="XProc-Z"/>
-								<c:header name="Cache-Control" value="max-age=3600"/>
-								{//c:body}
-							</c:response>
-						</p:inline>
-					</p:input>
-				</p:template>
-			</p:group>
-			<p:catch name="not-found">
-				<z:not-found/>
-			</p:catch>
-		</p:try>
+		<z:parse-request-uri name="request-uri"/>
+		<p:group>
+			<!-- sanitize path by removing ".." segments, and interpret as relative to "static" folder -->
+			<p:variable name="path" select="
+				concat(
+					'../static', 
+					replace(
+						/c:param-set/c:param[@name='path']/@value, 
+						'\.\.',
+						''
+					)
+				)
+			"/>
+			<p:template name="request-spec">
+				<p:with-param name="path" select="$path"/>
+				<p:input port="template">
+					<p:inline>
+						<c:request detailed="true" method="get" href="{$path}"/>
+					</p:inline>
+				</p:input>
+			</p:template>
+			<p:try>
+				<p:group name="serve-file">
+					<p:http-request/>
+					<p:template name="http-response">
+						<p:input port="parameters"><p:empty/></p:input>
+						<p:input port="template">
+							<p:inline>
+								<c:response status="200">
+									<c:header name="X-Powered-By" value="XProc using XML Calabash"/>
+									<c:header name="Server" value="XProc-Z"/>
+									<c:header name="Cache-Control" value="max-age=3600"/>
+									{//c:body}
+								</c:response>
+							</p:inline>
+						</p:input>
+					</p:template>
+					<p:choose>
+						<p:when test="ends-with($path, '.html')">
+							<p:add-attribute match="//c:body" attribute-name="content-type" attribute-value="text/html; charset=UTF-8"/>
+						</p:when>
+						<p:otherwise>
+							<p:identity/>
+						</p:otherwise>
+					</p:choose>
+				</p:group>
+				<p:catch name="not-found">
+					<!--
+<z:make-http-response>
+						<p:input port="source">
+							<p:pipe step="request-uri" port="result"/>
+						</p:input>
+					</z:make-http-response>
+					-->
+					<z:not-found/>
+				</p:catch>
+			</p:try>
+		</p:group>
 	</p:pipeline>
 	
 	<p:pipeline type="z:parse-request-uri">
@@ -62,7 +82,7 @@
 							<c:param-set>
 								<xsl:analyze-string 
 									select="/c:request/@href" 
-									regex="^(.*:)//([^:/]+)(:[0-9]+)?(.*)(\?.*)?$">
+									regex="^([^:]*:)//([^:/]+)(:[0-9]+)?([^?]*)(\?.*)?$">
 									<!-- TODO check above regex - is "[^:/]+" correct? -->
 									<xsl:matching-substring>
 										<c:param name="scheme" value="{regex-group(1)}"/>
