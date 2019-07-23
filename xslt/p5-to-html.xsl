@@ -137,7 +137,7 @@
 	<!-- https://www.tei-c.org/release/doc/tei-p5-doc/en/html/ST.html#STBTC -->
 	<!-- TEI "phrase-level", model.global.edit, and "gLike" elements are mapped to html:span -->
 	<!-- Also tei:label since it is only used in the chymistry corpus with phrase content -->
-	<xsl:template match="
+	<xsl:template priority="-0.1" match="
 		binaryObject | formula | graphic | media | code | distinct | emph | foreign | gloss | ident | mentioned | 
 		soCalled | term | title | hi | caesura | rhyme | address | affiliation | email | date | time | depth | dim | 
 		geo | height | measure | measureGrp | num | unit | width | name | orgName | persName | geogFeat |
