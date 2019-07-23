@@ -57,7 +57,7 @@
 									<string key="@type">dctypes:Image</string>
 								</map>
 								<array key="images">
-									<xsl:for-each select="tei:graphic[@type='screen']">
+									<xsl:for-each select="tei:graphic[@rend='screen']">
 										<map>
 											<string key="@id"><xsl:value-of select="concat($base-uri, $text-id, '/annotation/', $surface-id)"/></string>
 											<string key="@type">oa:Annotation</string>
