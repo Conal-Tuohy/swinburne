@@ -72,13 +72,15 @@
 		<p:when test="$relative-uri = '' ">
 			<!-- home page -->
 			<chymistry:html-page page="home"/>
+			<chymistry:add-site-navigation/>
 		</p:when>
-		<p:when test="matches($relative-uri, 'css/|font/')">
+		<p:when test="matches($relative-uri, 'css/|font/|uv/|image/')">
 			<z:static/>
 		</p:when>
 		<p:when test="$relative-uri = 'admin' ">
 			<!-- Form includes commands to download P4, convert to P5, reindex Solr -->
 			<chymistry:admin-form/>
+			<chymistry:add-site-navigation/>
 		</p:when>
 		<p:when test="$relative-uri = 'p4/' ">
 			<!-- Download the latest P4 files from Xubmit -->
@@ -94,6 +96,7 @@
 					<chymistry:list-p5/>
 				</p:otherwise>
 			</p:choose>
+			<chymistry:add-site-navigation/>
 		</p:when>
 		<p:when test="starts-with($relative-uri, 'solr/')">
 			<chymistry:p5-as-solr>
@@ -124,6 +127,7 @@
 		<p:when test="starts-with($relative-uri, 'text/') ">
 			<!-- Represent an individual P5 text as an HTML page -->
 			<chymistry:p5-as-html/>
+			<chymistry:add-site-navigation/>
 		</p:when>
 		<p:when test="starts-with($relative-uri, 'iiif/') ">
 			<!-- International Image Interoperability API -->
@@ -153,6 +157,7 @@
 					<p:pipe step="configuration" port="result"/>
 				</p:with-option>
 			</chymistry:search>
+			<chymistry:add-site-navigation/>
 		</p:when>
 		<p:when test="$relative-uri = 'parameters/'">
 			<!-- for debugging - show details of the request -->
@@ -161,7 +166,19 @@
 		<p:otherwise>
 			<!-- request URI not recognised -->
 			<z:not-found/>
+			<chymistry:add-site-navigation/>
 		</p:otherwise>
 	</p:choose>
 
+	<p:declare-step type="chymistry:add-site-navigation">
+		<p:input port="source"/>
+		<p:output port="result"/>
+		<p:xslt>
+			<p:input port="parameters"><p:empty/></p:input>
+			<p:input port="stylesheet">
+				<p:document href="../xslt/add-site-navigation.xsl"/>
+			</p:input>
+		</p:xslt>
+	</p:declare-step>
+	
 </p:declare-step>
