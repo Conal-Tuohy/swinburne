@@ -16,6 +16,6 @@
 		<p:load>
 			<p:with-option name="href" select="concat('../html/', encode-for-uri($page), '.html')"/>
 		</p:load>
-		<z:make-http-response content-type="application/xhtml+xml"/>
+		<z:make-http-response content-type="text/html"/>
 	</p:declare-step>
 </p:library>

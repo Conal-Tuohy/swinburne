@@ -200,7 +200,7 @@
 				<p:document href="../xslt/embed-universal-viewer.xsl"/>
 			</p:input>
 		</p:xslt>
-		<z:make-http-response content-type="application/xhtml+xml"/>
+		<z:make-http-response content-type="text/html"/>
 	</p:declare-step>
 	
 	<p:declare-step name="p5-as-xml" type="chymistry:p5-as-xml">
@@ -216,7 +216,7 @@
 	<p:declare-step name="list-p5" type="chymistry:list-p5">
 		<p:input port="source"/>
 		<p:output port="result"/>
-		<p:directory-list name="list-p5-files" path="../p5/"/>
+		<p:directory-list name="list-p5-files" path="../p5/" exclude-filter="schemas.xml" include-filter=".+\.xml$"/>
 		<p:xslt>
 			<p:input port="parameters"><p:empty/></p:input>
 			<p:input port="stylesheet">

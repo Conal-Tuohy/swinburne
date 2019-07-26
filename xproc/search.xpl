@@ -48,7 +48,7 @@
 					<p:input port="parameters"><p:empty/></p:input>
 					<p:input port="stylesheet"><p:document href="../xslt/solr-response-to-html.xsl"/></p:input>
 				</p:xslt>
-				<z:make-http-response content-type="application/xhtml+xml"/>
+				<z:make-http-response content-type="text/html"/>
 			</p:when>
 			<p:when test="/c:request/@method='POST'">
 				<!-- The search form uses POST to send search parameters both in the POST body and as URL query parameters. -->
