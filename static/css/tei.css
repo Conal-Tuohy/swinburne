@@ -4,29 +4,35 @@
 }
 
 body {
-	font-family: "Newton Sans";
 	line-height: 1.5em;
 }
 
 div.tei-text {
-	width: 50em;
+	width: 45em;
 }
 
 div.tei-bibl {
 	display: inline;
 }
 
-div.tei-milestone {
+figure.tei-milestone {
+	margin-top: 3em;
 	text-align: center;
 }
+
+figure.tei-milestone img.thumbnail {
+	height: auto;
+	width: auto;
+	max-height: 100px;
+}
 /* flag editorial interventions by wrapping in angle brackets */
-div.tei-milestone::before,
+figure.tei-milestone figcaption::before,
 span.tei-gap::before,
 span.tei-title.type-supplied::before
 {
 	content: "<";
 }
-div.tei-milestone::after,
+figure.tei-milestone figcaption::after,
 span.tei-gap::after,
 span.tei-title.type-supplied::after
 {

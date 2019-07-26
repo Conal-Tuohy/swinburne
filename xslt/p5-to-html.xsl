@@ -268,8 +268,16 @@
 	</xsl:template>
 	
 	<!-- page breaks -->
-	<xsl:template match="milestone[@unit='folio'][@xml:id]" mode="create-content">
-		<xsl:value-of select="@n"/>
+	<xsl:key name="surface-by-id" match="surface[@xml:id]" use="@xml:id"/>
+	<xsl:template match="milestone[@unit='folio'][@xml:id]">
+		<xsl:element name="figure">
+			<xsl:apply-templates mode="create-attributes" select="."/>
+			<xsl:element name="figcaption"><xsl:value-of select="@n"/></xsl:element>
+			<xsl:variable name="surface" select="key('surface-by-id', substring-after(@facs, '#'))"/>
+			<a class="large-image" href="{$surface/graphic[@rend='large']/@url}">
+				<img class="thumbnail" src="{$surface/graphic[@rend='thumbnail']/@url}"/>
+			</a>
+		</xsl:element>
 	</xsl:template>
 	
 	<!-- lists and tables -->
