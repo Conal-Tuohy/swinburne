@@ -82,7 +82,7 @@
 				<xsl:variable name="id" select="f:string[@key='id']"/>
 				<xsl:variable name="title" select="*[@key='title']"/>
 				<li>
-					<a href="../text/{$id}/">[<xsl:value-of select="$title"/>]</a>
+					<a href="../text/{$id}/diplomatic">[<xsl:value-of select="$title"/>]</a>
 				</li>
 			</xsl:for-each>
 		</ul>
