@@ -58,7 +58,7 @@
 					)
 				"/></string>
 				<string key="@type">dctypes:Text</string>
-				<string key="format">application/xhtml+xml</string>
+				<string key="format">text/html</string>
 			</map>
 			<string key="on"><xsl:value-of select="
 				concat(

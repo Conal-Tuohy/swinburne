@@ -29,6 +29,12 @@
 			</map>
 			<array key="metadata">
 				<map>
+					<string key="label">Institution</string>
+					<string key="value"><xsl:value-of select="
+						/tei:TEI/tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:msDesc/tei:msIdentifier/tei:institution
+					"/></string>
+				</map>
+				<map>
 					<string key="label">Repository</string>
 					<string key="value"><xsl:value-of select="
 						/tei:TEI/tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:msDesc/tei:msIdentifier/tei:repository
@@ -36,6 +42,9 @@
 				</map>
 				<!-- TODO additional metadata fields -->
 			</array>
+			<map key="logo">
+				<string key="@id">/image/newtonImage.transparent.png</string>
+			</map>
 			<xsl:comment>pages and images</xsl:comment>
 			<array key="sequences">
 				<map>
@@ -57,7 +66,7 @@
 									<string key="@type">dctypes:Image</string>
 								</map>
 								<array key="images">
-									<xsl:for-each select="tei:graphic[@rend='screen']">
+									<xsl:for-each select="tei:graphic[@rend='large']"><!-- 'screen' is slightly smaller -->
 										<map>
 											<string key="@id"><xsl:value-of select="concat($base-uri, $text-id, '/annotation/', $surface-id)"/></string>
 											<string key="@type">oa:Annotation</string>
