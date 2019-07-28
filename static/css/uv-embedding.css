@@ -1,0 +1,68 @@
+/* This stylesheet defines the layout of the Universal Viewer (div.uv) and the textual transcription (div.transcription) */
+div.content {
+	background: white;
+}
+
+div.popup {
+	position: fixed;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	display: grid;
+	justify-content: center;
+	align-content: center;
+}
+div.popup.active {
+	background-color: rgba(0, 0, 0, 0.2);
+	cursor: zoom-in;
+	animation-duration: 0.5s;
+	animation-timing-function: ease-in;
+	animation-name: show-uv;
+}
+div.popup.inactive {
+	z-index: -100;
+	opacity: 0;
+}
+div.uv {
+	/*position: relative;*/
+	height: 600px;
+	width: 800px;
+	font-family: "Newton Sans";
+}
+div.transcription img.thumbnail {
+	cursor: pointer;
+	border-color: rgba(0, 0, 0, 0);
+	border-style: solid;
+	border-top-width: 1em;
+	border-bottom-width: 1em;
+	border-left-width: 3em;
+	border-right-width: 3em;
+}
+div.transcription img.thumbnail:hover {
+	animation-duration: 8s;
+	animation-name: throb;
+	animation-iteration-count: infinite;
+}
+@keyframes throb {
+	0% {
+		border-color: rgba(0, 0, 0, 0);
+	}
+	70% {
+		border-color: rgba(0, 0, 0, 0.9);
+	}
+	80% {
+		border-color: rgba(0, 0, 0, 1);
+	}
+	100% {
+		border-color: rgba(0, 0, 0, 1);
+	}
+}
+@keyframes show-uv {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}

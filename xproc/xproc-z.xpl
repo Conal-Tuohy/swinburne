@@ -74,7 +74,7 @@
 			<chymistry:html-page page="home"/>
 			<chymistry:add-site-navigation/>
 		</p:when>
-		<p:when test="matches($relative-uri, 'css/|font/|uv/|image/')">
+		<p:when test="matches($relative-uri, '^(css|font|uv|image|js)/')">
 			<z:static/>
 		</p:when>
 		<p:when test="$relative-uri = 'admin' ">
