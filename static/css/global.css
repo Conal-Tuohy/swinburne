@@ -61,6 +61,9 @@ nav#main-nav summary {
 	vertical-align: baseline;
 	cursor: pointer;
 	text-decoration: none;
+	border-right-color: rgb(247, 246, 240);
+	border-right-style: solid;
+	border-right-width: 1px;
 }
 nav#main-nav details[open] ul {
 	position: fixed;
