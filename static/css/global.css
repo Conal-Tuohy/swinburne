@@ -1,6 +1,69 @@
 body {
 	font-family: "Newton Sans";
+	margin: 0;
+	box-sizing: border-box;
 }
-section.iub a {
-	float: right;
+header.page-header section.iub {
+	display: flex;
+	justify-content: flex-end;
+	background-color: rgb(248, 248, 248);
+	border-bottom-color: rgb(192, 192, 192);
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+}
+img#iu-logo {
+	display: block;
+	margin-right: 5em;
+}
+header.page-header section.chymistry {	
+	background-color: #DFD9BD;
+	padding-top: 0.1em;
+	padding-bottom: 0.1em;
+	padding-left: 0;
+	padding-right: 0;
+}
+header.page-header section.chymistry a {
+	display: flex;
+	justify-content: flex-start;
+	align-items: flex-start;
+}
+img#newton-masthead-image {
+	margin-top: 1em;
+}
+@font-face {
+  font-family: "Newton Sans";
+  src: url("/font/NewtonSans-2015-11-04.ttf");
+}
+
+nav#main-nav {
+	background-color: rgb(66, 60, 48);
+	font-size: small;
+}
+nav#main-nav ul {
+	margin: 0;
+	padding-top: 0.2em;
+	padding-bottom: 0.2em;
+}
+nav#main-nav li {
+	display: inline-block;
+	vertical-align: top;
+	margin: 0;
+}
+nav#main-nav a:hover,
+nav#main-nav summary:hover {
+	background-color: rgb(45, 41, 33);
+}
+nav#main-nav a,
+nav#main-nav summary {
+	display: inline-block;
+	color: rgb(247, 246, 240);
+	padding: 0.75em;
+	vertical-align: baseline;
+	cursor: pointer;
+	text-decoration: none;
+}
+nav#main-nav details[open] ul {
+	position: fixed;
+	background-color: rgb(45, 41, 33);
+	padding-left: 0;
 }

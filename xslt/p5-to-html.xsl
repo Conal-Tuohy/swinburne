@@ -5,9 +5,9 @@
 	xpath-default-namespace="http://www.tei-c.org/ns/1.0">
 	<!-- transform a TEI document into an HTML page-->
 	
-	<xsl:param name="view"/><!-- 'diplomatic' or 'normalized' -->
+	<xsl:param name="view"/><!-- 'diplomatic' or 'normalized' or 'introduction' -->
 	<xsl:key name="char-by-ref" match="char[@xml:id]" use="concat('#', @xml:id)"/>
-	<xsl:variable name="title" select="/tei:TEI/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title"/>
+	<xsl:variable name="title" select="/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msContents/msItem/title"/>
 	
 	<xsl:template match="/tei:TEI">
 		<html>
@@ -16,10 +16,20 @@
 				<link href="/css/tei.css" rel="stylesheet" type="text/css"/>
 			</head>
 			<body>
-				<h1><xsl:value-of select="$title"/></h1>
-				<xsl:comment>view: <xsl:value-of select="$view"/></xsl:comment>
-				<xsl:apply-templates select="tei:teiHeader"/>
-				<xsl:apply-templates select="tei:text"/>
+				<div class="tei">
+					<!-- TODO shouldn't heading be a string constructed from msIdentifer? -->
+					<h1><xsl:value-of select="$title"/></h1>
+					<xsl:comment>view: <xsl:value-of select="$view"/></xsl:comment>
+					<xsl:choose>
+						<xsl:when test="$view = 'introduction'">
+							<xsl:apply-templates select="teiHeader/fileDesc/sourceDesc/msDesc/msContents/msItem/note[@type='introduction']"/>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:apply-templates select="tei:teiHeader"/>
+							<xsl:apply-templates select="tei:text"/>
+						</xsl:otherwise>
+					</xsl:choose>
+				</div>
 			</body>
 		</html>
 	</xsl:template>

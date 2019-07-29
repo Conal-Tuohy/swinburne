@@ -1,14 +1,9 @@
-@font-face {
-  font-family: "Newton Sans";
-  src: url("/font/NewtonSans-2015-11-04.ttf");
-}
-
-body {
+div.tei {
 	line-height: 1.5em;
+	width: 45em;
 }
 
 div.tei-text {
-	width: 45em;
 }
 
 div.tei-bibl {
@@ -18,6 +13,7 @@ div.tei-bibl {
 figure.tei-milestone {
 	margin-top: 3em;
 	text-align: center;
+	color: #7D100B;
 }
 
 figure.tei-milestone img.thumbnail {
