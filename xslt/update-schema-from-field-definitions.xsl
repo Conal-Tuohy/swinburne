@@ -55,6 +55,16 @@
 						}
 					}
 				</xsl:text>
+				<!-- define the three main text fields "introduction", "normalized", and "diplomatic" -->
+				<xsl:call-template name="define-field">
+					<xsl:with-param name="name" select=" 'introduction' "/>
+				</xsl:call-template>
+				<xsl:call-template name="define-field">
+					<xsl:with-param name="name" select=" 'normalized' "/>
+				</xsl:call-template>
+				<xsl:call-template name="define-field">
+					<xsl:with-param name="name" select=" 'diplomatic' "/>
+				</xsl:call-template>				
 				<!-- define a "text" field that's a copy of "introduction", "normalized", and "diplomatic" -->
 				<xsl:call-template name="define-field">
 					<xsl:with-param name="name" select=" 'text' "/>
