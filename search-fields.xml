@@ -36,13 +36,14 @@
 		▸ the text of the normalized version
 		▸ the text of the diplomatic version
 	-->
+	<!--
 	<field name="text" label="Text" xpath="
 		(
 			/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msContents/msItem/note[@type='introduction'],	(: critical intro :)
 			string-join(/TEI/text//text()[not(ancestor::orig)]),	(: normalized version :)
 			string-join(/TEI/text//text()[not(ancestor::reg)])	(: diplomatic version :)
 		)
-	"/>
+	"/>-->
 	<field name="institution" label="Institution" xpath="/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/institution" facet="true"/>
 	<field name="repository" label="Repository" xpath="/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/repository" facet="true"/>
 	<field 

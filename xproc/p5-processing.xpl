@@ -29,7 +29,7 @@
 				<p:document href="../search-fields.xml"/>
 			</p:input>
 		</p:wrap-sequence>
-		<!-- TODO transform to a Solr schema API update request (either updating, or adding each field, as appropriate), make request, format result -->
+		<!-- transform to a Solr schema API update request (either updating, or adding each field, as appropriate), make request, format result -->
 		<p:xslt name="prepare-schema-update-request">
 			<p:with-param name="solr-base-uri" select="$solr-base-uri"/>
 			<p:input port="stylesheet">
@@ -44,9 +44,11 @@
 		<p:input port="source"/>
 		<p:output port="result"/>
 		<p:option name="solr-base-uri" required="true"/>
+		<!--
 		<chymistry:generate-indexer name="indexing-stylesheet">
 			<p:with-option name="solr-base-uri" select="$solr-base-uri"/>
 		</chymistry:generate-indexer>
+		-->
 		<p:directory-list name="list-p5-files" path="../p5/"/>
 		<p:add-xml-base relative="false" all="true"/>
 		<p:for-each>
@@ -62,6 +64,11 @@
 			<p:load name="read-p5">
 				<p:with-option name="href" select="$input-file"/>
 			</p:load>
+			<chymistry:convert-p5-to-solr>
+				<p:with-option name="solr-base-uri" select="$solr-base-uri"/>
+				<p:with-option name="text" select="$file-id"/>
+			</chymistry:convert-p5-to-solr>
+			<!--
 			<p:xslt>
 				<p:with-param name="id" select="$file-id"/>
 				<p:with-param name="solr-base-uri" select="$solr-base-uri"/>
@@ -69,6 +76,7 @@
 					<p:pipe step="indexing-stylesheet" port="result"/>
 				</p:input>
 			</p:xslt>
+			-->
 			<p:http-request/>
 		</p:for-each>
 		<p:wrap-sequence wrapper="solr-index-responses"/>
@@ -89,25 +97,94 @@
 		</p:xslt>
 	</p:declare-step>
 	
+	<!-- debugging / testing method; outputs a Solr update message XML verbatim -->
 	<p:declare-step name="p5-as-solr" type="chymistry:p5-as-solr">
 		<p:input port="source"/>
 		<p:output port="result"/>
 		<p:option name="solr-base-uri" required="true"/>
-		<p:variable name="text" select="substring-before(substring-after(/c:request/@href, '/solr/'), '/')"/>
+		<chymistry:convert-p5-to-solr>
+			<p:with-option name="solr-base-uri" select="$solr-base-uri"/>
+			<p:with-option name="text" select="substring-before(substring-after(/c:request/@href, '/solr/'), '/')"/>
+		</chymistry:convert-p5-to-solr>
+		<z:make-http-response content-type="application/xml"/>
+	</p:declare-step>
+	
+	<p:declare-step name="convert-p5-to-solr" type="chymistry:convert-p5-to-solr">
+		<p:input port="source"/>
+		<p:output port="result"/>
+		<p:option name="solr-base-uri" required="true"/>
+		<p:option name="text" required="true"/>
 		<chymistry:generate-indexer name="indexing-stylesheet">
 			<p:with-option name="solr-base-uri" select="$solr-base-uri"/>
 		</chymistry:generate-indexer>
 		<p:load name="text">
 			<p:with-option name="href" select="concat('../p5/', $text, '.xml')"/>
 		</p:load>
-		<p:xslt>
+		<p:xslt name="metadata-fields">
 			<p:with-param name="id" select="$text"/>
 			<p:with-param name="solr-base-uri" select="$solr-base-uri"/>
+			<p:input port="source">
+				<p:pipe step="text" port="result"/>
+			</p:input>
 			<p:input port="stylesheet">
 				<p:pipe step="indexing-stylesheet" port="result"/>
 			</p:input>
 		</p:xslt>
-		<z:make-http-response content-type="application/xhtml+xml"/>
+		<p:xslt name="introduction-html">
+			<p:with-param name="view" select=" 'introduction' "/>
+			<p:input port="source">
+				<p:pipe step="text" port="result"/>
+			</p:input>
+			<p:input port="stylesheet">
+				<p:document href="../xslt/p5-to-html.xsl"/>
+			</p:input>
+		</p:xslt>
+		<p:xslt name="introduction-field">
+			<p:with-param name="field-name" select=" 'introduction' "/>
+			<p:input port="stylesheet">
+				<p:document href="../xslt/html-to-solr-field.xsl"/>
+			</p:input>
+		</p:xslt>
+		<p:xslt name="diplomatic-html">
+			<p:with-param name="view" select=" 'diplomatic' "/>
+			<p:input port="source">
+				<p:pipe step="text" port="result"/>
+			</p:input>
+			<p:input port="stylesheet">
+				<p:document href="../xslt/p5-to-html.xsl"/>
+			</p:input>
+		</p:xslt>
+		<p:xslt name="diplomatic-field">
+			<p:with-param name="field-name" select=" 'diplomatic' "/>
+			<p:input port="stylesheet">
+				<p:document href="../xslt/html-to-solr-field.xsl"/>
+			</p:input>
+		</p:xslt>
+		<p:xslt name="normalized-html">
+			<p:with-param name="view" select=" 'normalized' "/>
+			<p:input port="source">
+				<p:pipe step="text" port="result"/>
+			</p:input>
+			<p:input port="stylesheet">
+				<p:document href="../xslt/p5-to-html.xsl"/>
+			</p:input>
+		</p:xslt>
+		<p:xslt name="normalized-field">
+			<p:with-param name="field-name" select=" 'normalized' "/>
+			<p:input port="stylesheet">
+				<p:document href="../xslt/html-to-solr-field.xsl"/>
+			</p:input>
+		</p:xslt>
+		<p:insert name="insert-text-fields" match="doc" position="last-child">
+			<p:input port="source">
+				<p:pipe step="metadata-fields" port="result"/>
+			</p:input>
+			<p:input port="insertion">
+				<p:pipe step="introduction-field" port="result"/>
+				<p:pipe step="diplomatic-field" port="result"/>
+				<p:pipe step="normalized-field" port="result"/>
+			</p:input>
+		</p:insert>
 	</p:declare-step>	
 	
 	<p:declare-step name="p5-as-iiif" type="chymistry:p5-as-iiif">

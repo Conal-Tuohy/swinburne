@@ -55,21 +55,40 @@
 						}
 					},
 				</xsl:text>
+				<!-- define Solr fields corresponding to the facets and search fields defined in the "search-fields.xml" file -->
 				<xsl:for-each select="/*/fields/field">
-					<xsl:variable name="field-name" select="@name"/>
-					<xsl:choose>
-						<xsl:when test="/*/response/arr[@name='fields']/lst/str[@name='name'] = $field-name">"replace-field"</xsl:when>
-						<xsl:otherwise>"add-field"</xsl:otherwise>
-					</xsl:choose>
-					<xsl:text>:{"name":"</xsl:text>
-					<xsl:value-of select="$field-name"/>
-					<!-- facets are indexed as Solr "strings" type (i.e. untokenized), others are tokenized as "text_general" type -->
-					<xsl:text>","type":"</xsl:text>
-					<xsl:value-of select="if (@name='id') then 'string' else if (@facet='true') then 'strings' else 'text_general'"/>
-					<xsl:text>"}</xsl:text>
+					<xsl:call-template name="define-field">
+						<xsl:with-param name="name" select="@name"/>
+						<xsl:with-param name="facet" select="@facet"/>
+					</xsl:call-template>
 				</xsl:for-each>
+				<!-- define the three main Solr text fields: a critical intro, and a diplomatic and a normalized rendition of the text -->
+				<xsl:call-template name="define-field">
+					<xsl:with-param name="name" select=" 'introduction' "/>
+				</xsl:call-template>
+				<xsl:call-template name="define-field">
+					<xsl:with-param name="name" select=" 'diplomatic' "/>
+				</xsl:call-template>
+				<xsl:call-template name="define-field">
+					<xsl:with-param name="name" select=" 'normalized' "/>
+				</xsl:call-template>
 				<xsl:text>}</xsl:text>
 			</c:body>
 		</c:request>
+	</xsl:template>
+	
+	<xsl:template name="define-field">
+		<xsl:param name="name"/>
+		<xsl:param name="facet"/>
+		<xsl:choose>
+			<xsl:when test="/*/response/arr[@name='fields']/lst/str[@name='name'] = $name">"replace-field"</xsl:when>
+			<xsl:otherwise>"add-field"</xsl:otherwise>
+		</xsl:choose>
+		<xsl:text>:{"name":"</xsl:text>
+		<xsl:value-of select="$name"/>
+		<!-- facets are indexed as Solr "strings" type (i.e. untokenized), others are tokenized as "text_general" type -->
+		<xsl:text>","type":"</xsl:text>
+		<xsl:value-of select="if ($name='id') then 'string' else if ($facet='true') then 'strings' else 'text_general'"/>
+		<xsl:text>"}</xsl:text>
 	</xsl:template>
 </xsl:stylesheet>
