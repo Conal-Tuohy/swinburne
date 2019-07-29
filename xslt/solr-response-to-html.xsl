@@ -88,7 +88,21 @@
 		</ul>
 	</xsl:template>
 	
+	<xsl:template name="render-field">
+		<xsl:param name="name"/>
+		<xsl:param name="label"/>
+		<xsl:variable name="field-value-sought" select="$request/c:param[@name=$name]/@value"/>
+		<div class="field">
+			<label for="{$name}"><xsl:value-of select="$label"/></label>
+			<input type="text" id="{$name}" name="{$name}" value="{$field-value-sought}"/>
+		</div>
+	</xsl:template>
+	
 	<xsl:template name="render-search-fields">
+		<xsl:call-template name="render-field">
+			<xsl:with-param name="name" select=" 'text' "/>
+			<xsl:with-param name="label" select=" 'Text' "/>
+		</xsl:call-template>
 		<xsl:for-each select="$search-field-definitions">
 			<xsl:variable name="field-name" select="@name"/>
 			<xsl:variable name="field-label" select="@label"/>
@@ -128,11 +142,10 @@
 					</xsl:if>
 				</xsl:when>
 				<xsl:otherwise>
-					<xsl:variable name="field-value-sought" select="$request/c:param[@name=$field-name]/@value"/>
-					<div class="field">
-						<label for="{$field-name}"><xsl:value-of select="$field-label"/></label>
-						<input type="text" id="{$field-name}" name="{$field-name}" value="{$field-value-sought}"/>
-					</div>
+					<xsl:call-template name="render-field">
+						<xsl:with-param name="name" select="$field-name"/>
+						<xsl:with-param name="label" select="$field-label"/>
+					</xsl:call-template>
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:for-each>

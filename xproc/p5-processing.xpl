@@ -16,7 +16,7 @@
 			<p:with-param name="solr-base-uri" select="$solr-base-uri"/>
 			<p:input port="template">
 				<p:inline>
-					<c:request method="get" href="{$solr-base-uri}schema/fields?wt=xml">
+					<c:request method="get" href="{$solr-base-uri}schema?wt=xml">
 						<c:header name="Accept" value="application/xml"/>
 					</c:request>
 				</p:inline>
@@ -44,11 +44,6 @@
 		<p:input port="source"/>
 		<p:output port="result"/>
 		<p:option name="solr-base-uri" required="true"/>
-		<!--
-		<chymistry:generate-indexer name="indexing-stylesheet">
-			<p:with-option name="solr-base-uri" select="$solr-base-uri"/>
-		</chymistry:generate-indexer>
-		-->
 		<p:directory-list name="list-p5-files" path="../p5/"/>
 		<p:add-xml-base relative="false" all="true"/>
 		<p:for-each>

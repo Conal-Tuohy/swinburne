@@ -53,8 +53,25 @@
 								}
 							]
 						}
-					},
+					}
 				</xsl:text>
+				<!-- define a "text" field that's a copy of "introduction", "normalized", and "diplomatic" -->
+				<xsl:call-template name="define-field">
+					<xsl:with-param name="name" select=" 'text' "/>
+				</xsl:call-template>
+				<xsl:call-template name="add-copy-field">
+					<xsl:with-param name="source" select=" 'introduction' "/>
+					<xsl:with-param name="destination" select=" 'text' "/>
+				</xsl:call-template>
+				<xsl:call-template name="add-copy-field">
+					<xsl:with-param name="source" select=" 'normalized' "/>
+					<xsl:with-param name="destination" select=" 'text' "/>
+				</xsl:call-template>
+				<xsl:call-template name="add-copy-field">
+					<xsl:with-param name="source" select=" 'diplomatic' "/>
+					<xsl:with-param name="destination" select=" 'text' "/>
+				</xsl:call-template>
+				
 				<!-- define Solr fields corresponding to the facets and search fields defined in the "search-fields.xml" file -->
 				<xsl:for-each select="/*/fields/field">
 					<xsl:call-template name="define-field">
@@ -62,26 +79,38 @@
 						<xsl:with-param name="facet" select="@facet"/>
 					</xsl:call-template>
 				</xsl:for-each>
-				<!-- define the three main Solr text fields: a critical intro, and a diplomatic and a normalized rendition of the text -->
-				<xsl:call-template name="define-field">
-					<xsl:with-param name="name" select=" 'introduction' "/>
-				</xsl:call-template>
-				<xsl:call-template name="define-field">
-					<xsl:with-param name="name" select=" 'diplomatic' "/>
-				</xsl:call-template>
-				<xsl:call-template name="define-field">
-					<xsl:with-param name="name" select=" 'normalized' "/>
-				</xsl:call-template>
 				<xsl:text>}</xsl:text>
 			</c:body>
 		</c:request>
 	</xsl:template>
 	
+	<xsl:template name="delete-field">
+		<xsl:param name="name"/>
+		<xsl:for-each select="/*/response/lst[@name='schema']/arr[@name='copyFields']/lst[str[@name='source'] = $name]">
+			, "delete-copy-field": { "source": "<xsl:value-of select="$name"/>", "dest": "<xsl:value-of select="str[@name='dest']"/>"}
+		</xsl:for-each>
+		<xsl:if test="/*/response/lst[@name='schema']/arr[@name='fields']/lst/str[@name='name'] = $name">
+			, "delete-field": {"name": "<xsl:value-of select="$name"/>"}
+		</xsl:if>
+	</xsl:template>
+	
+	<xsl:template name="add-copy-field">
+		<xsl:param name="source"/>
+		<xsl:param name="destination"/>
+		<xsl:if test="/*/response/lst[@name='schema']/arr[@name='copyFields']/lst
+			[str[@name='source'] = $source and str[@name='dest'] = $destination]
+		">
+			, "delete-copy-field": { "source": "<xsl:value-of select="$source"/>", "dest": "<xsl:value-of select="$destination"/>"}
+		</xsl:if>
+		, "add-copy-field": { "source": "<xsl:value-of select="$source"/>", "dest": "<xsl:value-of select="$destination"/>"}
+	</xsl:template>
+	
 	<xsl:template name="define-field">
 		<xsl:param name="name"/>
 		<xsl:param name="facet"/>
+		<xsl:text>, </xsl:text>
 		<xsl:choose>
-			<xsl:when test="/*/response/arr[@name='fields']/lst/str[@name='name'] = $name">"replace-field"</xsl:when>
+			<xsl:when test="/*/response/lst[@name='schema']/arr[@name='fields']/lst/str[@name='name'] = $name">"replace-field"</xsl:when>
 			<xsl:otherwise>"add-field"</xsl:otherwise>
 		</xsl:choose>
 		<xsl:text>:{"name":"</xsl:text>
