@@ -27,8 +27,10 @@
 	<xsl:template match="c:param-set">
 		<f:map>
 			<f:map key="params">
-				<f:string key="hl">true</f:string>
-				<f:string key="hl.fl">text</f:string>
+				<f:boolean key="hl">true</f:boolean>
+				<f:string key="hl.fl">normalized,diplomatic,introduction</f:string>
+				<f:string key="hl.q">text:<xsl:value-of select="c:param[@name='text']/@value"/></f:string>
+				<f:string key="hl.snippets">10</f:string>
 			</f:map>
 			<f:string key="query">*:*</f:string>
 			<f:array key="filter">
