@@ -3,6 +3,33 @@ div.tei {
 	width: 45em;
 }
 
+/* The menu at the top of the page for selecting a view of the text */
+div.tei-view-selection {
+	display: flex;
+	font-size: small;
+	margin-top: 1em;
+	justify-content: center; 
+}
+div.tei-view-selection a,
+div.tei-view-selection span {
+	padding: 0.2em;
+	box-shadow: 0 0.4em 0.5em -0.5em #000;
+	margin-left: 0.5em;
+	margin-right: 0.5em;
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+}
+div.tei-view-selection a {
+	text-decoration: none;
+	color: black;
+}
+div.tei-view-selection a:hover {
+	background-color: #C9C9C9;
+}
+div.tei-view-selection span {
+	font-weight: bold;
+}
+/* Styles for renditions of TEI elements */
 div.tei-text {
 }
 

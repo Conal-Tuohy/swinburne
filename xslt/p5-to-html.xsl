@@ -17,21 +17,52 @@
 			</head>
 			<body>
 				<div class="tei">
+					<div class="tei-view-selection">
+						<xsl:call-template name="render-view-option">
+							<xsl:with-param name="option-view" select=" 'normalized' "/>
+							<xsl:with-param name="option-label" select=" 'Normalized Transcription' "/>
+						</xsl:call-template>
+						<xsl:call-template name="render-view-option">
+							<xsl:with-param name="option-view" select=" 'diplomatic' "/>
+							<xsl:with-param name="option-label" select=" 'Diplomatic Transcription' "/>
+						</xsl:call-template>
+						<xsl:call-template name="render-view-option">
+							<xsl:with-param name="option-view" select=" 'introduction' "/>
+							<xsl:with-param name="option-label" select=" 'Introduction' "/>
+						</xsl:call-template>
+					</div>
 					<!-- TODO shouldn't heading be a string constructed from msIdentifer? -->
 					<h1><xsl:value-of select="$title"/></h1>
-					<xsl:comment>view: <xsl:value-of select="$view"/></xsl:comment>
+					<xsl:apply-templates select="tei:teiHeader"/>
 					<xsl:choose>
 						<xsl:when test="$view = 'introduction'">
-							<xsl:apply-templates select="teiHeader/fileDesc/sourceDesc/msDesc/msContents/msItem/note[@type='introduction']"/>
+							<xsl:apply-templates select="$introduction"/>
 						</xsl:when>
 						<xsl:otherwise>
-							<xsl:apply-templates select="tei:teiHeader"/>
 							<xsl:apply-templates select="tei:text"/>
 						</xsl:otherwise>
 					</xsl:choose>
 				</div>
 			</body>
 		</html>
+	</xsl:template>
+	
+	<xsl:variable name="introduction" select="/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msContents/msItem/note[@type='introduction']"/>
+	
+	<xsl:template name="render-view-option">
+		<xsl:param name="option-view"/>
+		<xsl:param name="option-label"/>
+		<!-- render the option unless it's a link to an introduction and there is actually no introduction in the text -->
+		<xsl:if test="not($option-view = 'introduction' and not($introduction))">
+			<xsl:choose>
+				<xsl:when test="$view = $option-view">
+					<span><xsl:value-of select="$option-label"/></span>
+				</xsl:when>
+				<xsl:otherwise>
+					<a href="{$option-view}"><xsl:value-of select="$option-label"/></a>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:if>
 	</xsl:template>
 	
 	<xsl:template match="teiHeader">
