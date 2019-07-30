@@ -52,19 +52,27 @@
 			</p:when>
 			<p:when test="/c:request/@method='POST'">
 				<!-- The search form uses POST to send search parameters both in the POST body and as URL query parameters. -->
-				<!-- This sub-pipeline extracts the parameters from the body, re-encodes them as URL query parameters, and -->
-				<!-- redirects the user  to the resulting URL. -->
-				<p:variable name="merged-parameters" select="
+				<!-- This is so that the facet value selection buttons (which are submit buttons) can each have their own target URLs, -->
+				<!-- which include parameters already. -->
+				<!-- This sub-pipeline extracts the parameters from the request URL and the POST body, re-encodes them all as URL -->
+				<!-- query parameters (discarding those with empty values), and redirects the user  to the resulting URL. -->
+				<p:variable name="filtered-parameters" select="
 					string-join(
-						(
-							substring-after(/c:request/@href, '?')[normalize-space()],
-							normalize-space(/c:request/c:body)[normalize-space()]
-						),
+						for $parameter in (
+							tokenize(
+								substring-after(/c:request/@href, '?'), 
+								'&amp;'
+							),
+							tokenize(
+								normalize-space(/c:request/c:body), 
+								'&amp;'
+							)
+						) return if (ends-with($parameter, '=')) then () else $parameter,
 						'&amp;'
 					)
-				"/>				
+				"/>
 				<p:template name="redirect">
-					<p:with-param name="parameters" select="$merged-parameters"/>
+					<p:with-param name="parameters" select="$filtered-parameters"/>
 					<p:input port="template">
 						<p:inline>
 							<c:response status="303">
