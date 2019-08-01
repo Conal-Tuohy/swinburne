@@ -4,9 +4,12 @@
 	xmlns="http://www.w3.org/1999/xhtml"
 	xpath-default-namespace="http://www.tei-c.org/ns/1.0">
 	<!-- transform a TEI document into an HTML page-->
+	<xsl:import href="render-metadata.xsl"/>
 	
 	<xsl:param name="view"/><!-- 'diplomatic' or 'normalized' or 'introduction' -->
 	<xsl:key name="char-by-ref" match="char[@xml:id]" use="concat('#', @xml:id)"/>
+	
+	<!-- TODO shouldn't the title be a string constructed from msIdentifer? -->
 	<xsl:variable name="title" select="/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msContents/msItem/title"/>
 	
 	<xsl:template match="/tei:TEI">
@@ -17,53 +20,31 @@
 			</head>
 			<body>
 				<div class="tei">
-					<div class="tei-view-selection">
-						<xsl:call-template name="render-view-option">
-							<xsl:with-param name="option-view" select=" 'normalized' "/>
-							<xsl:with-param name="option-label" select=" 'Normalized Transcription' "/>
-						</xsl:call-template>
-						<xsl:call-template name="render-view-option">
-							<xsl:with-param name="option-view" select=" 'diplomatic' "/>
-							<xsl:with-param name="option-label" select=" 'Diplomatic Transcription' "/>
-						</xsl:call-template>
-						<xsl:call-template name="render-view-option">
-							<xsl:with-param name="option-view" select=" 'introduction' "/>
-							<xsl:with-param name="option-label" select=" 'Introduction' "/>
-						</xsl:call-template>
-					</div>
-					<!-- TODO shouldn't heading be a string constructed from msIdentifer? -->
-					<h1><xsl:value-of select="$title"/></h1>
+					<xsl:call-template name="render-document-header">
+						<xsl:with-param name="title" select="$title"/>
+						<xsl:with-param name="current-view" select="$view"/>
+						<xsl:with-param name="has-introduction" select="normalize-space($introduction)"/>
+					</xsl:call-template>
+					<!-- render the document metadata details -->
 					<xsl:apply-templates select="tei:teiHeader"/>
-					<xsl:choose>
-						<xsl:when test="$view = 'introduction'">
-							<xsl:apply-templates select="$introduction"/>
-						</xsl:when>
-						<xsl:otherwise>
-							<xsl:apply-templates select="tei:text"/>
-						</xsl:otherwise>
-					</xsl:choose>
+					<!-- render the relevant part of the text itself -->
+					<!-- NB the "searchable-content" class will cause it to be indexed -->
+					<div class="searchable-content">
+						<xsl:choose>
+							<xsl:when test="$view = 'introduction'">
+								<xsl:apply-templates select="$introduction"/>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:apply-templates select="tei:text"/>
+							</xsl:otherwise>
+						</xsl:choose>
+					</div>
 				</div>
 			</body>
 		</html>
 	</xsl:template>
 	
 	<xsl:variable name="introduction" select="/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msContents/msItem/note[@type='introduction']"/>
-	
-	<xsl:template name="render-view-option">
-		<xsl:param name="option-view"/>
-		<xsl:param name="option-label"/>
-		<!-- render the option unless it's a link to an introduction and there is actually no introduction in the text -->
-		<xsl:if test="not($option-view = 'introduction' and not($introduction))">
-			<xsl:choose>
-				<xsl:when test="$view = $option-view">
-					<span><xsl:value-of select="$option-label"/></span>
-				</xsl:when>
-				<xsl:otherwise>
-					<a href="{$option-view}"><xsl:value-of select="$option-label"/></a>
-				</xsl:otherwise>
-			</xsl:choose>
-		</xsl:if>
-	</xsl:template>
 	
 	<xsl:template match="teiHeader">
 		<details class="tei-teiHeader">

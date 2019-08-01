@@ -9,6 +9,8 @@
 	xmlns="http://www.w3.org/1999/xhtml"
 	exclude-result-prefixes="c f dashboard map xs">
 	
+	<xsl:import href="render-metadata.xsl"/>
+	
 	<!-- the parameters from the request URL  -->
 	<xsl:variable name="request" select="/*/c:param-set"/>
 	
@@ -33,15 +35,16 @@
 	"/>	
 	
 	<xsl:variable name="search-base-url" select=" '/search/' "/>
+	
 	<xsl:template match="/">
 		<html>
 			<head>
-				<title>Chymistry Search</title>
+				<title>Search</title>
 				<link rel="shortcut icon" href="http://webapp1.dlib.indiana.edu/newton/favicon.ico" type="image/x-icon" />
-				<xsl:call-template name="css"/>
+				<link rel="stylesheet" href="/css/search.css" type="text/css"/>
 			</head>
 			<body>
-				<h1>Chymistry Search</h1>
+				<h1>Search</h1>
 				<!-- the main search button submits all the current facet values as URL parameters; if the user
 				clicks a facet button instead, then a different set of facet values are posted -->
 				<form method="POST" action="{
@@ -75,14 +78,75 @@
 		</html>
 	</xsl:template>
 	
-	<xsl:template name="render-results">	
+	<xsl:template name="render-results">
+		<xsl:variable name="highlighting" select="$response/f:map/f:map[@key='highlighting']/f:map"/>
 		<h2><xsl:value-of select="$response/f:map/f:map[@key='response']/f:number[@key='numFound']"/> results</h2>
-		<ul>
+		<ul class="results">
 			<xsl:for-each select="$response/f:map/f:map[@key='response']/f:array[@key='docs']/f:map">
 				<xsl:variable name="id" select="f:string[@key='id']"/>
 				<xsl:variable name="title" select="*[@key='title']"/>
-				<li>
-					<a href="../text/{$id}/diplomatic">[<xsl:value-of select="$title"/>]</a>
+				<li class="result">
+					<xsl:call-template name="render-document-header">
+						<xsl:with-param name="title" select="$title"/>
+						<xsl:with-param name="has-introduction" select="f:array[@key='introduction']"/>
+						<xsl:with-param name="base-uri" select="concat('/text/', $id, '/')"/>
+					</xsl:call-template>
+					<xsl:variable name="matching-views" select="$highlighting[@key=$id]/f:array"/>
+					<xsl:if test="exists($matching-views)">
+						<!-- contains the views ('introduction', 'normalized', or 'diplomatic') which match the query -->
+						<!-- NB the user doesn't necessarily have to submit a text query; their search my be just a selection of facet values. -->
+						<!-- In this case, this div will not appear -->
+						<div class="matching-views">
+							<ul class="matching-views">
+								<xsl:for-each select="$matching-views">
+									<!-- sort the views; first the "introduction" view, then the "normalized", then "diplomatic" -->
+									<xsl:sort select="@key!='introduction'"/>
+									<xsl:sort select="@key!='normalized'"/>
+									<xsl:sort select="@key!='diplomatic'"/>
+									<li class="matching-view">
+										<xsl:variable name="matching-view" select="@key"/>
+										<xsl:variable name="view-heading" select="
+											map{
+												'diplomatic': 'Matches in Diplomatic Transcription',
+												'normalized': 'Matches in Normalized Transcription',
+												'introduction': 'Matches in Introduction'
+											}
+										"/>
+										<div class="matching-view">
+											<header><xsl:value-of select="$view-heading($matching-view)"/></header>
+											<!-- list the snippets of matching text which were found in this particular view -->
+											<ul class="matching-snippets">
+												<xsl:for-each select="f:string">
+													<li class="matching-snippet">
+														<a href="/text/{$id}/{$matching-view}">
+															<!-- Within each snippet, Solr marks up individual matching words with escaped(!) <em> tags -->
+															<xsl:variable name="match-escaped-em-elements">(&lt;em&gt;[^&lt;]+&lt;/em&gt;)</xsl:variable>
+															<xsl:analyze-string select="." regex="{$match-escaped-em-elements}">
+																<xsl:matching-substring>
+																	<!-- mark up the matched words -->
+																	<xsl:element name="mark">
+																		<xsl:value-of select="
+																			substring-before(
+																				substring-after(., '&lt;em&gt;'),
+																				'&lt;/em&gt;'
+																			)
+																		"/>
+																	</xsl:element>
+																</xsl:matching-substring>
+																<xsl:non-matching-substring>
+																	<xsl:value-of select="."/>
+																</xsl:non-matching-substring>
+															</xsl:analyze-string>
+														</a>
+													</li>
+												</xsl:for-each>
+											</ul>
+										</div>
+									</li>
+								</xsl:for-each>
+							</ul>
+						</div>
+					</xsl:if>
 				</li>
 			</xsl:for-each>
 		</ul>
@@ -235,38 +299,5 @@
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:function>
-	
-	<xsl:template name="css">
-		<style type="text/css">
-			form {
-				display: grid;
-				grid-template-columns: 1fr 3fr;
-			}
-			.fields {
-				grid-column: 2 / 4;
-			}
-			.facets {
-				grid-column: 1 / 2;
-			}
-			.results {
-				grid-column: 2 / 4
-			}
-			.bucket button /* reset so it doesn't look like a button */
-			{
-				border-width: 0;
-				background: none repeat scroll 0 0 transparent; 
-				text-align: left;
-				text-indent: 0;
-				padding: 0;
-				cursor: pointer;
-			}
-			.selected {
-				font-style: italic;
-			}
-			.selected::after {
-				content: " ✖";
-			}
-		</style>
-	</xsl:template>
 
 </xsl:stylesheet>

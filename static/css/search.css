@@ -1,0 +1,102 @@
+
+form {
+	display: grid;
+	grid-template-columns: 1fr 3fr;
+}
+.fields {
+	grid-column: 2 / 4;
+}
+.facets {
+	grid-column: 1 / 2;
+}
+.results {
+	grid-column: 2 / 4
+}
+.bucket button /* reset so it doesn't look like a button */
+{
+	border-width: 0;
+	background: none repeat scroll 0 0 transparent; 
+	text-align: left;
+	text-indent: 0;
+	padding: 0;
+	cursor: pointer;
+}
+.selected {
+	font-style: italic;
+}
+.selected::after {
+	content: " ✖";
+}
+
+/* hits */
+mark {
+	color: #CC0000;
+	font-weight: bold;
+	background-color: inherit;
+}
+
+ul.results {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+li.result {
+	background-color: #EFEDE3;
+	padding-bottom: 1em;
+	margin-bottom: 1em;
+	border-style: solid;
+	border-color: #ccc;
+	border-width: thin;
+	border-radius: 0.3em;
+}
+li.result cite {
+	display: block;
+	padding: 0.5em;
+	font-size: 1.5em;
+	font-style: normal;
+	background-color: #DFD9BD;
+}
+ul.matching-views {
+	list-style-type: none;
+	margin: 0;
+	padding: 0.5em;
+	display: flex;
+}
+div.matching-view {
+	margin: 0.5em;
+	border-style: solid;
+	border-color: #ccc;
+	border-width: thin;
+	border-radius: 0.3em;
+	background-color: #f3f3f3;
+}
+div.matching-view header {
+	background-color: rgb(51, 51, 51);
+	color: white;
+	padding: 0.5em;
+	padding: 0.5em;
+	font-size: small;
+	margin-top: 0;
+	border-style: solid;
+	border-width: 0;
+	border-top-left-radius: 0.3em;
+	border-top-right-radius: 0.3em;
+}
+ul.matching-snippets {
+	list-style-type: none;
+	padding: 0.5em;
+}
+li.matching-snippet {
+	padding-bottom: 0.25em;
+	padding-top: 0.25em;
+	border-bottom-style: solid;
+	border-bottom-width: thin;
+	border-bottom-color: rgb(204, 204, 204);
+}
+li.matching-snippet:last-child {
+	border-bottom-style: none;
+}
+li.matching-snippet a {
+	text-decoration: none;
+	color: inherit;
+}
