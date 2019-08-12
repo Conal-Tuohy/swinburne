@@ -151,9 +151,7 @@
 					<p:pipe step="configuration" port="result"/>
 				</p:with-option>
 			</chymistry:highlight-hits>
-			<!--
 			<chymistry:add-site-navigation/>
-			-->
 		</p:when>
 		<p:when test="starts-with($relative-uri, 'iiif/') ">
 			<!-- International Image Interoperability API -->
