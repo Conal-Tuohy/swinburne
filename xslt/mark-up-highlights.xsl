@@ -11,98 +11,13 @@
 	<xsl:variable name="debug-json-serializer" select="map{'method': 'json', 'indent': true()}"/>
 
 	<xsl:template match="/html-and-highlight-strings/html:div">
-		<div class="highlight-test">
-			<xsl:variable name="text" select="string(.)"/>
-			<xsl:variable name="snippet-strings" select="//lst[@name='highlighting']/lst/arr/str/text()"/>
-			<xsl:variable name="snippets" select="highlight:locate-snippets-in-text($text, $snippet-strings)"/>
-			<!--
-			<xsl:variable name="debug-highlights" select=" '1234567890&lt;em&gt;12345&lt;/em&gt;67890&lt;em&gt;1234567890&lt;/em&gt;12345' "/>
-			<pre>
-				<xsl:value-of select="$debug-highlights"/>
-			</pre>
-			<pre>
-				<xsl:value-of select="
-					serialize(
-						array{highlight:parse-snippet-spans($debug-highlights, 1)},
-						$debug-json-serializer
-					)
-				"/>
-			</pre>
-			-->
-			<details>
-				<summary>Text</summary>
-				<textarea style="height: 10em; width: 60em;"><xsl:value-of select="$text"/></textarea>
-			</details>
-			<details>
-				<summary>Snippets as JSON objects</summary>
-				<pre>
-				<xsl:for-each select="$snippets">
-					<xsl:value-of select="
-						string-join(
-							for $snippet in $snippets return serialize($snippet, $debug-json-serializer),
-							codepoints-to-string(10)
-						)
-					"/>
-				</xsl:for-each>
-				</pre>
-			</details>
-			<!--
-			demo of highlighting in plain text:
-			<pre>
-			<xsl:iterate select="$snippets">
-				<xsl:param name="char-index" select="1"/>
-				<xsl:param name="text" select="$text"/>
-				<xsl:variable name="snippet" select="."/>
-				<xsl:element name="span">
-					<xsl:attribute name="class">plain</xsl:attribute>
-					<xsl:attribute name="style">background-color: #EEEEEE</xsl:attribute>
-					<xsl:value-of select="substring($text, $char-index, $snippet('start') - 1)"/>
-				</xsl:element>
-				<xsl:iterate select="array:flatten($snippet('spans'))">
-					<xsl:param name="char-index" select="$char-index"/>
-					<xsl:param name="text" select="$text"/>
-					<xsl:variable name="span" select="."/>
-					<xsl:comment><xsl:value-of select="concat('span start = ', $span('start'))"/></xsl:comment>
-					<xsl:element name="span">
-						<xsl:attribute name="class" select="$span('type')"/>
-						<xsl:attribute name="style" select="
-							concat(
-								'background-color: ', 
-								if ($span('type') = 'match') then
-									'yellow'
-								else
-									'orange'
-							)
-						"/>
-						<xsl:attribute name="title" select="$span('text')"/>
-						<xsl:value-of select="substring($text, $span('start'), $span('end') - $span('start') + 1)"/>
-					</xsl:element>
-					<xsl:next-iteration>
-						<xsl:with-param name="char-index" select="$span('end') + 1"/>
-						<xsl:with-param name="text" select="$text"/>
-					</xsl:next-iteration>
-				</xsl:iterate>
-				<xsl:next-iteration>
-					<xsl:with-param name="char-index" select=".('end') + 1"/>
-					<xsl:with-param name="text" select="$text"/>
-				</xsl:next-iteration>
-			</xsl:iterate>
-			</pre>
-			-->
-			
-			<!-- dump the snippet strings as a list for debugging -->
-			<ul style="background-color: yellow">
-				<xsl:for-each select="$snippets">
-					<li><xsl:value-of select=".('snippet-with-highlights')"/></li>
-				</xsl:for-each>
-			</ul>	
-			<xsl:apply-templates mode="highlight" select=".">
-				<xsl:with-param name="text" select="$text"/>
-				<xsl:with-param name="snippets" select="$snippets"/>
-			</xsl:apply-templates>
-			
-			<xsl:copy-of select="."/>
-		</div>
+		<xsl:variable name="text" select="string(.)"/>
+		<xsl:variable name="snippet-strings" select="//lst[@name='highlighting']/lst/arr/str/text()"/>
+		<xsl:variable name="snippets" select="highlight:locate-snippets-in-text($text, $snippet-strings)"/>
+		<xsl:apply-templates mode="highlight" select=".">
+			<xsl:with-param name="text" select="$text"/>
+			<xsl:with-param name="snippets" select="$snippets"/>
+		</xsl:apply-templates>
 	</xsl:template>
 	
 	<xsl:template match="/html-and-highlight-strings">
