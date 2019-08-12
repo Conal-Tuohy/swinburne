@@ -295,6 +295,15 @@
 						"/>
 						<xsl:element name="mark">
 							<xsl:attribute name="class" select="$mark-span('type')"/>
+							<xsl:if test="position() = 1">	
+								<!-- first mark in a snippet gets the identifier for linking to -->
+								<xsl:attribute name="id" select="
+									concat(
+										'hit',
+										$snippet('snippet-index')
+									)
+								"/>
+							</xsl:if>
 							<xsl:value-of select="$mark-output-text"/>
 						</xsl:element>
 						<xsl:next-iteration>
