@@ -1,0 +1,6 @@
+mark.match {
+	background-color: yellow;
+}
+mark.non-match {
+	background-color: greenyellow;
+}

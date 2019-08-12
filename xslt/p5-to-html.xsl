@@ -6,7 +6,7 @@
 	<!-- transform a TEI document into an HTML page-->
 	<xsl:import href="render-metadata.xsl"/>
 	
-	<xsl:param name="view"/><!-- 'diplomatic' or 'normalized' or 'introduction' -->
+	<xsl:param name="view" required="true"/><!-- 'diplomatic' or 'normalized' or 'introduction' -->
 	<xsl:key name="char-by-ref" match="char[@xml:id]" use="concat('#', @xml:id)"/>
 	
 	<!-- TODO shouldn't the title be a string constructed from msIdentifer? -->
@@ -17,6 +17,7 @@
 			<head>
 				<title><xsl:value-of select="$title"/></title>
 				<link href="/css/tei.css" rel="stylesheet" type="text/css"/>
+				<link href="/css/highlighting.css" rel="stylesheet" type="text/css"/>
 			</head>
 			<body>
 				<div class="tei">
@@ -213,6 +214,11 @@
 		<!-- The content of an HTML element which represents a TEI element is normally produced by applying templates to the children of a TEI element. -->
 		<!-- This can be over-ridden for specific TEI elements, e.g. <tei:space/> is an empty element, but it should produce an actual space character in the HTML -->
 		<xsl:apply-templates/>
+	</xsl:template>
+	<xsl:template mode="create-content" match="p">
+		<xsl:next-match/>
+		<!-- add white space so that when the HTML is converted to plain text, we don't run last word together with first word of next para -->
+		<xsl:value-of select="codepoints-to-string(10)"/>
 	</xsl:template>
 	
 	<xsl:template match="gap" mode="create-content">

@@ -118,7 +118,7 @@
 											<ul class="matching-snippets">
 												<xsl:for-each select="f:string">
 													<li class="matching-snippet">
-														<a href="/text/{$id}/{$matching-view}">
+														<a href="/text/{$id}/{$matching-view}?highlight={$request/c:param[@name='text']/@value}#hit{position()}">
 															<!-- Within each snippet, Solr marks up individual matching words with escaped(!) <em> tags -->
 															<xsl:variable name="match-escaped-em-elements">(&lt;em&gt;[^&lt;]+&lt;/em&gt;)</xsl:variable>
 															<xsl:analyze-string select="." regex="{$match-escaped-em-elements}">

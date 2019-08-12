@@ -4,9 +4,72 @@
 	xmlns:cx="http://xmlcalabash.com/ns/extensions"
 	xmlns:z="https://github.com/Conal-Tuohy/XProc-Z" 
 	xmlns:chymistry="tag:conaltuohy.com,2018:chymistry"
-	xmlns:fn="http://www.w3.org/2005/xpath-functions">
+	xmlns:fn="http://www.w3.org/2005/xpath-functions"
+	xmlns:html="http://www.w3.org/1999/xhtml">
 	
 	<p:import href="http://xmlcalabash.com/extension/steps/library-1.0.xpl"/>
+	
+	<p:declare-step name="highlight-hits" type="chymistry:highlight-hits">
+		<p:input port="source"/>
+		<p:output port="result"/>
+		<p:option name="highlight"/>
+		<p:option name="id"/>
+		<p:option name="view"/>
+		<p:option name="solr-base-uri" required="true"/>
+		<cx:message>
+			<p:with-option name="message" select="$highlight"/>
+		</cx:message>
+		<p:choose>
+			<p:when test="$highlight">
+				<!-- highlighting is required -->
+				<p:viewport name="searchable-content" match="html:div[@class='searchable-content']">
+					<p:xslt name="measured-text">
+						<p:input port="parameters"><p:empty/></p:input>
+						<p:input port="stylesheet">
+							<p:document href="../xslt/measure-text-nodes-for-highlighting.xsl"/>
+						</p:input>
+					</p:xslt>
+					<p:template name="solr-highlight-query">
+						<p:with-param name="view" select="$view"/>
+						<p:with-param name="id" select="$id"/>
+						<p:with-param name="solr-base-uri" select="$solr-base-uri"/>
+						<p:with-param name="highlight" select="$highlight"/>
+						<p:input port="template">
+							<p:inline>
+								<c:request href="{
+									concat(
+										$solr-base-uri, 'query?q=id%3A', $id,
+										'&amp;hl=true',
+										'&amp;hl.q=', $view, '%3A', encode-for-uri($highlight),
+										'&amp;hl.fl=', $view,
+										'&amp;hl.maxAnalyzedChars=-1',
+										'&amp;hl.snippets=20',
+										'&amp;wt=xml'
+									)
+								}" method="GET"/>
+							</p:inline>
+						</p:input>
+					</p:template>
+					<p:http-request name="solr-highlight-results"/>
+					<p:wrap-sequence wrapper="html-and-highlight-strings">
+						<p:input port="source">
+							<p:pipe step="solr-highlight-results" port="result"/>
+							<p:pipe step="measured-text" port="result"/>
+						</p:input>
+					</p:wrap-sequence>
+					<p:xslt name="mark-up-highlights-in-html">
+						<p:input port="parameters"><p:empty/></p:input>
+						<p:input port="stylesheet">
+							<p:document href="../xslt/mark-up-highlights.xsl"/>
+						</p:input>
+					</p:xslt>
+				</p:viewport>
+			</p:when>
+			<p:otherwise>
+				<p:identity name="no-highlighting-required"/>
+			</p:otherwise>
+		</p:choose>
+	</p:declare-step>
 	
 	<p:declare-step name="search" type="chymistry:search">
 		<p:input port="source"/>
