@@ -40,6 +40,7 @@
 									concat(
 										$solr-base-uri, 'query?q=id%3A', $id,
 										'&amp;hl=true',
+										'&amp;hl.mergeContiguous=true',
 										'&amp;hl.q=', $view, '%3A', encode-for-uri($highlight),
 										'&amp;hl.fl=', $view,
 										'&amp;hl.maxAnalyzedChars=-1',
@@ -61,6 +62,12 @@
 						<p:input port="parameters"><p:empty/></p:input>
 						<p:input port="stylesheet">
 							<p:document href="../xslt/mark-up-highlights.xsl"/>
+						</p:input>
+					</p:xslt>
+					<p:xslt name="link-hits-into-sequence">
+						<p:input port="parameters"><p:empty/></p:input>
+						<p:input port="stylesheet">
+							<p:document href="../xslt/link-highlights-into-sequence.xsl"/>
 						</p:input>
 					</p:xslt>
 				</p:viewport>

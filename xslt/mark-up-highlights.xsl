@@ -181,6 +181,7 @@
 					<!-- copy any portion of the value that precedes the start of the snippet -->
 					<xsl:variable name="preface" select="substring($value, $char-index - $start + 1, $snippet('start') - $char-index)"/>
 					<xsl:variable name="preface-length" select="string-length($preface)"/>
+					<xsl:value-of select="$preface"/>
 					<!-- output as many of the mark spans as will fit -->
 					<xsl:variable name="applicable-mark-spans" select="
 						array:flatten($snippet('spans'))
@@ -210,26 +211,13 @@
 						"/>
 						<xsl:element name="mark">
 							<xsl:attribute name="class" select="$mark-span('type')"/>
-							<xsl:if test="position() = 1">	
-								<!-- first mark in a snippet gets the identifier for linking to -->
-								<xsl:attribute name="id" select="
-									concat(
-										'hit',
-										$snippet('snippet-index')
-									)
-								"/>
-							</xsl:if>
+							<xsl:attribute name="data-snippet-index" select="$snippet('snippet-index')"/>
 							<xsl:value-of select="$mark-output-text"/>
 						</xsl:element>
 						<xsl:next-iteration>
 							<xsl:with-param name="char-index" select="$char-index + string-length($mark-output-text)"/>
 						</xsl:next-iteration>
 					</xsl:iterate>
-					<!-- trailing space in the measurement span which is not covered by a mark span -->
-					<xsl:variable name="end-of-mark-spans" select="max(for $mark-span in $applicable-mark-spans return $mark-span('end'))"/>
-					<xsl:if test="$end &gt; $end-of-mark-spans">
-						<xsl:value-of select="substring($value, $end-of-mark-spans - $start + 2)"/>
-					</xsl:if>
 					<xsl:next-iteration>
 						<xsl:with-param name="char-index" select="
 							min((
@@ -238,6 +226,11 @@
 						"/>
 					</xsl:next-iteration>
 				</xsl:iterate>
+				<!-- trailing space in the measurement span which is not covered by the final applicable-snippet -->
+				<xsl:variable name="end-of-applicable-snippets" select="max(for $snippet in $applicable-snippets return $snippet('end'))"/>
+				<xsl:if test="$end &gt;= $end-of-applicable-snippets">
+					<xsl:value-of select="substring($value, $end-of-applicable-snippets - $start + 2)"/>
+				</xsl:if>
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:value-of select="$value"/>

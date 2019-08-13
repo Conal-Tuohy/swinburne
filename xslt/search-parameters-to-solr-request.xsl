@@ -30,6 +30,7 @@
 				<xsl:if test="c:param[@name='text']/@value">
 					<!-- only if we have a "text" query parameter, can we can request hit-highlighting: -->
 					<f:boolean key="hl">true</f:boolean>
+					<f:boolean key="hl.mergeContiguous">true</f:boolean>
 					<f:string key="hl.fl">normalized,diplomatic,introduction</f:string>
 					<f:string key="hl.q">text:<xsl:value-of select="c:param[@name='text']/@value"/></f:string>
 					<f:string key="hl.snippets">10</f:string>
