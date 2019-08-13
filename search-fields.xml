@@ -55,4 +55,9 @@
 			return concat($character/mapping, ' ', $character/charName)
 		"
 		facet="true"/>
+	<field
+		name="person"
+		label="People"
+		xpath="//persName"
+		facet="true"/>
 </fields>
