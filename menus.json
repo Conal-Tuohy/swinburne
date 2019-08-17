@@ -1,0 +1,28 @@
+{
+	"Home":"/",
+	"Browse Manuscripts":"/search/",
+	"Online Tools":{
+		"Alchemical Glossary":"/page/glossary",
+		"Index Chemicus":"/page/index-chemicus",
+		"Latent Semantic Analysis":"/page/lsa",
+		"Newton Font":"/page/font",
+		"Symbol Font":"/page/symbols"
+	},
+	"Educational Resources":{
+		"Chymical Products":"/page/chymical-products",
+		"Experiments in Mineral Acids":"/page/mineral",
+		"Multimedia Lab":"/page/chem-lab",
+		"Related Websites":"/page/related"
+	},
+	"Project Information":{
+		"Articles and Presentations":"/page/publication",
+		"Chymistry in the News":"/page/news",
+		"Grant Proposal":"/page/grant",
+		"Newton and Alchemy":"/page/about",
+		"Technical Implementation":"/page/tech",
+		"Use & Copyright":"/page/copyright"
+	},
+	"Editorial Practices":"/page/editorial-practices",
+	"Project Team":"/page/personnel",
+	"Site Index":"/page/site-index"
+}

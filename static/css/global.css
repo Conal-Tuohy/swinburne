@@ -1,15 +1,48 @@
+ul {
+	padding: 0;
+	margin: 0;
+}
 body {
 	font-family: "Newton Sans";
+	background-color: #F7F6F2;
 	margin: 0;
+}
+* {
 	box-sizing: border-box;
 }
-header.page-header section.iub {
+a:hover {
+	text-decoration: underline !important;
+}
+
+/* These are the components which are horizontally centered in the page */
+header.page-header section a,
+nav#main-nav ul,
+div.content,
+footer.page-footer div.link-to-top,
+footer.page-footer div.menus,
+footer.page-footer div.links
+{
+	margin-left: auto;
+	margin-right: auto;
+	width: 70rem;
+}
+div.content {
+	background-color: white;
+	padding: 0.5em;
 	display: flex;
-	justify-content: flex-end;
+	align-items: flex-start;
+	/* column-gap: 1rem; not used because of poor browser support */
+}
+header.page-header section.iub {
 	background-color: rgb(248, 248, 248);
 	border-bottom-color: rgb(192, 192, 192);
 	border-bottom-style: solid;
 	border-bottom-width: 1px;
+}
+/* The IUB banner has right-aligned content */
+header.page-header section.iub a {
+	display: flex;
+	justify-content: flex-end;
 }
 img#iu-logo {
 	display: block;
@@ -22,6 +55,7 @@ header.page-header section.chymistry {
 	padding-left: 0;
 	padding-right: 0;
 }
+/* The Chymistry banner has left-aligned content */
 header.page-header section.chymistry a {
 	display: flex;
 	justify-content: flex-start;
@@ -40,7 +74,7 @@ nav#main-nav {
 	font-size: small;
 }
 nav#main-nav ul {
-	margin: 0;
+	margin-top: 0;
 	padding-top: 0.2em;
 	padding-bottom: 0.2em;
 }
@@ -70,6 +104,40 @@ nav#main-nav details[open] ul {
 	background-color: rgb(45, 41, 33);
 	padding-left: 0;
 }
+/* sub-menu on a page (copy of the drop down menu) */
+nav.internal {
+	background-color: #F7F8F2;
+	margin-right: 2rem;
+	margin-top: 1rem;
+	width: 15rem;
+	flex-grow: 0;
+	flex-shrink: 0.5;
+}
+nav.internal header {
+	border-top-right-radius: 0.4em;
+	border-top-left-radius: 0.4em;
+	border: thin solid #DFD9BD;
+	background-color: #DFD9BD;
+	color: #423C30;
+	font-weight: bold;
+	padding: 0.5em;
+}
+nav.internal ul {
+	list-style-type: none;
+	margin: 1em;
+	font-size: small;
+}
+nav.internal li {
+	margin-top: 0.5em;
+}
+nav.internal a {
+	color: rgb(120, 19, 11);
+	text-decoration: none;
+}
+nav.internal a.current {
+	font-weight: bold;
+	color: black;
+}
 
 /* The menu at the top of a page, or for a search result, for selecting a view of the text */
 div.tei-view-selection {
@@ -96,4 +164,56 @@ div.tei-view-selection a:hover {
 }
 div.tei-view-selection span {
 	font-weight: bold;
+}
+footer.page-footer {
+	margin-top: 0.5rem;
+	background-color: rgb(188, 171, 129);
+}
+footer.page-footer div.link-to-top {
+	padding-top: 0.25rem;
+	display: flex;
+	justify-content: flex-end;
+}
+footer.page-footer div.menus-and-links {
+	background-color: #333;
+}
+footer.page-footer div.menus {
+	background-color: #4F4E4E;
+	display: flex;
+	font-size: small;
+	justify-content: space-between;
+}
+footer.page-footer div.menus div.menu {
+	padding: 1em;
+}
+footer.page-footer div.menus div.menu header {
+	color: #C0C0C0;
+	margin-bottom: 0.5em;
+}
+footer.page-footer div.menus div.menu ul {
+	list-style-type: none;
+	margin-left: 1em;
+}
+footer.page-footer div.menus div.menu a {
+	text-decoration: none;
+	color: #ffc;
+}
+footer.page-footer div.menus div.menu a.current {
+	color: rgb(247, 246, 240);
+}
+footer.page-footer div.menus div.menu a.current::before {
+	content: "» ";
+}
+footer.page-footer div.menus div.menu li {
+	margin-bottom: 0.5em;
+}
+footer.page-footer div.links {
+	background-color: #4F4E4E;
+	color: #fff;
+	font-size: smaller;
+	padding: 1em;
+}
+footer.page-footer div.links a {
+	color: #fff;
+	text-decoration: none;
 }

@@ -72,7 +72,16 @@
 		<p:when test="$relative-uri = '' ">
 			<!-- home page -->
 			<chymistry:html-page page="home"/>
-			<chymistry:add-site-navigation/>
+			<chymistry:add-site-navigation current-uri="/"/>
+		</p:when>
+		<p:when test="starts-with($relative-uri, 'page/')">
+			<!-- html page -->
+			<chymistry:html-page>
+				<p:with-option name="page" select="substring-after($relative-uri, 'page/')"/>
+			</chymistry:html-page>
+			<chymistry:add-site-navigation>
+				<p:with-option name="current-uri" select="concat('/', $relative-uri)"/>
+			</chymistry:add-site-navigation>
 		</p:when>
 		<p:when test="matches($relative-uri, '^(css|font|uv|image|js)/')">
 			<z:static/>
@@ -197,8 +206,9 @@
 	<p:declare-step type="chymistry:add-site-navigation">
 		<p:input port="source"/>
 		<p:output port="result"/>
+		<p:option name="current-uri" select=" () "/>
 		<p:xslt>
-			<p:input port="parameters"><p:empty/></p:input>
+			<p:with-param name="current-uri" select="$current-uri"/>
 			<p:input port="stylesheet">
 				<p:document href="../xslt/add-site-navigation.xsl"/>
 			</p:input>
