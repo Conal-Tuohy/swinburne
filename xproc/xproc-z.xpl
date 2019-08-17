@@ -160,6 +160,12 @@
 					<p:pipe step="configuration" port="result"/>
 				</p:with-option>
 			</chymistry:highlight-hits>
+			<p:xslt>
+				<p:with-param name="manifest-uri" select="concat($base-uri, 'iiif/', $id, '/manifest')"/>
+				<p:input port="stylesheet">
+					<p:document href="../xslt/embed-universal-viewer.xsl"/>
+				</p:input>
+			</p:xslt>
 			<chymistry:add-site-navigation/>
 		</p:when>
 		<p:when test="starts-with($relative-uri, 'iiif/') ">

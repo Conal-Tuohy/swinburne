@@ -258,14 +258,6 @@
 				<p:document href="../xslt/p5-to-html.xsl"/>
 			</p:input>
 		</p:xslt>
-		<!--
-		<p:xslt>
-			<p:with-param name="manifest-uri" select="concat($base-uri, 'iiif/', $text, '/manifest')"/>
-			<p:input port="stylesheet">
-				<p:document href="../xslt/embed-universal-viewer.xsl"/>
-			</p:input>
-		</p:xslt>
-		-->
 		<z:make-http-response content-type="text/html"/>
 	</p:declare-step>
 	
