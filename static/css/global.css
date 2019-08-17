@@ -217,3 +217,17 @@ footer.page-footer div.links a {
 	color: #fff;
 	text-decoration: none;
 }
+ul.site-index-menu,
+ul.site-index-sub-menu {
+	padding-left: 2em;
+}
+ul.site-index-menu p {
+	margin: 0;
+}
+ul.site-index-menu li {
+	margin-top: 0.25em;
+}
+ul.site-index-menu a {
+	text-decoration: none;
+	color: #78130B;
+}

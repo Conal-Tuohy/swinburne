@@ -74,6 +74,11 @@
 			<chymistry:html-page page="home"/>
 			<chymistry:add-site-navigation current-uri="/"/>
 		</p:when>
+		<p:when test="$relative-uri = 'site-index' ">
+			<!-- home page -->
+			<chymistry:site-index/>
+			<chymistry:add-site-navigation current-uri="/site-index"/>
+		</p:when>
 		<p:when test="starts-with($relative-uri, 'page/')">
 			<!-- html page -->
 			<chymistry:html-page>
@@ -196,7 +201,7 @@
 					<p:pipe step="configuration" port="result"/>
 				</p:with-option>
 			</chymistry:search>
-			<chymistry:add-site-navigation/>
+			<chymistry:add-site-navigation current-uri="/search/"/>
 		</p:when>
 		<p:when test="$relative-uri = 'parameters/'">
 			<!-- for debugging - show details of the request -->
@@ -217,6 +222,17 @@
 			<p:with-param name="current-uri" select="$current-uri"/>
 			<p:input port="stylesheet">
 				<p:document href="../xslt/add-site-navigation.xsl"/>
+			</p:input>
+		</p:xslt>
+	</p:declare-step>	
+	
+	<p:declare-step type="chymistry:site-index">
+		<p:input port="source"/>
+		<p:output port="result"/>
+		<p:xslt>
+			<p:input port="parameters"><p:empty/></p:input>
+			<p:input port="stylesheet">
+				<p:document href="../xslt/render-menus-as-site-index.xsl"/>
 			</p:input>
 		</p:xslt>
 	</p:declare-step>
