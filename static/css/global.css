@@ -217,8 +217,7 @@ footer.page-footer div.links a {
 	color: #fff;
 	text-decoration: none;
 }
-ul.site-index-menu,
-ul.site-index-sub-menu {
+ul.site-index-menu {
 	padding-left: 2em;
 }
 ul.site-index-menu p {

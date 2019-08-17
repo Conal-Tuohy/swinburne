@@ -33,7 +33,7 @@
 	<xsl:template match="fn:map/fn:map">
 		<li>
 			<p><xsl:value-of select="@key"/></p>
-			<ul class="site-index-sub-menu">
+			<ul class="site-index-menu">
 				<xsl:apply-templates/>
 			</ul>
 		</li>
