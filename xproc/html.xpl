@@ -13,9 +13,34 @@
 		<p:option name="page"/>
 		<p:input port="source"/>
 		<p:output port="result"/>
-		<p:load>
-			<p:with-option name="href" select="concat('../html/', encode-for-uri($page), '.html')"/>
-		</p:load>
-		<z:make-http-response content-type="text/html"/>
+		<p:try>
+			<p:group>
+				<p:load>
+					<p:with-option name="href" select="concat('../html/', encode-for-uri($page), '.html')"/>
+				</p:load>
+				<z:make-http-response content-type="text/html"/>
+			</p:group>
+			<p:catch>
+				<p:identity>
+					<p:input port="source">
+						<p:inline>
+							<c:response status="404">
+								<c:body content-type="application/xhtml+xml">
+									<html xmlns="http://www.w3.org/1999/xhtml">
+										<head>
+											<title>Not Found</title>
+										</head>
+										<body>
+											<h1>Page Not Found</h1>
+											<p>The requested page was not found.</p>
+										</body>
+									</html>
+								</c:body>
+							</c:response>
+						</p:inline>
+					</p:input>
+				</p:identity>
+			</p:catch>
+		</p:try>						
 	</p:declare-step>
 </p:library>
