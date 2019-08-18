@@ -67,7 +67,7 @@
 	</xsl:template>
 	
 	<xsl:template match="fn:map" mode="main-menu">
-		<ul>
+		<ul class="primary">
 			<xsl:apply-templates mode="main-menu"/>
 		</ul>
 	</xsl:template>
@@ -78,7 +78,7 @@
 		<li>
 			<details>
 				<summary><xsl:value-of select="@key"/></summary>
-				<ul>
+				<ul class="secondary">
 					<xsl:apply-templates mode="main-menu"/>
 				</ul>
 			</details>

@@ -16,7 +16,7 @@ a:hover {
 
 /* These are the components which are horizontally centered in the page */
 header.page-header section a,
-nav#main-nav ul,
+nav#main-nav ul.primary,
 div.content,
 footer.page-footer div.link-to-top,
 footer.page-footer div.menus,
@@ -83,12 +83,15 @@ nav#main-nav li {
 	vertical-align: top;
 	margin: 0;
 }
+nav#main-nav details li {
+	display: inherit;
+}
 nav#main-nav a:hover,
 nav#main-nav summary:hover {
 	background-color: rgb(45, 41, 33);
 }
-nav#main-nav a,
-nav#main-nav summary {
+nav#main-nav ul.primary a,
+nav#main-nav ul.primary summary {
 	display: inline-block;
 	color: rgb(247, 246, 240);
 	padding: 0.75em;
@@ -98,6 +101,9 @@ nav#main-nav summary {
 	border-right-color: rgb(247, 246, 240);
 	border-right-style: solid;
 	border-right-width: 1px;
+}
+nav#main-nav ul.secondary a {
+	border: none;
 }
 nav#main-nav details[open] ul {
 	position: fixed;
