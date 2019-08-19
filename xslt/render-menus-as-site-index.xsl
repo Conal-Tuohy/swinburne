@@ -14,8 +14,17 @@
 						<title>Site Index</title>
 					</head>
 					<body>
-						<h1>Site Index</h1>
-						<xsl:apply-templates select="$menus"/>
+						<section class="content">
+							<aside>
+								<header>Site Index</header>
+								<p>If you have any questions or issues, feel free to email us at:</p>
+								<p>chymist [at] indiana.edu</p>
+							</aside>
+							<div>
+								<h1>Site Index</h1>
+								<xsl:apply-templates select="$menus"/>
+							</div>
+						</section>
 					</body>
 				</html>
 			</c:body>

@@ -2,7 +2,8 @@
 	xmlns:fn="http://www.w3.org/2005/xpath-functions" 
 	xmlns="http://www.w3.org/1999/xhtml" 
 	xmlns:map="http://www.w3.org/2005/xpath-functions/map"
-	xpath-default-namespace="http://www.w3.org/1999/xhtml">
+	xpath-default-namespace="http://www.w3.org/1999/xhtml"
+	exclude-result-prefixes="fn map">
 	<!-- embed the page in global navigation -->
 	<xsl:param name="current-uri"/>
 	<xsl:variable name="menus" select="json-to-xml(unparsed-text('../menus.json'))"/>
@@ -15,8 +16,13 @@
 	<xsl:template match="head">
 		<xsl:copy>
 			<xsl:copy-of select="@*"/>
-			<xsl:copy-of select="*"/>
+			<xsl:apply-templates select="*"/>
 			<link rel="stylesheet" type="text/css" href="/css/global.css"/>
+		</xsl:copy>
+	</xsl:template>
+	<xsl:template match="title">
+		<xsl:copy>
+			<xsl:value-of select="concat(., ': The Chymistry of Isaac Newton Project')"/>
 		</xsl:copy>
 	</xsl:template>
 	<xsl:template match="body">
@@ -38,18 +44,29 @@
 			<nav id="main-nav">
 				<xsl:apply-templates select="$menus" mode="main-menu"/>
 			</nav>
-			<script src="/js/global.js"></script>
-			<div class="content">
+			<xsl:variable name="sub-menu">
 				<xsl:call-template name="sub-menu"/>
-				<div>
+			</xsl:variable>
+			<xsl:choose>
+				<xsl:when test="$sub-menu/*">
+					<section class="content">
+						<xsl:copy-of select="$sub-menu"/>
+						<div>
+							<xsl:copy-of select="node()"/>
+						</div>
+					</section>
+				</xsl:when>
+				<xsl:otherwise>
 					<xsl:copy-of select="node()"/>
-				</div>
-			</div>
+				</xsl:otherwise>
+			</xsl:choose>
 			<xsl:call-template name="footer"/>
+			<script src="/js/global.js"></script>
 		</xsl:copy>
 	</xsl:template>
 	
 	<xsl:template name="sub-menu">
+		<xsl:message select="concat('current uri = ', $current-uri)"/>
 		<xsl:variable name="sub-menu" select="$menus/fn:map/fn:map[fn:string = $current-uri]"/>
 		<xsl:if test="$sub-menu">
 			<nav class="internal">
@@ -138,6 +155,8 @@
 					under Grant Nos. 0324310 and 0620868 and by the <a href="http://www.neh.gov/" title="NEH" target="_blank">National Endowment for the Humanities</a> 
 					under Grant No. RZ-50798. Any opinions, findings, and conclusions or recommendations expressed in this material are those of the author(s) and do not 
 					necessarily reflect the views of the National Science Foundation or the National Endowment for the Humanities.</p>
+					<!-- temporary link to site admin page -->
+					<p style="text-align: right"><a href="/admin">℞</a></p>
 				</div>
 			</div>
 		</footer>

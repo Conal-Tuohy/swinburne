@@ -44,36 +44,40 @@
 				<link rel="stylesheet" href="/css/search.css" type="text/css"/>
 			</head>
 			<body>
-				<h1>Search</h1>
-				<!-- the main search button submits all the current facet values as URL parameters; if the user
-				clicks a facet button instead, then a different set of facet values are posted -->
-				<form method="POST" action="{
-					concat(
-						$search-base-url, '?',
-						string-join(
-							(
-								for $parameter 
-								in $request/c:param
-									[@name=$facet-definitions/@name] 
-									[normalize-space(@value)]
-								return concat(
-									encode-for-uri($parameter/@name), '=', encode-for-uri($parameter/@value)
+				<section class="content">
+					<div class="search">
+						<!-- the main search button submits all the current facet values as URL parameters; if the user
+						clicks a facet button instead, then a different set of facet values are posted -->
+						<form method="POST" action="{
+							concat(
+								$search-base-url, '?',
+								string-join(
+									(
+										for $parameter 
+										in $request/c:param
+											[@name=$facet-definitions/@name] 
+											[normalize-space(@value)]
+										return concat(
+											encode-for-uri($parameter/@name), '=', encode-for-uri($parameter/@value)
+										)
+									),
+									'&amp;'
 								)
-							),
-							'&amp;'
-						)
-					)
-				}">
-					<div class="fields">
-						<xsl:call-template name="render-search-fields"/>
+							)
+						}">
+							<div class="fields">
+								<h1>Search</h1>
+								<xsl:call-template name="render-search-fields"/>
+							</div>
+							<div class="facets">
+								<xsl:call-template name="render-facets"/>
+							</div>
+							<div class="results">
+								<xsl:call-template name="render-results"/>
+							</div>
+						</form>
 					</div>
-					<div class="facets">
-						<xsl:call-template name="render-facets"/>
-					</div>
-					<div class="results">
-						<xsl:call-template name="render-results"/>
-					</div>
-				</form>
+				</section>
 			</body>
 		</html>
 	</xsl:template>

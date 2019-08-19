@@ -20,20 +20,24 @@
 									<title>Chymistry admin</title>
 								</head>
 								<body>
-									<h1>Chymistry admin</h1>
-									<form method="post" action="p4/">
-										<button>Download P4 files from Xubmit</button>
-									</form>
-									<form method="post" action="p5/">
-										<button>Convert downloaded P4 files to P5</button>
-									</form>
-									<form method="post" action="reindex/">
-										<button>Rebuild Solr index from P5 files</button>
-									</form>
-									<form method="post" action="update-schema/">
-										<button>Update Solr schema to reflect search-fields.xml</button>
-									</form>
-									<p><a href="../p5/">View texts</a></p>
+									<section class="content">
+										<div class="content">
+											<h1>Chymistry admin</h1>
+											<form method="post" action="p4/">
+												<button>Download P4 files from Xubmit</button>
+											</form>
+											<form method="post" action="p5/">
+												<button>Convert downloaded P4 files to P5</button>
+											</form>
+											<form method="post" action="reindex/">
+												<button>Rebuild Solr index from P5 files</button>
+											</form>
+											<form method="post" action="update-schema/">
+												<button>Update Solr schema to reflect search-fields.xml</button>
+											</form>
+											<p><a href="../p5/">View texts</a></p>
+										</div>
+									</section>
 								</body>
 							</html>
 						</c:body>
