@@ -42,6 +42,8 @@
 	<p:import href="html.xpl"/>	
 	<!-- the search and browse interface -->
 	<p:import href="search.xpl"/>
+	<!-- (temporary) step for building index-chemicus.html file from legacy disaggregated pages -->
+	<p:import href="temp-migrate-index-chemicus.xpl"/>
 	<!-- dispatch the request to the appropriate pipeline, depending on the request URI -->
 	<p:variable name="relative-uri" select="
 		replace(
@@ -206,6 +208,10 @@
 		<p:when test="$relative-uri = 'parameters/'">
 			<!-- for debugging - show details of the request -->
 			<z:dump-parameters/>
+		</p:when>
+		<!-- temp; for generating index chemicus -->
+		<p:when test="$relative-uri = 'index-chemicus.xml' ">
+			<chymistry:migrate-index-chemicus/>
 		</p:when>
 		<p:otherwise>
 			<!-- request URI not recognised -->
