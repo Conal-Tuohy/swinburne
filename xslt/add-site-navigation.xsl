@@ -17,6 +17,9 @@
 		<xsl:copy>
 			<xsl:copy-of select="@*"/>
 			<xsl:apply-templates select="*"/>
+			<meta charset="utf-8" />
+			<meta name="keywords" content="science,chemistry,history,isaac newton,chymistry,alchemical manuscripts,national science foundation,laboratory,chymistry of isaac newton,indiana university,digtial library,alchemy,newton" />
+			<meta name="description" content="Isaac Newton, like Albert Einstein, is a quintessential symbol of the human intellect and its ability to decode the secrets of nature. Newton wrote and transcribed about a million words on the subject of alchemy, of which only a tiny fraction has today been published. With the support of the National Science Foundation and the National Endowment for the Humanities, The Chymistry of Isaac Newton hosted by Indiana University's Digital Library Program, is producing a scholarly online edition of Newton's alchemical manuscripts integrated with new research on Newton's chymistry." />
 			<link rel="stylesheet" type="text/css" href="/css/global.css"/>
 		</xsl:copy>
 	</xsl:template>
