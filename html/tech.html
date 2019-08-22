@@ -1,0 +1,60 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>Technical Implementation</title>
+	</head>
+	<body>
+				<h2>Technical Information</h2>
+				<p>Newton's
+					alchemical manuscripts include a rich and diverse set of document types, including laboratory notebooks, indices of alchemical substances and 
+					operations, Newton's transcriptions from other sources, and even poetry.  The material does not lend itself easily to publication in print, 
+					thanks to its unfinished character and its sheer volume.  Fortunately, the increasing sophistication of online editing makes it feasible to 
+					prepare web-based editions of hitherto unedited collections, a feature that is invigorating foundational 
+					scholarship in a variety of fields.</p>
+				<p>The Chymistry of Isaac Newton project aims to produce a scholarly online edition of Newton's alchemical 
+					manuscripts integrated with new research on Newton's chymistry. The texts, encoded in TEI/XML, can be viewed in diplomatic or normalized versions 
+					and Latin and other non-English texts are accompanied by translations into English. Where possible, transcriptions will be accompanied by page 
+					images of the original manuscripts. An additional effort is the development and incorporation of scholarly analysis tools. The combination of a 
+					more accessible, digital edition of these works and advanced scholarly analysis tools, will, we hope, lead to further investigation of these 
+					important writings and continued revaluation of their place in Newton's overall scientific and creative enterprise. </p>
+				<p>This project is a collaboration between researchers, librarians and information scientists, 
+					and graduate students, demanding the contributions of many people from different 
+					backgrounds with a variety of skills - editorial, scholarly, technical, creative - to design, produce, and assemble the many component 
+					parts of a complex digital scholarship project. Such projects break the mold of the stereotype of solitary scholarship, the end result of which 
+					is the traditional monograph, and introduce, or re-introduce, a scholarly paradigm of active, hands-on, face-to-face collaboration.  In this we 
+					are reminded of the great publishing ventures at the dawn of the age of print, when scholars like Aldo Manuzio and Christopher Plantin combined 
+					the skills of the humanist and philologist with those of the publisher and printer in one center of production. </p>
+				<h4>Transcription, Encoding, and Editing</h4>
+				<p>The Chymistry of Isaac Newton depends upon a flexible, easily indexed data format that is machine and human readable. 
+					Requirements for the data format are three-fold. The format must support data interchange and promise long-term viability. It must be capable of 
+					representing the deeper cultural, historical and linguistic characteristics of Isaac Newton's work. And finally, to facilitate system delivery, 
+					the data format must support the encoding and derivation of metadata about these digital representations. </p>
+				<p>Texts are encoded by hand according to the <a href="http://www.tei-c.org">Text Encoding Initiative</a> (TEI) guidelines 
+					and document type definition (DTD),version P4 . Designed by humanities scholars, TEI is an expressive, comprehensive encoding scheme that allows 
+					for a great deal of flexibility in representing texts. XML compatible, TEI P4 standardizes data interchange between systems. In addition to the 
+					required base tag set, The Chymistry of Isaac Newton makes use of several additional tag sets to provide support for the Newton manuscript 
+					features like poetry, linking, and figures. In addition, the project uses the manuscript description tag set from the forthcoming TEI P5 
+					recommendations to support comprehensive manuscript descriptive metadata. </p>
+				<p>The transcription, encoding, and editing of the documents is done by a team of researchers and graduate students. Content 
+					and editorial expertise is provided by Professor Newman, while XML, TEI, and general encoding expertise is provided by a librarian and other 
+					professional staff in the Digital Library Program. Two primary technologies support the editorial process. Editorial assistants use the <a href="http://www.oxygenxml.com">Oxygen XML</a> editor to 
+					create and edit TEI documents. A Wiki is used as a place to communicate about encoding issues, to develop encoding guidelines, and to 
+					maintain communications about tasks. </p>
+				<h4>Technology</h4>
+				<p>The Chymistry of Isaac Newton project poses many challenges related to representation of the text. There are at least 
+					four different representations of each manuscript--the base TEI/XML representation; the diplomatic and normalized HTML representations; and the 
+					digital page image. The diplomatic and normalized HTML representations are automatically derived, using XSLT, from the TEI/XML version of the 
+					text.</p>
+				<p>Specific features of the text, such as additions, deletions, verse, formula, drawings, graphs, charts, and special symbols, pose technical 
+					representational problems. A combination of Web technologies, including HTML, Dynamic HTML, JavaScript, Web-based image formats, and Cascading 
+					Style Sheets (CSS) are used to achieve the proper representation of the texts on the Web. </p>
+				<p><a href="http://unicode.org/" target="_blank">Unicode</a> is the default encoding for XML documents; TEI documents for The Chymistry of Isaac Newton are encoded using the most commonly supported Unicode encoding, UTF-8. In addition, Unicode has defined several private use character ranges, to enable organizations to define code points for characters that are not defined by the Unicode standard. While many symbols used by Isaac Newton to represent substances and processes correspond to astrological symbols or other characters and are included within the Unicode standard, the Chymistry of Isaac Newton Project successfully introduced a set of alchemical symbols that have now been incorporated into Unicode 6.0, released Oct. 2010 (<a href="http://www.unicode.org/charts/PDF/U1F700.pdf" target="_blank">http://www.unicode.org/charts/PDF/U1F700.pdf</a>). Currently our website still uses private use area symbols but will use the five-digit Unicode characters when that becomes practicable.</p>
+				<p> Hardware and software components form the technical infrastructure supporting delivery of The Chymistry of Isaac Newton web site. Software is 
+					hosted on IBM eServer pSeries server hardware running version 5.1 of the IBM AIX operating system. Software for the project is developed in 
+					Java, using Java Servlet technology, Java Server Pages, and the <a href="http://struts.apache.org">Apache Struts</a> Java Web application framework. TEI 
+					documents are transformed for the web using the Extensible Stylesheet Language Transformations (XSLT) version 1.0. The open source Tomcat 
+					application server and Apache HTTP Server software deliver the web site.</p>
+				<p> Current software development efforts include the integration of the Indiana University Digital Library Program developed <a href="http://metsnavigator.sourceforge.net">METS Navigator</a> to allow for page image navigation of the manuscripts. In addition, 
+					advanced searching capabilities are being implemented using the open source <a href="http://xtf.sourceforge.net">Extensible Text Framework</a> (XTF) developed by the California Digital Library. To support customized pedagogical tools, an RDBMS-backed authentication component 
+					is under development. </p>
+	</body>
+</html>
