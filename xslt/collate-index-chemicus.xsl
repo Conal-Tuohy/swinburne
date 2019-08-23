@@ -96,8 +96,16 @@
 								<xsl:variable name="matching-items" select="key('terms-by-initial', $initial, $index-page)"/>
 								<li>
 									<xsl:choose>
-										<xsl:when test="$matching-items">
-											<a class="alpha" href="#group-{lower-case(.)}" title="{count($matching-items)} terms"><xsl:value-of select="."/></a>
+										<xsl:when test="exists($matching-items)">
+											<a class="alpha" 
+												href="#group-{lower-case(.)}" 
+												title="{
+													if (count($matching-items) = 1) then 
+														'1 term'
+													else 
+														concat(count($matching-items), ' terms')
+												}"
+											><xsl:value-of select="."/></a>
 										</xsl:when>
 										<xsl:otherwise>
 											<span class="alpha" title="no matching terms"><xsl:value-of select="."/></span>
