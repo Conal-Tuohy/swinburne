@@ -131,9 +131,7 @@ aside {
 	background-color: #F7F8F2;
 	margin-right: 2rem;
 	margin-top: 1rem;
-	width: 15rem;
-	flex-grow: 0;
-	flex-shrink: 0.5;
+	min-width: 10rem;
 	border: thin solid #DFD9BD;
 	border-top-right-radius: 0.4em;
 	border-top-left-radius: 0.4em;
