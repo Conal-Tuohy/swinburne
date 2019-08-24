@@ -221,6 +221,12 @@
 		<xsl:value-of select="codepoints-to-string(10)"/>
 	</xsl:template>
 	
+	<!-- filter out <gap> in normalized view -->
+	<xsl:template match="gap">
+		<xsl:if test="$view = 'diplomatic' ">
+			<xsl:next-match/>
+		</xsl:if>
+	</xsl:template>
 	<xsl:template match="gap" mode="create-content">
 		<xsl:text>illeg.</xsl:text>
 	</xsl:template>
@@ -238,17 +244,26 @@
 		"/>
 	</xsl:template>
 	<xsl:template match="add">
-		<xsl:element name="ins">
-			<xsl:apply-templates mode="create-attributes" select="."/>
-			<xsl:apply-templates mode="create-content" select="."/>
-		</xsl:element>
+		<xsl:choose>
+			<xsl:when test="$view = 'diplomatic' ">
+				<xsl:element name="ins">
+					<xsl:apply-templates mode="create-attributes" select="."/>
+					<xsl:apply-templates mode="create-content" select="."/>
+				</xsl:element>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:apply-templates mode="create-content" select="."/>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 
 	<xsl:template match="del">
-		<xsl:element name="del">
-			<xsl:apply-templates mode="create-attributes" select="."/>
-			<xsl:apply-templates mode="create-content" select="."/>
-		</xsl:element>
+		<xsl:if test="$view = 'diplomatic' ">
+			<xsl:element name="del">
+				<xsl:apply-templates mode="create-attributes" select="."/>
+				<xsl:apply-templates mode="create-content" select="."/>
+			</xsl:element>
+		</xsl:if>
 	</xsl:template>	
 	<!-- elements rendered only in diplomatic view -->
 	<xsl:template match="choice/orig" priority="1">
