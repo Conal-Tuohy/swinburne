@@ -24,7 +24,8 @@ nav#main-nav ul.primary,
 section.content,
 footer.page-footer div.link-to-top,
 footer.page-footer div.menus,
-footer.page-footer div.links
+footer.page-footer div.links,
+div.tei
 {
 	margin-left: auto;
 	margin-right: auto;
