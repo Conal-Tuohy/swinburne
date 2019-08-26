@@ -4,7 +4,7 @@
 	"Online Tools":{
 		"Alchemical Glossary":"/page/glossary",
 		"Index Chemicus":"/page/index-chemicus",
-		"Latent Semantic Analysis":"/page/lsa",
+		"Latent Semantic Analysis":"/newton/lsa/index.php",
 		"Newton Font":"/page/font",
 		"Symbol Guide":"/page/symbols"
 	},

@@ -4,6 +4,7 @@
 	xmlns:c="http://www.w3.org/ns/xproc-step" 
 	xmlns:z="https://github.com/Conal-Tuohy/XProc-Z" 
 	xmlns:chymistry="tag:conaltuohy.com,2018:chymistry"
+	xmlns:html="http://www.w3.org/1999/xhtml"
 	version="1.0" 
 	name="main">
 
@@ -42,6 +43,8 @@
 	<p:import href="html.xpl"/>	
 	<!-- the search and browse interface -->
 	<p:import href="search.xpl"/>
+	<!-- proxying to the Latent Semantic Analysis back end service -->
+	<p:import href="lsa.xpl"/>
 	<!-- (temporary) step for building index-chemicus.html file from legacy disaggregated pages -->
 	<p:import href="temp-migrate-index-chemicus.xpl"/>
 	<!-- dispatch the request to the appropriate pipeline, depending on the request URI -->
@@ -62,13 +65,6 @@
 			<p:pipe step="main" port="source"/>
 		</p:input>
 	</p:identity>
-	<!--
-	<cx:message>
-		<p:with-option name="message" select="serialize(/)">
-			<p:pipe step="configuration" port="result"/>
-		</p:with-option>
-	</cx:message>
-	-->
 	
 	<p:choose>
 		<p:when test="$relative-uri = '' ">
@@ -80,6 +76,15 @@
 			<!-- home page -->
 			<chymistry:site-index/>
 			<chymistry:add-site-navigation current-uri="/site-index"/>
+		</p:when>
+		<!-- Latent Semantic Analysis pages -->
+		<p:when test="starts-with($relative-uri, 'newton/')">
+			<chymistry:lsa>
+				<p:with-option name="relative-uri" select="$relative-uri"/>
+			</chymistry:lsa>
+			<p:viewport match="html:html[html:head/html:title]">
+				<chymistry:add-site-navigation/>
+			</p:viewport>
 		</p:when>
 		<p:when test="starts-with($relative-uri, 'page/')">
 			<!-- html page -->
