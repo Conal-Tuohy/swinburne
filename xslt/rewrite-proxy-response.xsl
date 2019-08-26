@@ -21,8 +21,7 @@
 			<xsl:copy-of select="@*"/>
 			<xsl:apply-templates select="
 				section[tokenize(@class) = 'mainContent']/div | 
-				script |
-				div[tokenize(@class)='ui-dialog']
+				script
 			"/>
 		</xsl:copy>
 	</xsl:template>
