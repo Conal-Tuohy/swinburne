@@ -44,7 +44,7 @@
 		<p:input port="source"/>
 		<p:output port="result"/>
 		<p:option name="solr-base-uri" required="true"/>
-		<p:directory-list name="list-p5-files" path="../p5/"/>
+		<p:directory-list name="list-p5-files" path="../p5/" include-filter=".+\.xml$"/>
 		<p:add-xml-base relative="false" all="true"/>
 		<p:for-each>
 			<p:iteration-source select="//c:file"/>
