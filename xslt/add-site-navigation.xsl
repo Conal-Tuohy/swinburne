@@ -32,11 +32,6 @@
 		<xsl:copy>
 			<xsl:copy-of select="@*"/>
 			<header class="page-header">
-				<section class="iub">
-					<a href="http://www.iub.edu/" class="iub">
-						<img id="iu-logo" src="/image/iub_clear.png" alt="Indiana University Bloomington" width="171" height="44"/>
-					</a>
-				</section>
 				<section class="chymistry">
 					<a id="masthead-link" href="/" title="Chymistry of Isaac Newton Project HOME">
 						<img id="newton-masthead-image" src="/image/newtonImage.transparent.png" alt="Image of Isaac Newton" title="Image of Isaac Newton"/>

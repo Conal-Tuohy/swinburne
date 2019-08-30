@@ -235,7 +235,55 @@
 				<p:document href="../xslt/add-site-navigation.xsl"/>
 			</p:input>
 		</p:xslt>
+		<chymistry:add-institutional-branding/>
 	</p:declare-step>	
+	
+	<p:declare-step type="chymistry:add-institutional-branding" name="add-institutional-branding">
+		<p:input port="source"/>
+		<p:output port="result"/>
+		<chymistry:get-remote-html name="header" href="https://assets.iu.edu/brand/3.x/header-iub.html"/>
+		<chymistry:get-remote-html name="footer" href="https://assets.iu.edu/brand/3.x/footer.html"/>
+		<p:identity name="page">
+			<p:input port="source">
+				<p:pipe step="add-institutional-branding" port="source"/>
+			</p:input>
+		</p:identity>
+		<p:insert match="html:head" position="first-child">
+			<p:input port="insertion">
+				<p:inline xmlns="http://www.w3.org/1999/xhtml" exclude-inline-prefixes="chymistry">
+					<link href="https://assets.iu.edu/brand/3.x/brand.css" rel="stylesheet" type="text/css"/>
+				</p:inline>
+			</p:input>
+		</p:insert>
+		<p:insert match="html:body/html:header[tokenize(@class)='page-header']" position="first-child">
+			<p:input port="insertion">
+				<p:pipe step="header" port="result"/>
+			</p:input>			
+		</p:insert>
+		<p:insert match="html:body/html:footer[tokenize(@class)='page-footer']" position="last-child">
+			<p:input port="insertion">
+				<p:pipe step="footer" port="result"/>
+			</p:input>			
+		</p:insert>
+	</p:declare-step>
+	
+	<p:declare-step type="chymistry:get-remote-html">
+		<p:option name="href" required="true"/>
+		<p:output port="result"/>
+		<!-- TODO add local caching -->
+		<p:add-attribute attribute-name="href" match="/c:request">
+			<p:with-option name="attribute-value" select="$href"/>
+			<p:input port="source">
+				<p:inline>
+					<c:request method="GET"/>
+				</p:inline>
+			</p:input>
+		</p:add-attribute>
+		<p:http-request/>
+		<!-- convert to XHTML -->
+		<p:unescape-markup content-type="text/html" charset="utf-8"/>
+		<p:filter select="/c:body/html:*"/>
+	</p:declare-step>
 	
 	<p:declare-step type="chymistry:site-index">
 		<p:input port="source"/>
