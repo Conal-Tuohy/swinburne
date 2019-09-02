@@ -103,6 +103,10 @@
 			<chymistry:admin-form/>
 			<chymistry:add-site-navigation/>
 		</p:when>
+		<p:when test="$relative-uri = 'download-bibliography' ">
+			<!-- Download the TEI P5 bibliography file from Xubmit -->
+			<chymistry:download-bibliography/>
+		</p:when>
 		<p:when test="$relative-uri = 'p4/' ">
 			<!-- Download the latest P4 files from Xubmit -->
 			<chymistry:download-p4/>
@@ -140,6 +144,10 @@
 					<p:pipe step="configuration" port="result"/>
 				</p:with-option>
 			</chymistry:reindex>
+		</p:when>
+		<p:when test="$relative-uri = 'bibliography' ">
+			<chymistry:bibliography-as-html/>
+			<chymistry:add-site-navigation/>
 		</p:when>
 		<p:when test="starts-with($relative-uri, 'p5/') ">
 			<!-- Represent an individual P5 text as XML (i.e. raw) -->

@@ -23,6 +23,9 @@
 									<section class="content">
 										<div class="content">
 											<h1>Chymistry admin</h1>
+											<form method="post" action="download-bibliography">
+												<button>Download bibiography from Xubmit</button>
+											</form>
 											<form method="post" action="p4/">
 												<button>Download P4 files from Xubmit</button>
 											</form>
@@ -39,6 +42,26 @@
 										</div>
 									</section>
 								</body>
+							</html>
+						</c:body>
+					</c:response>
+				</p:inline>
+			</p:input>
+		</p:identity>
+	</p:declare-step>
+	<p:declare-step name="download-bibliography" type="chymistry:download-bibliography">
+		<p:input port="source"/>
+		<p:output port="result"/>
+		<p:load href="http://algernon.dlib.indiana.edu:8080/xubmit/rest/repository/newtonbib/CHYM000001.xml"/>
+		<p:store href="../p5/CHYM000001.xml"/>
+		<p:identity>
+			<p:input port="source">
+				<p:inline>
+					<c:response status="200">
+						<c:body content-type="text/html">
+							<html xmlns="http://www.w3.org/1999/xhtml">
+								<head><title>Bibliography downloaded</title></head>
+								<body><p>Bibliography downloaded</p></body>
 							</html>
 						</c:body>
 					</c:response>

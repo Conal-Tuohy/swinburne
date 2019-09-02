@@ -44,7 +44,8 @@
 		<p:input port="source"/>
 		<p:output port="result"/>
 		<p:option name="solr-base-uri" required="true"/>
-		<p:directory-list name="list-p5-files" path="../p5/" include-filter=".+\.xml$"/>
+		<!-- reindex all the P5 files except the bibliography file CHYM000001.xml -->
+		<p:directory-list name="list-p5-files" path="../p5/" include-filter=".+\.xml$" exclude-filter="CHYM000001\.xml"/>
 		<p:add-xml-base relative="false" all="true"/>
 		<p:for-each>
 			<p:iteration-source select="//c:file"/>
@@ -242,8 +243,21 @@
 			</p:input>
 		</p:xslt>
 	</p:declare-step>
+	
+	<p:declare-step name="bibliography-as-html" type="chymistry:bibliography-as-html">
+		<p:input port="source"/>
+		<p:output port="result"/>
+		<p:load href="../p5/CHYM000001.xml"/>
+		<p:xslt>
+			<p:input port="parameters"><p:empty/></p:input>
+			<p:input port="stylesheet">
+				<p:document href="../xslt/bibliography-to-html.xsl"/>
+			</p:input>
+		</p:xslt>
+		<z:make-http-response content-type="text/html"/>
+	</p:declare-step>
 
-	<p:declare-step name="p5-as-html" type="chymistry:p5-as-html">
+	<p:declare-step name="p5-as-html" type="chymistry:p5-as-html" xmlns:tei="http://www.tei-c.org/ns/1.0">
 		<p:input port="source"/>
 		<p:output port="result"/>
 		<p:option name="text" required="true"/>
@@ -252,6 +266,11 @@
 		<p:load name="text">
 			<p:with-option name="href" select="concat('../p5/', $text, '.xml')"/>
 		</p:load>
+		<p:insert name="bibliography" match="tei:sourceDesc" position="first-child">
+			<p:input port="insertion" select="/tei:TEI/tei:text/tei:body/tei:listBibl">
+				<p:document href="../p5/CHYM000001.xml"/>
+			</p:input>
+		</p:insert>
 		<p:xslt name="text-as-html">
 			<p:with-param name="view" select="$view"/>
 			<p:input port="stylesheet">

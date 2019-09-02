@@ -323,6 +323,29 @@
 		</xsl:element>
 	</xsl:template>
 	
+	<!-- bibliographic citations -->
+	<xsl:key name="citation-by-id" match="/TEI/teiHeader/fileDesc/sourceDesc/listBibl/biblStruct[@xml:id]" use="@xml:id"/>
+	<xsl:template match="bibl[@corresp]">
+		<xsl:element name="a">
+			<xsl:apply-templates mode="create-attributes" select="."/>
+			<xsl:apply-templates mode="create-content" select="."/>
+		</xsl:element>
+	</xsl:template>
+	<xsl:template match="bibl[@corresp]" mode="create-attributes">
+		<xsl:variable name="id" select="substring-after(@corresp, '#')"/>
+		<xsl:variable name="full-citation" select="key('citation-by-id', $id)"/>
+		<xsl:attribute name="title">
+			<xsl:apply-templates mode="citation-popup" select="$full-citation"/>
+		</xsl:attribute>
+		<xsl:attribute name="href" select="concat('/bibliography#', $id)"/>
+		<xsl:next-match/>
+	</xsl:template>
+	
+	<xsl:template match="*" mode="citation-popup">
+		<!-- for now, just extract the text nodes of the citation -->
+		<xsl:apply-templates mode="citation-popup"/>
+	</xsl:template>
+	
 	<!-- lists and tables -->
 	<xsl:template match="list" priority="1">
 		<xsl:apply-templates select="tei:head"/><!-- HTML list headings must precede <ul> element -->
