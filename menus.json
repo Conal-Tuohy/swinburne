@@ -2,6 +2,7 @@
 	"Home":"/",
 	"Browse Manuscripts":"/search/",
 	"Online Tools":{
+		"Bibliography":"/bibliography",
 		"Alchemical Glossary":"/page/glossary",
 		"Index Chemicus":"/page/index-chemicus",
 		"Latent Semantic Analysis":"/newton/lsa/index.php",
