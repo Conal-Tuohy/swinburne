@@ -58,6 +58,6 @@
 	<field
 		name="person"
 		label="People"
-		xpath="//persName"
+		xpath="for $person-name in //persName return string-join($person-name//text()[not(ancestor::orig)][not(ancestor::abbrev)])"
 		facet="true"/>
 </fields>
