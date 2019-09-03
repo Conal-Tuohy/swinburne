@@ -3,7 +3,7 @@ div.fields {
 	display: grid;
 	grid-template-columns: min-content auto;
 	grid-gap: 0.5em;
-	align-items: start;
+	align-items: center;
 }
 div.fields h1 {
 	grid-column: 1 / 3;
