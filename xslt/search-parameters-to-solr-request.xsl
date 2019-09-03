@@ -8,9 +8,9 @@
 	exclude-result-prefixes="xs nma">
 
 	<xsl:param name="solr-base-uri"/>
+	<xsl:param name="default-results-limit" required="true"/>	
 	
 	<xsl:variable name="fields-definition" select="/*/fields"/>
-
 	
 	<!-- Transform the user's HTTP request into an outgoing HTTP request to Solr using Solr's JSON request API 
 	https://lucene.apache.org/solr/guide/7_6/json-request-api.html -->
@@ -38,8 +38,18 @@
 				</xsl:if>
 			</f:map>
 			<f:string key="query">*:*</f:string>
+			<!-- request only the values of certain fields -->
+			<!--<f:string key="fl">id title introduction</f:string>-->
+			<!-- the Solr 'offset' and 'limit' query parameters control pagination -->
+			<!-- if 'page' is blank, then it counts as 1. e.g. if $default-results-limit=2 and page=1 then offset=2*(1-1)=0 -->
+			<xsl:variable name="page" select=" (c:param[@name='page']/@value, 1)[1] "/>
+			<f:number key="offset"><xsl:value-of select="$default-results-limit * ($page - 1)"/></f:number>
+			<f:number key="limit"><xsl:value-of select="$default-results-limit"/></f:number>
+			<!-- Any parameter other than 'page' is assumed to a field in Solr -->
+			<xsl:variable name="control-parameter-names" select="('page')"/>
+			<xsl:variable name="search-fields" select="c:param[not(@name = $control-parameter-names)]"/>
 			<f:array key="filter">
-				<xsl:for-each-group group-by="@name" select="c:param[normalize-space(@value)]">
+				<xsl:for-each-group group-by="@name" select="$search-fields[normalize-space(@value)]">
 					<!-- the param/@name specifies the field's name; look up the field by name and get field's definition -->
 					<xsl:variable name="field-name" select="@name"/>
 					<xsl:variable name="field-value" select="@value"/>

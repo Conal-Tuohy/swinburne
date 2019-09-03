@@ -10,6 +10,7 @@
 	exclude-result-prefixes="c f dashboard map xs">
 	
 	<xsl:import href="render-metadata.xsl"/>
+	<xsl:param name="default-results-limit" required="true"/>
 	
 	<!-- the parameters from the request URL  -->
 	<xsl:variable name="request" select="/*/c:param-set"/>
@@ -82,9 +83,74 @@
 		</html>
 	</xsl:template>
 	
+	<xsl:template name="render-pagination-links">
+		<xsl:variable name="current-page" select="
+			xs:integer(
+				(
+					$request/c:param[@name='page']/@value, 
+					1
+				)[1]
+			)
+		"/>
+		<xsl:variable name="last-page" select="
+			xs:integer(
+				1 + ($response/f:map/f:map[@key='response']/f:number[@key='numFound'] - 1) idiv $default-results-limit
+			)
+		"/>
+		<xsl:variable name="search-field-url-parameters" select="
+			string-join(
+				(
+					for $parameter 
+					in $request/c:param
+						[normalize-space(@value)]
+					return concat(
+						encode-for-uri($parameter/@name), '=', encode-for-uri($parameter/@value)
+					)											
+				),
+				'&amp;'
+			)
+		"/>
+		<xsl:if test="$last-page &gt; 1">
+			<!-- there are multiple pages of results -->
+			<nav class="pagination">
+				<span>Page: </span>
+				<xsl:if test="$current-page &gt; 1">
+					<xsl:for-each select="1 to $current-page - 1">
+						<a class="page" href="{
+							string-join(
+								(
+									concat($search-base-url, '?page=', .),
+									$search-field-url-parameters
+								),
+								'&amp;'
+							)
+						}"><xsl:value-of select="."/></a>
+						<xsl:text> </xsl:text>
+					</xsl:for-each>
+				</xsl:if>
+				<span class="page"><xsl:value-of select="$current-page"/></span>
+				<xsl:if test="$current-page &lt; $last-page">
+					<xsl:for-each select="$current-page + 1 to $last-page">
+						<xsl:text> </xsl:text>
+						<a class="page" href="{
+							string-join(
+								(
+									concat($search-base-url, '?page=', .),
+									$search-field-url-parameters
+								),
+								'&amp;'
+							)
+						}"><xsl:value-of select="."/></a>
+					</xsl:for-each>
+				</xsl:if>			
+			</nav>
+		</xsl:if>
+	</xsl:template>
+	
 	<xsl:template name="render-results">
 		<xsl:variable name="highlighting" select="$response/f:map/f:map[@key='highlighting']/f:map"/>
 		<h2><xsl:value-of select="$response/f:map/f:map[@key='response']/f:number[@key='numFound']"/> results</h2>
+		<xsl:call-template name="render-pagination-links"/>
 		<ul class="results">
 			<xsl:for-each select="$response/f:map/f:map[@key='response']/f:array[@key='docs']/f:map">
 				<xsl:variable name="id" select="f:string[@key='id']"/>
@@ -154,6 +220,7 @@
 				</li>
 			</xsl:for-each>
 		</ul>
+		<xsl:call-template name="render-pagination-links"/>
 	</xsl:template>
 	
 	<xsl:template name="render-field">

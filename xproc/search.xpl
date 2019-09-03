@@ -82,6 +82,7 @@
 		<p:input port="source"/>
 		<p:output port="result"/>
 		<p:option name="solr-base-uri" required="true"/>
+		<p:variable name="default-results-limit" select="20"/>
 		<p:choose>
 			<p:when test="/c:request/@method='GET'">
 				<p:www-form-urldecode name="field-values">
@@ -96,6 +97,7 @@
 				</p:wrap-sequence>
 				<p:xslt name="prepare-solr-request">
 					<p:with-param name="solr-base-uri" select="$solr-base-uri"/>
+					<p:with-param name="default-results-limit" select="$default-results-limit"/>
 					<p:input port="stylesheet"><p:document href="../xslt/search-parameters-to-solr-request.xsl"/></p:input>
 				</p:xslt>
 				<p:xslt name="convert-xml-to-json">
@@ -115,7 +117,7 @@
 					</p:input>
 				</p:wrap-sequence>
 				<p:xslt name="render-solr-response">
-					<p:input port="parameters"><p:empty/></p:input>
+					<p:with-param name="default-results-limit" select="$default-results-limit"/>
 					<p:input port="stylesheet"><p:document href="../xslt/solr-response-to-html.xsl"/></p:input>
 				</p:xslt>
 				<z:make-http-response content-type="text/html"/>
