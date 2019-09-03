@@ -75,6 +75,7 @@ li {
 	border-width: 1pt;
 	border-color: black;
 	padding: 1em;
+	margin-top: 1em;
 }
 .tei-teiHeader h2,
 .tei-teiHeader .tei-head {
