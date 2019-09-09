@@ -58,6 +58,15 @@ ul.type-simple {
 ul.tei-list {
 	margin: 0;
 }
+/* "disjunctive" lists are where Newton gives a columnar list of alternative words or phrases */
+ul.tei-list.type-disjunctive {
+	display: inline-block;
+	vertical-align: middle;
+	list-style-type: none;
+	font-size: small;
+	text-align: center;
+	line-height: 1em;
+}
 li {
 	margin-bottom: 0.25em;
 }
