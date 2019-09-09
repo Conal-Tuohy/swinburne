@@ -553,4 +553,16 @@ becomes
    <!-- discard outdated comments -->
    <xsl:template match="comment()[contains(., 'This document is a template for the development of manuscripts')]"/>
    
+	<!-- CT 2019-09-09 -->
+	<!-- In the Chymistry corpus, each P4 figure elements' @id attribute encodes the base name of the image file, without the extension '.gif' -->
+	<xsl:template match="figure">
+		<xsl:element name="figure">
+			<xsl:apply-templates select="@*"/>
+			<xsl:element name="graphic">
+				<xsl:attribute name="url" select="concat(@id, '.gif')"/>
+			</xsl:element>
+			<xsl:apply-templates/>
+		</xsl:element>
+	</xsl:template>
+   
 </xsl:stylesheet>

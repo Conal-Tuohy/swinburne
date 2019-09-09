@@ -153,6 +153,13 @@
 			<!-- Represent an individual P5 text as XML (i.e. raw) -->
 			<chymistry:p5-as-xml/>
 		</p:when>
+		<!-- image files corresponding to figures within a text -->
+		<!-- e.g. relative URI = 'text/ALCH000001/figure/foo.gif' -->
+		<p:when test="matches($relative-uri, '^text/.*/figure/.*')">
+			<chymistry:figure>
+				<p:with-option name="relative-uri" select="$relative-uri"/>
+			</chymistry:figure>
+		</p:when>
 		<p:when test="starts-with($relative-uri, 'text/') ">
 			<!-- Represent an individual P5 text as an HTML page -->
 			<p:variable name="uri-parser" select=" 'text/([^/]*)/([^?]*).*' "/>
@@ -232,6 +239,51 @@
 			<chymistry:add-site-navigation/>
 		</p:otherwise>
 	</p:choose>
+	
+	<p:declare-step type="chymistry:figure">
+		<p:option name="relative-uri" required="true"/>
+		<p:output port="result"/>
+		<p:template name="figure-request">
+			<p:with-param name="relative-uri" select="$relative-uri"/>
+			<p:input port="template">
+				<p:inline>
+					<c:request detailed="true" method="get" href="{
+						replace(
+							$relative-uri,
+							'^text/([^/]+)/figure/(.*)',
+							'../figure/$1/$2'
+						)
+					}"/>
+				</p:inline>
+			</p:input>
+			<p:input port="source">
+				<p:empty/>
+			</p:input>
+		</p:template>
+		<p:try>
+			<p:group>
+				<p:http-request/>
+				<p:template name="http-response">
+					<p:input port="parameters"><p:empty/></p:input>
+					<p:input port="template">
+						<p:inline>
+							<c:response status="200">
+								<c:header name="X-Powered-By" value="XProc using XML Calabash"/>
+								<c:header name="Server" value="XProc-Z"/>
+								<c:header name="Cache-Control" value="max-age=3600"/>
+								<c:body content-type="image/gif" encoding="base64">
+									{//c:body/text()}
+								</c:body>
+							</c:response>
+						</p:inline>
+					</p:input>
+				</p:template>
+			</p:group>
+			<p:catch>
+				<z:not-found/>
+			</p:catch>
+		</p:try>
+	</p:declare-step>
 
 	<p:declare-step type="chymistry:add-site-navigation">
 		<p:input port="source"/>

@@ -323,6 +323,25 @@
 		</xsl:element>
 	</xsl:template>
 	
+	<!-- figures -->
+	<xsl:template match="figure">
+		<xsl:element name="figure">
+			<xsl:apply-templates mode="create-attributes" select="."/>
+			<xsl:apply-templates mode="create-content" select="."/>
+		</xsl:element>
+	</xsl:template>
+	<xsl:template match="figDesc">
+		<xsl:element name="figcaption">
+			<xsl:apply-templates mode="create-attributes" select="."/>
+			<xsl:apply-templates mode="create-content" select="."/>
+		</xsl:element>
+	</xsl:template>
+	<xsl:template match="graphic">
+		<xsl:element name="img">
+			<xsl:attribute name="src" select="concat('figure/', @url)"/>
+		</xsl:element>
+	</xsl:template>
+	
 	<!-- bibliographic citations -->
 	<xsl:key name="citation-by-id" match="/TEI/teiHeader/fileDesc/sourceDesc/listBibl/biblStruct[@xml:id]" use="@xml:id"/>
 	<xsl:template match="bibl[@corresp]">

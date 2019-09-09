@@ -158,7 +158,8 @@
 		</p:add-attribute>
 	</p:pipeline>
 	
-	<p:pipeline type="z:not-found">
+	<p:declare-step type="z:not-found">
+		<p:output port="result"/>
 		<p:identity>
 			<p:input port="source">
 				<p:inline>
@@ -180,7 +181,7 @@
 				</p:inline>
 			</p:input>
 		</p:identity>
-	</p:pipeline>
+	</p:declare-step>
 	
 	<p:declare-step type="z:dump-parameters" name="dump-parameters">
 		<p:input port="parameters" kind="parameter" primary="true"/>
