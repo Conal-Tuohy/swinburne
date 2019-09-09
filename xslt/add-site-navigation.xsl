@@ -6,6 +6,7 @@
 	exclude-result-prefixes="fn map">
 	<!-- embed the page in global navigation -->
 	<xsl:param name="current-uri"/>
+	<xsl:variable name="keyboard" select="document('../keyboard.xhtml')"/>
 	<xsl:variable name="menus" select="json-to-xml(unparsed-text('../menus.json'))"/>
 	<xsl:template match="node()">
 		<xsl:copy>
@@ -33,10 +34,22 @@
 			<xsl:copy-of select="@*"/>
 			<header class="page-header">
 				<section class="chymistry">
-					<a id="masthead-link" href="/" title="Chymistry of Isaac Newton Project HOME">
-						<img id="newton-masthead-image" src="/image/newtonImage.transparent.png" alt="Image of Isaac Newton" title="Image of Isaac Newton"/>
-						<img id="newton-masthead-text" src="/image/masthead.png" alt="The Chymistry of Isaac Newton Project" title="The Chymistry of Isaac Newton Project"/>
-					</a>
+					<div class="masthead">
+						<a class="masthead-link" href="/" title="Chymistry of Isaac Newton Project HOME">
+							<img id="newton-masthead-image" src="/image/newtonImage.transparent.png" alt="Image of Isaac Newton" title="Image of Isaac Newton"/>
+						</a>
+						<a class="masthead-link" href="/" title="Chymistry of Isaac Newton Project HOME">
+							<img id="newton-masthead-text" src="/image/masthead.png" alt="The Chymistry of Isaac Newton Project" title="The Chymistry of Isaac Newton Project"/>
+						</a>
+						<xsl:if test="not(//form[@id='advanced-search'])">
+							<form id="quick-search" action="/search/" method="GET">
+								<xsl:copy-of select="$keyboard"/>
+								<input type="text" name="text" placeholder="Search manuscripts"/>
+								<button type="submit">Search</button>
+								<a href="/search/">Advanced search</a>
+							</form>
+						</xsl:if>
+					</div>
 				</section>
 			</header>
 			<nav id="main-nav">

@@ -15,6 +15,8 @@
 	<!-- the parameters from the request URL  -->
 	<xsl:variable name="request" select="/*/c:param-set"/>
 	
+	<xsl:variable name="keyboard" select="document('../keyboard.xhtml')"/>
+	
 	<!-- the specification of the searchable fields and facets; previously used to convert the above request parameters into a Solr search -->
 	<xsl:variable name="field-definitions" select="/*/fields/field[@label]"/>
 	<xsl:variable name="facet-definitions" select="$field-definitions[@facet='true']"/>
@@ -49,21 +51,27 @@
 					<div class="search">
 						<!-- the main search button submits all the current facet values as URL parameters; if the user
 						clicks a facet button instead, then a different set of facet values are posted -->
-						<form method="POST" action="{
-							concat(
-								$search-base-url, '?',
-								string-join(
-									(
-										for $parameter 
-										in $request/c:param
-											[@name=$facet-definitions/@name] 
-											[normalize-space(@value)]
-										return concat(
-											encode-for-uri($parameter/@name), '=', encode-for-uri($parameter/@value)
-										)
-									),
-									'&amp;'
-								)
+						<xsl:variable name="url-parameters" select="
+							string-join(
+								(
+									for $parameter 
+									in $request/c:param
+										[@name=$facet-definitions/@name] 
+										[normalize-space(@value)]
+									return concat(
+										encode-for-uri($parameter/@name), '=', encode-for-uri($parameter/@value)
+									)
+								),
+								'&amp;'
+							)
+						"/>
+						<form id="advanced-search" method="POST" action="{
+							string-join(
+								(
+									$search-base-url,
+									$url-parameters[normalize-space()]
+								), 
+								'?'
 							)
 						}">
 							<div class="fields">
@@ -282,7 +290,8 @@
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:for-each>
-		<button>search</button>	
+		<button>search</button>
+		<xsl:copy-of select="$keyboard"/>
 	</xsl:template>
 	
 	<xsl:template name="render-facets">

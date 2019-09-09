@@ -23,7 +23,7 @@ div.row div.twelvecol {
 	float: none !important;
 }
 /* These are the components which are horizontally centered in the page */
-header.page-header section a,
+header.page-header section div.masthead,
 nav#main-nav ul.primary,
 section.content,
 footer.page-footer div.link-to-top,
@@ -65,12 +65,64 @@ header.page-header section.chymistry {
 	padding-bottom: 0.1em;
 	padding-left: 0;
 	padding-right: 0;
-}
-/* The Chymistry banner has left-aligned content */
-header.page-header section.chymistry a {
 	display: flex;
-	justify-content: flex-start;
-	align-items: flex-start;
+}
+/* The Chymistry banner */
+header.page-header section.chymistry div.masthead {
+	display: flex;
+	align-items: flex-end;
+}
+a.masthead-link {
+	align-self: start;
+	justify-self: start;
+}
+form#quick-search {
+	flex: auto;
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	margin-bottom: 0.4em;
+}
+form#quick-search a {
+	margin-left: 0.4em;
+}
+details.keyboard summary {
+	margin-right: 0.4em;
+}
+details.keyboard {
+	position: relative;
+}
+details.keyboard h1 {
+	font-size: small;
+	font-weight: bold;
+	margin-top: 1em;
+	margin-bottom: 0.5em;
+}
+details.keyboard div {
+	position: absolute;
+	top: 1.5em;
+	z-index: 20;
+	background-color: #F7F8F2;
+	border: thin solid #DFD9BD;
+	padding: 0.4em;
+	height: 25em;
+	overflow-y: scroll;
+}
+details.keyboard div section ul {
+	list-style-type: none;
+	display: grid;
+	grid-template-columns: repeat(8, 1fr);
+	justify-items: center;
+}
+input {	
+	font-family: "Newton Sans";
+}
+button.key {
+	width: 2.5em;
+	height: 2em;
+	padding: 0;
+	margin: 0.1em;
+	font-family: "Newton Sans";
 }
 img#newton-masthead-image {
 	margin-top: 1em;

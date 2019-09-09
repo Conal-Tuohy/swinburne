@@ -43,3 +43,31 @@ body.addEventListener(
 	}
 );
 
+/* keyboard */
+var keys = document.querySelectorAll("button.key");
+for (var i=0; i < keys.length; i = i + 1) {
+	keys.item(i).addEventListener(
+		"click",
+		function(event) {
+			var start = currentInputField.selectionStart;
+			var end = currentInputField.selectionEnd;
+			var text = currentInputField.value;
+			var insertion = this.innerText;
+			currentInputField.value = text.substring(0, start) + insertion + text.substring(end, text.length);
+			currentInputField.setSelectionRange(start + insertion.length, start + insertion.length);
+			currentInputField.focus();
+			event.stopPropagation();
+		}
+	);
+}
+var currentInputField = document.querySelector("input[name=text]");
+var inputFields = document.querySelectorAll("input[type=text]");
+for (var i=0; i < inputFields.length; i = i + 1) {
+	inputFields.item(i).addEventListener(
+		"focus",
+		function(event) {
+			currentInputField = this;
+			console.log(currentInputField);
+		}
+	);
+}
