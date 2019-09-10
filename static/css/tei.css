@@ -22,16 +22,22 @@ figure.tei-milestone img.thumbnail {
 	width: auto;
 	max-height: 100px;
 }
+/* add "help" mouse pointer when title attribute present */
+span[title] {
+	cursor: help;
+}
 /* flag editorial interventions by wrapping in angle brackets */
 figure.tei-milestone figcaption::before,
 span.tei-gap::before,
-span.tei-title.type-supplied::before
+span.tei-title.type-supplied::before,
+span.tei-supplied::before
 {
 	content: "<";
 }
 figure.tei-milestone figcaption::after,
 span.tei-gap::after,
-span.tei-title.type-supplied::after
+span.tei-title.type-supplied::after,
+span.tei-supplied::after
 {
 	content: ">";
 }
@@ -40,6 +46,9 @@ span.tei-gap {
 }
 span.tei-gap {
 	color: rgb(1, 139, 132);
+}
+.tei-supplied {
+	color: #018B84;
 }
 del {
 	color: #A0A0A0;

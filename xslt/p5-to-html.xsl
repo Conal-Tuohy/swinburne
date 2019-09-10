@@ -221,6 +221,12 @@
 		<xsl:value-of select="codepoints-to-string(10)"/>
 	</xsl:template>
 	
+	<!-- supplied/@reason ⇒ @title -->
+	<xsl:template match="supplied" mode="create-attributes">
+		<xsl:next-match/>
+		<xsl:attribute name="title" select="@reason"/>
+	</xsl:template>
+	
 	<!-- filter out <gap> in normalized view -->
 	<xsl:template match="gap">
 		<xsl:if test="$view = 'diplomatic' ">
