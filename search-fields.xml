@@ -30,22 +30,8 @@
 	<field name="description" label="Description"
 		xpath="/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msContents/msItem/note[@type='description']"
 	/>
-	<!-- 
-	The "text" field is populated with (up to) three distinct values: 
-		▸ the critical intro (if present), 
-		▸ the text of the normalized version
-		▸ the text of the diplomatic version
-	-->
-	<!--
-	<field name="text" label="Text" xpath="
-		(
-			/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msContents/msItem/note[@type='introduction'],	(: critical intro :)
-			string-join(/TEI/text//text()[not(ancestor::orig)]),	(: normalized version :)
-			string-join(/TEI/text//text()[not(ancestor::reg)])	(: diplomatic version :)
-		)
-	"/>-->
-	<field name="institution" label="Institution" xpath="/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/institution" facet="true"/>
-	<field name="repository" label="Repository" xpath="/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/repository" facet="true"/>
+	<field name="institution" label="Institution" xpath="/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/institution" type="facet"/>
+	<field name="repository" label="Repository" xpath="/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/repository" type="facet"/>
 	<field 
 		name="symbol" 
 		label="Symbol" 
@@ -54,10 +40,24 @@
 			in /TEI/teiHeader/encodingDesc/charDecl/char[charProp[localName='type']/value='symbol']
 			return concat($character/mapping, ' ', $character/charName)
 		"
-		facet="true"/>
+		type="facet"/>
 	<field
 		name="person"
 		label="People"
 		xpath="for $person-name in //persName return string-join($person-name//text()[not(ancestor::orig)][not(ancestor::abbrev)])"
-		facet="true"/>
+		type="facet"/>
+	<field
+		name="sort"
+		xpath="
+			string-join(
+				(
+					/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/settlement,
+					/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier[country/@key='US']/region/@key,
+					/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/altIdentifier/idno[@type='collection'],
+					/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/idno
+				),
+				' '
+			)
+		"
+		type="sort"/>
 </fields>

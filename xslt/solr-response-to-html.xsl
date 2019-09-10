@@ -19,8 +19,8 @@
 	
 	<!-- the specification of the searchable fields and facets; previously used to convert the above request parameters into a Solr search -->
 	<xsl:variable name="field-definitions" select="/*/fields/field[@label]"/>
-	<xsl:variable name="facet-definitions" select="$field-definitions[@facet='true']"/>
-	<xsl:variable name="search-field-definitions" select="$field-definitions[not(@facet='true')]"/>
+	<xsl:variable name="facet-definitions" select="$field-definitions[@type='facet']"/>
+	<xsl:variable name="search-field-definitions" select="$field-definitions[not(@type=('facet', 'sort'))]"/>
 
 	<!-- the response from Solr to the above search -->
 	<xsl:variable name="response" select="/*/c:body"/>
@@ -249,7 +249,7 @@
 			<xsl:variable name="field-label" select="@label"/>
 			<xsl:variable name="field-range" select="@range"/><!-- e.g. MONTH, DAY -->
 			<xsl:variable name="field-format" select="@format"/><!-- e.g. "month", "day", "http status" -->
-			<xsl:variable name="field-is-facet" select="@facet='true'"/>
+			<xsl:variable name="field-is-facet" select="@type='facet'"/>
 			<xsl:comment>field: <xsl:value-of select="$field-name"/></xsl:comment>
 			<xsl:choose>
 				<xsl:when test="$field-is-facet">

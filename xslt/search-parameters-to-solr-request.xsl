@@ -48,6 +48,8 @@
 			<!-- Any parameter other than 'page' is assumed to a field in Solr -->
 			<xsl:variable name="control-parameter-names" select="('page')"/>
 			<xsl:variable name="search-fields" select="c:param[not(@name = $control-parameter-names)]"/>
+			<!-- impose a sort order; sort by descending score, then by the value of the "sort" field, ascending -->
+			<f:string key="sort">score desc, sort asc</f:string>
 			<f:array key="filter">
 				<xsl:for-each-group group-by="@name" select="$search-fields[normalize-space(@value)]">
 					<!-- the param/@name specifies the field's name; look up the field by name and get field's definition -->
@@ -93,7 +95,7 @@
 				</xsl:for-each-group>
 			</f:array>
 			<f:map key="facet">
-				<xsl:for-each select="$fields-definition/field[@facet='true']">
+				<xsl:for-each select="$fields-definition/field[@type='facet']">
 					<f:map key="{@name}">
 						<xsl:if test="@missing"><!-- include a count of records which are missing a value for this facet -->
 							<f:boolean key="missing">true</f:boolean>

@@ -86,9 +86,10 @@
 				<xsl:for-each select="/*/fields/field">
 					<xsl:call-template name="define-field">
 						<xsl:with-param name="name" select="@name"/>
-						<xsl:with-param name="facet" select="@facet"/>
+						<xsl:with-param name="type" select="@type"/>
 					</xsl:call-template>
 				</xsl:for-each>
+
 				<xsl:text>}</xsl:text>
 			</c:body>
 		</c:request>
@@ -117,7 +118,7 @@
 	
 	<xsl:template name="define-field">
 		<xsl:param name="name"/>
-		<xsl:param name="facet"/>
+		<xsl:param name="type"/>
 		<xsl:text>, </xsl:text>
 		<xsl:choose>
 			<xsl:when test="/*/response/lst[@name='schema']/arr[@name='fields']/lst/str[@name='name'] = $name">"replace-field"</xsl:when>
@@ -125,9 +126,9 @@
 		</xsl:choose>
 		<xsl:text>:{"name":"</xsl:text>
 		<xsl:value-of select="$name"/>
-		<!-- facets are indexed as Solr "strings" type (i.e. untokenized), others are tokenized as "text_general" type -->
+		<!-- facets and sort fields are indexed as Solr "strings" type (i.e. untokenized), others are tokenized as "text_general" type -->
 		<xsl:text>","type":"</xsl:text>
-		<xsl:value-of select="if ($name='id') then 'string' else if ($facet='true') then 'strings' else 'text_general'"/>
+		<xsl:value-of select="if ($name='id' or $type='sort') then 'string' else if ($type='facet') then 'strings' else 'text_general'"/>
 		<xsl:text>"}</xsl:text>
 	</xsl:template>
 </xsl:stylesheet>
