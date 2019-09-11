@@ -22,6 +22,10 @@ figure.tei-milestone img.thumbnail {
 	width: auto;
 	max-height: 100px;
 }
+a.tei-bibl::before {
+	content: "📖";
+	margin-right: 0.25em;
+}
 /* add "help" mouse pointer when title attribute present */
 span[title] {
 	cursor: help;
