@@ -30,6 +30,9 @@ a.tei-bibl::before {
 span[title] {
 	cursor: help;
 }
+span.tei-ref.type-annotation::before {
+	content: "📝";
+}
 /* flag editorial interventions by wrapping in angle brackets */
 figure.tei-milestone figcaption::before,
 span.tei-gap::before,

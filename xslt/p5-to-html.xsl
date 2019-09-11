@@ -451,7 +451,6 @@
 		<xsl:element name="span">
 			<xsl:apply-templates mode="create-attributes" select="."/>
 			<xsl:attribute name="title" select="normalize-space(id(substring-after(@target, '#')))"/>
-			<xsl:text>🗈</xsl:text>
 		</xsl:element>
 	</xsl:template>
 </xsl:stylesheet>
