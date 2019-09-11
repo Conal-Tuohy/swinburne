@@ -153,23 +153,9 @@
 	</xsl:if>
    </xsl:template>
    
-   <xsl:template match="note">
-      <note>
-         <!-- Value of @type must be an XML name -->
-         <xsl:if test="./@type">
-            <xsl:attribute name="type">
-               <xsl:choose>
-                  <xsl:when test="./@type='translation status'">
-                     <xsl:value-of>translation_status</xsl:value-of>
-                  </xsl:when>
-                  <xsl:otherwise>
-                     <xsl:value-of select="./@type"/>
-                  </xsl:otherwise>
-               </xsl:choose>
-            </xsl:attribute>
-            <xsl:apply-templates/>
-         </xsl:if>
-      </note>
+   <!-- Value of @type must be an XML name -->
+   <xsl:template match="note/@type">
+   	<xsl:attribute name="type" select="translate(., ' ', '_')"/>
    </xsl:template>
 
    <xsl:template match="xptr">

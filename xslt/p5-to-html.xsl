@@ -446,4 +446,12 @@
 			<xsl:apply-templates mode="create-content" select="."/>
 		</td>
 	</xsl:template>
+	<xsl:template match="ref[@type='annotation'][@target]">
+		<!-- a link to an annotation -->
+		<xsl:element name="span">
+			<xsl:apply-templates mode="create-attributes" select="."/>
+			<xsl:attribute name="title" select="normalize-space(id(substring-after(@target, '#')))"/>
+			<xsl:text>🗈</xsl:text>
+		</xsl:element>
+	</xsl:template>
 </xsl:stylesheet>
