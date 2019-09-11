@@ -54,6 +54,12 @@ span.tei-gap {
 .tei-supplied {
 	color: #018B84;
 }
+.tei-sic {
+	color: #018B84;
+}
+.tei-sic::after {
+	content: " <sic> ";
+}
 del {
 	color: #A0A0A0;
 }

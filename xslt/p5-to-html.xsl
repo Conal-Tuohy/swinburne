@@ -272,7 +272,7 @@
 		</xsl:if>
 	</xsl:template>	
 	<!-- elements rendered only in diplomatic view -->
-	<xsl:template match="choice/orig" priority="1">
+	<xsl:template match="choice/orig | choice/sic" priority="1">
 		<xsl:if test="$view = 'diplomatic' ">
 			<xsl:next-match/>
 		</xsl:if>
@@ -284,14 +284,15 @@
 			</xsl:element>
 		</xsl:if>
 	</xsl:template>
+	<xsl:template match="choice[corr]" mode="create-attributes">
+		<xsl:if test="$view = 'diplomatic' ">
+			<xsl:attribute name="title" select="concat('correct: ', corr)"/>
+		</xsl:if>
+		<xsl:next-match/>
+	</xsl:template>
 	
 	<!-- elements rendered only in normalized view -->
-	<xsl:template match="choice/reg" priority="1">
-		<xsl:if test="$view = 'normalized' ">
-			<xsl:next-match/>
-		</xsl:if>
-	</xsl:template>
-	<xsl:template match="choice/expan" priority="1">
+	<xsl:template match="choice/reg | choice/corr | choice/expan" priority="1">
 		<xsl:if test="$view = 'normalized' ">
 			<xsl:next-match/>
 		</xsl:if>
