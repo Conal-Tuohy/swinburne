@@ -297,6 +297,12 @@
 			</xsl:element>
 		</xsl:if>
 	</xsl:template>
+	<xsl:template match="choice[expan]" mode="create-attributes">
+		<xsl:if test="$view = 'diplomatic' ">
+			<xsl:attribute name="title" select="expan"/>
+		</xsl:if>
+		<xsl:next-match/>
+	</xsl:template>
 	<xsl:template match="choice[corr]" mode="create-attributes">
 		<xsl:if test="$view = 'diplomatic' ">
 			<xsl:attribute name="title" select="concat('correct: ', corr)"/>
