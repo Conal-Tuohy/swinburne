@@ -51,9 +51,8 @@ span.tei-gap {
 span.tei-gap {
 	color: rgb(1, 139, 132);
 }
-.tei-supplied {
-	color: #018B84;
-}
+.tei-supplied,
+.tei-unclear,
 .tei-sic {
 	color: #018B84;
 }

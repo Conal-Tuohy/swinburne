@@ -249,6 +249,19 @@
 			)
 		"/>
 	</xsl:template>
+	<xsl:template match="unclear[@reason]" mode="create-attributes">
+		<xsl:next-match/>
+		<xsl:attribute name="title" select="
+			string-join(
+				(
+					'illegible; reason:',
+					@reason,
+					@extent
+				),
+				' '
+			)
+		"/>
+	</xsl:template>
 	<xsl:template match="add">
 		<xsl:choose>
 			<xsl:when test="$view = 'diplomatic' ">
