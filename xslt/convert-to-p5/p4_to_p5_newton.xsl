@@ -550,5 +550,19 @@ becomes
 			<xsl:apply-templates/>
 		</xsl:element>
 	</xsl:template>
+	
+	<!-- Convert orig with @reg into a choice containing orig and reg elements, -->
+	<!-- retaining any original line breaks at the start of the regularized text -->
+	<xsl:template match="orig[@reg]">
+		<xsl:element name="choice">
+			<xsl:element name="orig">
+				<xsl:apply-templates select="*|@*|processing-instruction()|comment()|text()"/>
+			</xsl:element>
+			<xsl:element name="reg">
+				<xsl:copy-of select="lb"/>
+				<xsl:value-of select="@reg"/>
+			</xsl:element>
+		</xsl:element>
+	</xsl:template>
    
 </xsl:stylesheet>
