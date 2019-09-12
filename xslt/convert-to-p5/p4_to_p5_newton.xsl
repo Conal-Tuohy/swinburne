@@ -559,7 +559,7 @@ becomes
 				<xsl:apply-templates select="*|@*|processing-instruction()|comment()|text()"/>
 			</xsl:element>
 			<xsl:element name="reg">
-				<xsl:copy-of select="lb"/>
+				<xsl:apply-templates select="lb"/>
 				<xsl:value-of select="@reg"/>
 			</xsl:element>
 		</xsl:element>
