@@ -451,22 +451,6 @@ becomes
    -->
    
    
-
-   <!-- Converts <name @reg> to <name><reg type="name"> -->
-   <xsl:template match="name">
-      <xsl:if test="./@reg">
-         <name>
-            <reg>
-               <xsl:attribute name="type">
-                  <xsl:value-of>name</xsl:value-of>
-               </xsl:attribute>
-               <xsl:value-of select="./@reg"/>
-            </reg>
-            <xsl:apply-templates/>            
-         </name>
-      </xsl:if>
-   </xsl:template>
-
    <!-- Assigns values of "high", "low", or "medium" to <unclear @cert> -->
    <xsl:template match="unclear/@cert">
       <xsl:variable name="certVal">
