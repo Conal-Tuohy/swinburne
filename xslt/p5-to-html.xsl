@@ -1,5 +1,6 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="2.0"
 	xmlns:c="http://www.w3.org/ns/xproc-step" 
+	xmlns:chymistry="tag:conaltuohy.com,2018:chymistry"
 	xmlns:tei="http://www.tei-c.org/ns/1.0"
 	xmlns="http://www.w3.org/1999/xhtml"
 	xpath-default-namespace="http://www.tei-c.org/ns/1.0">
@@ -206,7 +207,8 @@
 			)
 		"/>
 		<xsl:for-each select="@xml:lang"><xsl:attribute name="lang" select="."/></xsl:for-each>
-		<xsl:for-each select="@xml:id"><xsl:attribute name="id" select="."/></xsl:for-each>
+		<xsl:for-each select="@target"><xsl:attribute name="href" select="."/></xsl:for-each>
+		<xsl:copy-of select="chymistry:mint-id(.)"/>
 	</xsl:template>
 	
 	<!-- populate an HTML element's content -->
@@ -224,7 +226,7 @@
 	<!-- supplied/@reason ⇒ @title -->
 	<xsl:template match="supplied" mode="create-attributes">
 		<xsl:next-match/>
-		<xsl:attribute name="title" select="@reason"/>
+		<xsl:attribute name="title" select="concat('supplied; reason: ', @reason)"/>
 	</xsl:template>
 	
 	<!-- filter out <gap> in normalized view -->
@@ -232,6 +234,12 @@
 		<xsl:if test="$view = 'diplomatic' ">
 			<xsl:next-match/>
 		</xsl:if>
+	</xsl:template>
+	<xsl:template match="div" mode="create-content">
+		<xsl:if test="@n">
+			<header><xsl:value-of select="@n"/></header>
+		</xsl:if>
+		<xsl:next-match/>
 	</xsl:template>
 	<xsl:template match="gap" mode="create-content">
 		<xsl:text>illeg.</xsl:text>
@@ -394,11 +402,11 @@
 	<!-- lists and tables -->
 	<xsl:template match="list" priority="1">
 		<xsl:apply-templates select="tei:head"/><!-- HTML list headings must precede <ul> element -->
-		<ul>
+		<xsl:element name="{if (@type='ordered') then 'ol' else 'ul'}">
 			<xsl:apply-templates mode="create-attributes" select="."/>
 			<!-- generate child <li> only for list/item, not e.g. list/milestone -->
 			<xsl:apply-templates select="tei:item"/>
-		</ul>
+		</xsl:element>
 	</xsl:template>
 	<xsl:template match="item" priority="1">
 		<li>
@@ -446,11 +454,65 @@
 			<xsl:apply-templates mode="create-content" select="."/>
 		</td>
 	</xsl:template>
+	<xsl:template match="head | argument">
+		<xsl:element name="header">
+			<xsl:apply-templates mode="create-attributes" select="."/>
+			<xsl:apply-templates mode="create-content" select="."/>
+		</xsl:element>
+	</xsl:template>
+	<xsl:template match="anchor">
+		<xsl:element name="a">
+			<xsl:apply-templates mode="create-attributes" select="."/>
+			<xsl:apply-templates mode="create-content" select="."/>
+		</xsl:element>
+	</xsl:template>
 	<xsl:template match="ref[@type='annotation'][@target]">
 		<!-- a link to an annotation -->
-		<xsl:element name="span">
+		<xsl:element name="a">
 			<xsl:apply-templates mode="create-attributes" select="."/>
 			<xsl:attribute name="title" select="normalize-space(id(substring-after(@target, '#')))"/>
 		</xsl:element>
 	</xsl:template>
+	<xsl:function name="chymistry:mint-id">
+		<xsl:param name="element"/>
+		<xsl:choose>
+			<xsl:when test="$element/@xml:id">
+				<xsl:attribute name="id" select="$element/@xml:id"/>
+			</xsl:when>
+			<xsl:when test="$element/@target">
+				<!-- element doesn't have an id, but it has a target, so we can use that as the base and ensure uniqueness by appending a counter -->
+				<xsl:attribute name="id" select="
+					concat(
+						substring-after($element/@target, '#'),
+						'-ref-', 
+						1 + count($element/preceding::*[@target=$element/@target])
+					)"/>
+			</xsl:when>
+		</xsl:choose>
+	</xsl:function>
+	<xsl:key name="reference-by-target" match="*[@target]" use="@target"/>
+	<xsl:template match="note[@type='annotation'][@xml:id]" mode="create-content">
+		<!-- content of an annotation should start with a link back to the note anchor -->
+		<xsl:variable name="annotation-id" select="@xml:id"/>
+		<header>
+			<xsl:for-each select="key('reference-by-target', concat('#', @xml:id))">
+				<a href="#{chymistry:mint-id(.)}">^</a>
+				<xsl:text> </xsl:text>
+			</xsl:for-each>
+			<xsl:for-each select="@n">
+				<span class="tei-note-n"><xsl:value-of select="."/> </span>
+			</xsl:for-each>
+		</header>
+		<xsl:next-match/>
+	</xsl:template>
+	<xsl:template match="note[@type='translation']">
+		<span>
+			<xsl:apply-templates mode="create-attributes" select="."/>
+			<xsl:attribute name="title" select="normalize-space()"/>
+		</span>
+	</xsl:template>
+	<xsl:template match="name[reg]" mode="create-attributes">
+		<xsl:attribute name="title" select="reg"/>
+	</xsl:template>
+	<xsl:template match="name/reg"/>
 </xsl:stylesheet>

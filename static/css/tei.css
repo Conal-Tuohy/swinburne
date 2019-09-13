@@ -30,21 +30,23 @@ a.tei-bibl::before {
 span[title] {
 	cursor: help;
 }
-span.tei-ref.type-annotation::before {
+a.tei-ref.type-annotation::before {
 	content: "📝";
 }
 /* flag editorial interventions by wrapping in angle brackets */
 figure.tei-milestone figcaption::before,
 span.tei-gap::before,
 span.tei-title.type-supplied::before,
-span.tei-supplied::before
+span.tei-supplied::before,
+.tei-note.type-editorial::before
 {
 	content: "<";
 }
 figure.tei-milestone figcaption::after,
 span.tei-gap::after,
 span.tei-title.type-supplied::after,
-span.tei-supplied::after
+span.tei-supplied::after,
+.tei-note.type-editorial::after
 {
 	content: ">";
 }
@@ -72,11 +74,11 @@ ins {
 	text-decoration: line-through;
 }
 ul.type-simple {
-	list-style-type: none; /* no bullet */
-	margin-left: 0;
-	padding-left: 0;
 }
 ul.tei-list {
+	list-style-type: none; /* no bullet */
+	/*margin-left: 0;*/
+	padding-left: 0;
 	margin: 0;
 }
 /* "disjunctive" lists are where Newton gives a columnar list of alternative words or phrases */
@@ -114,6 +116,15 @@ li {
 	padding-top: 1pt;
 	font-weight: bold;
 }
+.tei-note.type-editorial {
+	font-style: italic;
+}
+.tei-note.type-translation::before {
+	color: #018B84;
+	content: "<Translation>";
+	font-style: italic;
+}
+
 .inline {
 	display: inline;
 }
