@@ -37,6 +37,8 @@
 	<p:import href="convert-to-p5.xpl"/>	
 	<!-- An administrative UI for the application -->
 	<p:import href="administration.xpl"/>	
+	<!-- Pipelines for analyzing and visualizing the corpus -->
+	<p:import href="analyze-corpus.xpl"/>
 	<!-- pipelines that process TEI P5 text -->
 	<p:import href="p5-processing.xpl"/>	
 	<!-- pipelines that serve HTML text -->
@@ -75,6 +77,10 @@
 		<p:when test="$relative-uri = 'site-index' ">
 			<!-- home page -->
 			<chymistry:site-index/>
+			<chymistry:add-site-navigation current-uri="/site-index"/>
+		</p:when>
+		<p:when test="$relative-uri = 'analysis/elements' ">
+			<chymistry:list-elements/>
 			<chymistry:add-site-navigation current-uri="/site-index"/>
 		</p:when>
 		<!-- Latent Semantic Analysis pages -->

@@ -18,27 +18,37 @@
 							<html xmlns="http://www.w3.org/1999/xhtml">
 								<head>
 									<title>Chymistry admin</title>
+									<style type="text/css">
+										div.content  {display: flex; gap: 1em;}
+										div.content button {width: 100%; margin-top: 0.5em;}
+									</style>
 								</head>
 								<body>
 									<section class="content">
 										<div class="content">
-											<h1>Chymistry admin</h1>
-											<form method="post" action="download-bibliography">
-												<button>Download bibiography from Xubmit</button>
-											</form>
-											<form method="post" action="p4/">
-												<button>Download P4 files from Xubmit</button>
-											</form>
-											<form method="post" action="p5/">
-												<button>Convert downloaded P4 files to P5</button>
-											</form>
-											<form method="post" action="reindex/">
-												<button>Rebuild Solr index from P5 files</button>
-											</form>
-											<form method="post" action="update-schema/">
-												<button>Update Solr schema to reflect search-fields.xml</button>
-											</form>
-											<p><a href="../p5/">View texts</a></p>
+											<div>
+												<h1>Chymistry admin</h1>
+												<form method="post" action="download-bibliography">
+													<button>Update bibiography P5 file from Xubmit</button>
+												</form>
+												<form method="post" action="p4/">
+													<button>Update manuscript P4 files from Xubmit</button>
+												</form>
+												<form method="post" action="p5/">
+													<button>Convert downloaded P4 files to P5</button>
+												</form>
+												<form method="post" action="reindex/">
+													<button>Rebuild Solr index from P5 files</button>
+												</form>
+												<form method="post" action="update-schema/">
+													<button>Update Solr schema from <em>search-fields.xml</em></button>
+												</form>
+											</div>
+											<div>
+												<h1>Analysis and visualization</h1>
+												<p><a href="../p5/">View texts</a></p>
+												<p><a href="/analysis/elements">View element usage</a></p>
+											</div>
 										</div>
 									</section>
 								</body>
