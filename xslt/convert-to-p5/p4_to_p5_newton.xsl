@@ -3,9 +3,7 @@
    xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.tei-c.org/ns/1.0"
    xmlns:xlink="http://www.w3.org/1999/xlink" exclude-result-prefixes="xs hex xlink" version="3.0"
    xmlns:hex="http://webapp1.dlib.indiana.edu/newton/">
-   <!--
-   <xsl:import href="./p4_to_p5.xsl"/>
-   -->
+   
    <xsl:variable name="uc">ABCDEFGHIJKLMNOPQRSTUVWXYZ</xsl:variable>
    <xsl:variable name="lc">abcdefghijklmnopqrstuvwxyz</xsl:variable>
    <xsl:import href="from.xsl"/><!-- "from" P4 (to P5) -->
@@ -265,13 +263,18 @@
 <xsl:template match="join/@targOrder"/>
 
 <!-- this very specific rule applies to move a <p> which is the only child of an <add> which is the last child of a <p> into a following sibling of the ancestor <p>,
-and with the <add> converted into an <addSpan> and <anchor>
-<p>blah blah <add><p>blah blah blah</p></add></p>
-becomes
-<p>blah blah</p>
-<addSpan spanTo="#xxx">
-<p>blah blah blah</p>
-<anchor xml:id="xxx"/>
+and with the <add> converted into an <addSpan> and <anchor>, e.g.
+
+	<p>blah blah <add>
+		<p>blah blah blah</p>
+	</add></p>
+
+	⇒
+
+	<p>blah blah</p>
+	<addSpan spanTo="#xxx">
+	<p>blah blah blah</p>
+	<anchor xml:id="xxx"/>
 -->
 <xsl:template match="
 	p[
@@ -349,7 +352,7 @@ becomes
    <xsl:template match="c">
       <!-- Change <c> to <g> -->
       <g>
-         <xsl:attribute name="ref">
+         <xsl:attribute name="ref"><!-- reference to the <char> declaration -->
             <xsl:value-of select="concat('#',normalize-space(.))"/>
          </xsl:attribute>
       </g>
@@ -360,7 +363,7 @@ becomes
          <!-- Don't create a charDecl if there are no characters needing to be declared -->
          <xsl:if test="//c">
             <charDecl>
-               <!-- Don't repeat char declarations -->
+               <!-- For each group of <c> elements containing the same character, declare that character as a <char> -->
                <xsl:for-each-group select="//c" group-by="normalize-space(.)">
                   <char xml:id="{normalize-space(.)}">
                      <charName><xsl:value-of select="@n"/></charName>
@@ -437,19 +440,6 @@ becomes
    </xsl:template>
 
 
-
-   <!-- If a <foreign> tag has no mixed content, then apply @xml:lang from <foreign> to all child elements and remove <foreign> -->
-<!--
-   <xsl:template match="foreign[not(child::text())]">
-      <xsl:for-each select="./child::node()">
-         <xsl:attribute name="xml:lang">
-            <xsl:value-of select="../@lang"/>
-         </xsl:attribute>
-         <xsl:apply-templates/>
-      </xsl:for-each>
-   </xsl:template>
-   -->
-   
    
    <!-- Assigns values of "high", "low", or "medium" to <unclear @cert> -->
    <xsl:template match="unclear/@cert">
