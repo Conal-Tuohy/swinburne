@@ -308,7 +308,7 @@ and with the <add> converted into an <addSpan> and <anchor>, e.g.
 <xsl:template match="join/@targets">
 	<xsl:attribute name="target" select="
 		string-join(
-			for $target in tokenize(.) return concat('#', .),
+			for $target in tokenize(.) return concat('#', $target),
 			' '
 		)
 	"/>
@@ -374,7 +374,7 @@ and with the <add> converted into an <addSpan> and <anchor>, e.g.
                      	</charProp>
                      </xsl:for-each>
                      <!-- The <c> element contains a unicode codepoint, in hexadecimal, with the prefix 'UNx'  -->
-                     <xsl:variable name="char" select="codepoints-to-string(xs:integer(hex:dec(substring-after(.,'UNx'))))"/>
+                    <xsl:variable name="char" select="substring-after(.,'UNx') => hex:dec() => xs:integer() => codepoints-to-string()"/>
                      <xsl:variable name="private-use-regex">\p{Co}</xsl:variable>
                      <mapping type="{if (matches($char, $private-use-regex)) then 'PUA' else 'unicode'}"><xsl:value-of select="$char"/></mapping>
                   </char>
