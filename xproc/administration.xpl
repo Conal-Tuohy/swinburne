@@ -47,7 +47,11 @@
 											<div>
 												<h1>Analysis and visualization</h1>
 												<p><a href="../p5/">View texts</a></p>
-												<p><a href="/analysis/elements">View element usage</a></p>
+												<h2>Corpus-level summaries</h2>
+												<p><a href="/analysis/elements">Elements</a></p>
+												<p><a href="/analysis/list-attributes-by-element">Attributes by element</a></p>
+												<p><a href="/analysis/list-classification-attributes">Classification attributes</a></p>
+												<p><a href="/analysis/sample-xml-text">Sample XML text</a></p>
 											</div>
 										</div>
 									</section>

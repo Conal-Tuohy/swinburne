@@ -81,7 +81,18 @@
 		</p:when>
 		<p:when test="$relative-uri = 'analysis/elements' ">
 			<chymistry:list-elements/>
-			<chymistry:add-site-navigation current-uri="/site-index"/>
+			<chymistry:add-site-navigation current-uri="/analysis/elements"/>
+		</p:when>
+		<p:when test="$relative-uri = 'analysis/list-classification-attributes' ">
+			<chymistry:list-classification-attributes/>
+			<chymistry:add-site-navigation current-uri="/list-classification-attributes"/>
+		</p:when>
+		<p:when test="$relative-uri = 'analysis/list-attributes-by-element' ">
+			<chymistry:list-attributes-by-element/>
+			<chymistry:add-site-navigation current-uri="/analysis/list-attributes-by-element"/>
+		</p:when>
+		<p:when test="$relative-uri = 'analysis/sample-xml-text' ">
+			<chymistry:sample-xml-text/>
 		</p:when>
 		<!-- Latent Semantic Analysis pages -->
 		<p:when test="starts-with($relative-uri, 'newton/')">
