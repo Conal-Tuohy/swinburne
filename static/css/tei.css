@@ -134,3 +134,10 @@ summary {
 details div.expansion {
 	padding-top: 1em;
 }
+.tei-lg {
+	margin: 1em;
+	line-height: 1.5;
+}
+.tei-l {
+	display: block;
+}

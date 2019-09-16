@@ -159,7 +159,7 @@
 	</xsl:template>
 	
 	<!-- https://www.tei-c.org/release/doc/tei-p5-doc/en/html/ST.html#STBTC -->
-	<!-- TEI "phrase-level", model.global.edit, and "gLike" elements are mapped to html:span -->
+	<!-- TEI "phrase-level", model.global.edit, "gLike", and "lLike" elements are mapped to html:span -->
 	<!-- Also tei:label since it is only used in the chymistry corpus with phrase content -->
 	<xsl:template priority="-0.1" match="
 		binaryObject | formula | graphic | media | code | distinct | emph | foreign | gloss | ident | mentioned | 
@@ -176,6 +176,8 @@
 		addSpan | app | damageSpan | delSpan | gap | space | witDetail
 		|
 		g
+		|
+		l
 		|
 		label
 	">
@@ -470,7 +472,7 @@
 		<!-- a link to an annotation -->
 		<xsl:element name="a">
 			<xsl:apply-templates mode="create-attributes" select="."/>
-			<xsl:attribute name="title" select="normalize-space(id(substring-after(@target, '#')))"/>
+			<xsl:attribute name="title" select="substring-after(@target, '#') => id() => normalize-space()"/>
 		</xsl:element>
 	</xsl:template>
 	<xsl:function name="chymistry:mint-id">
