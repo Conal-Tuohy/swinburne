@@ -452,6 +452,9 @@ TBowman
 	text-decoration: line-through;
 	color: #A0A0A0;
 }
+.tei-space {
+	white-space: break-spaces;
+}
 
 /* Black text on a black background?! */
 .rend-cancelled {

@@ -1,7 +1,8 @@
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="2.0"
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="3.0"
 	xmlns:c="http://www.w3.org/ns/xproc-step" 
 	xmlns:chymistry="tag:conaltuohy.com,2018:chymistry"
 	xmlns:tei="http://www.tei-c.org/ns/1.0"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns="http://www.w3.org/1999/xhtml"
 	xpath-default-namespace="http://www.tei-c.org/ns/1.0">
 	<!-- transform a TEI document into an HTML page-->
@@ -328,9 +329,6 @@
 	</xsl:template>
 	
 	<!-- significant white space -->
-	<xsl:template match="space[@dim='horizontal']" mode="create-attributes">
-		<xsl:attribute name="style" select="concat('display: inline-block; width: ', @quantity div 2, 'em;')"/>
-	</xsl:template>
 	<xsl:template match="space[@dim='vertical']" mode="create-attributes">
 		<xsl:attribute name="style" select="concat('display: block; height: ', @quantity, 'em;')"/>
 	</xsl:template>
@@ -339,6 +337,11 @@
 	</xsl:template>
 	<xsl:template match="lb">
 		<xsl:element name="br"/>
+	</xsl:template>
+	<xsl:template match="space[@dim='horizontal'][@quantity castable as xs:integer]" mode="create-content">
+		<xsl:for-each select="1 to @quantity">
+			<xsl:text> </xsl:text>
+		</xsl:for-each>
 	</xsl:template>
 	
 	<!-- render the name of a special character using a @title -->
