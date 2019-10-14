@@ -359,6 +359,13 @@
 		</xsl:element>
 	</xsl:template>
 	
+	<!-- section breaks -->
+	<xsl:template match="milestone">
+		<xsl:element name="hr">
+			<xsl:apply-templates mode="create-attributes" select="."/>
+		</xsl:element>
+	</xsl:template>
+	
 	<!-- figures -->
 	<xsl:template match="figure">
 		<xsl:element name="figure">

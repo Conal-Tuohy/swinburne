@@ -7,6 +7,12 @@ div.tei {
 div.tei-text {
 }
 
+
+/* forme work centered by default */
+.tei-fw {
+	text-align: center;
+}
+
 div.tei-bibl {
 	display: inline;
 }
@@ -101,6 +107,9 @@ li {
 	vertical-align: super;
 	font-size: 0.85em;
 }
+.place-right {
+	text-align: right;
+}
 /* Manuscript metadata */
 .tei-teiHeader {
 	border-style: solid;
@@ -140,4 +149,1034 @@ details div.expansion {
 }
 .tei-l {
 	display: block;
+}
+
+/* styles copied from legacy site */
+/* ***** Structural elements ***** */
+
+
+.tei-p {
+	margin-top: 1em;
+	margin-bottom: 1em;
+	line-height: 1.5;
+	white-space: normal;
+	text-indent: 1.5em;
+}
+/*
+.tei-p:before {
+	content: "\A0\A0\A0\A0\A0\A0";
+}*/
+
+/* apparently unused 
+.p-flush {
+	margin-top: 1em;
+	margin-bottom: 1em;
+	line-height: 1.5;
+	white-space: normal;
+}
+.whiteSpaceWrap {
+	white-space: normal;
+}
+*/
+/* 
+   ADDED .whiteSpaceWrap element 
+   July 8, 2009 by TBowman to address wrapping
+ */
+
+/* 
+OLD >> ADDED for font-detection Javascript toggle 
+OLD >> Summer 2008 by T Bowman & W Hooper
+
+NEW >> ADDED @font-face 
+NEW >> April 2012
+	
+	@font-face {
+	    font-family: Newton;
+	    src: url('fonts/Newton-2010jan-rev.otf');
+	}
+	.NSymbolFont {
+		display: none;
+		font: 100% Newton;
+		visibility: hidden;
+	}
+	.NSymbolFontShow {
+		display: inline;
+		font: 100%;
+		font-family: "Newton", sans-serif !important;
+		visibility: visible;
+	}
+	.NSymbolImage {
+		display: inline;
+		visibility: visible;
+	}
+	.NSymbolImageHide {
+		display: none;
+		visibility: hidden;
+	}
+*/
+
+.rend-parallel-docs {
+	display: grid;
+}
+.rend-parallel-left {
+	grid-column: 1;
+}
+.rend-parallel-left-30 {
+	grid-column: 1;
+	width: 30em;
+}
+.rend-parallel-right {
+	grid-column: 2;
+}
+
+/* 
+adapted from http://matthewjamestaylor.com/blog/perfect-2-column-double-page.htm 
+can be combined with the w-XX width elements and the border elements
+much simpler, just requires one extra div parent element
+plus doesn't need the annoying 80em min-width declaration which causes horiz scroll bar
+*/
+/* column container */
+/* div.parallel-container {
+						clear:both;
+						float:left;
+						width:100%;			// width of whole page 
+						overflow:hidden;	// This chops off any overhanging divs 
+					} */
+/* common column settings */
+/*
+div.parallel-insideContainer {
+	float: left;
+	width: 100%;
+	position: relative;
+	height: auto;
+	overflow: auto;
+}
+*/
+/* div.parallel-col1,
+					div.parallel-col2,
+					div.parallel-col3 {
+						float:left;
+						position:relative;
+						padding:0 1em 0 1em;
+						overflow:hidden;
+					}  // can go to many columns... ie. parallel-col4, parallel-col5, etc. */
+/* 
+The above COLUMN FORMATTING 
+ADDED July 8, 2009 by TBowman 
+to address <lb> tags in an ADDITION element 
+*/
+/*
+div.parallel-docs {
+	display: block;
+	float: left;
+	_margin-left: 0;
+	_padding-left: 0em;
+	white-space: nowrap;
+	min-width: 80em;
+}
+
+div.parallel-left-30 {
+	width: 30em;
+	overflow: auto;
+	display: block;
+	float: left;
+	margin-top: 0;
+	_margin-left: 0;
+	_padding-left: 0em;
+	padding-right: 1em;
+	vertical-align: top;
+	white-space: nowrap;
+}
+
+div.parallel-left {
+	display: block;
+	float: left;
+	margin-top: 0;
+	_margin-left: 0;
+	_padding-left: 0em;
+	padding-right: 1em;
+	vertical-align: top;
+	white-space: nowrap;
+}
+
+div.parallel-right {
+	display: block;
+	float: left;
+	padding: 0;
+	margin: 0;
+	padding-left: 1em;
+	padding-right: 1em;
+	padding-top: 0;
+	vertical-align: top;
+	text-align: left;
+	overflow: auto;
+	white-space: nowrap;
+}
+*/
+
+/* 
+CHANGED July 8, 2008
+Changed 0.02cm to 1px for border-width below
+0.02cm was NOT working in Safari on Windows machines and Mac machines
+TBowman
+*/
+.rend-rule-left-side {
+	border-left-style: solid;
+	border-left-color: black;
+	border-left-width: 1px;
+}
+
+.rend-rule-right-side {
+	border-right-style: solid;
+	border-right-color: black;
+	border-right-width: 1px;
+}
+
+.rend-rule-both-sides {
+	border-left-style: solid;
+	border-left-color: black;
+	border-left-width: 1px;
+	border-right-style: solid;
+	border-right-color: black;
+	border-right-width: 1px;
+}
+
+/* .teidiv1 { padding: 0; }
+.teidiv2 { padding: 0; }
+.teidiv3 { padding: 0; }
+.teidiv4 { padding: 0; }
+.teidiv5 { padding: 0; }
+.teidiv6 { padding: 0; } */
+/*
+.teidiv1pad {
+	padding-left: 1em;
+}
+
+.teidiv2pad {
+	padding-left: 2em;
+}
+
+.teidiv3pad {
+	padding-left: 3em;
+}
+
+.teidiv4pad {
+	padding-left: 4em;
+}
+
+.teidiv5pad {
+	padding-left: 5em;
+}
+
+.teidiv6pad {
+	padding-left: 6em;
+}
+*/
+/*
+.footer {
+	font-size: 8pt;
+}
+*/
+/* ***** Text Styles - correspond to rend attr values ***** */
+.rend-i {
+	font-style: italic;
+}
+
+.rend-b {
+	font-weight: bold;
+}
+
+.rend-u {
+	text-decoration: underline;
+}
+
+.rend-double-u {
+	border-style: double;
+	border-color: #000000;
+	border-width: 0px 0px 3px 0px;
+	padding: 0px;
+}
+
+.rend-n {
+	font-style: normal;
+}
+
+.rend-sc {
+	font-variant: small-caps;
+}
+
+.rend-mono {
+	font-family: courier, monospace;
+}
+
+.rend-code {
+	font-family: courier, monospace;
+}
+
+.rend-center {
+	display: block;
+	width: 35em;
+	text-align: center;
+	padding: 0;
+}
+.rend-right {
+	text-align: right;
+}
+
+.rend-left {
+	text-align: left;
+}
+.rend-no-indent {
+	text-indent: 0;
+}
+.rend-super {
+	vertical-align: super;
+	display: inline;
+	line-height: 1em;
+	font-size: 85%;
+}
+
+.rend-sub {
+	vertical-align: sub;
+	font-size: 85%;
+}
+
+.rend-inline {
+	display: inline;
+}
+
+.rend-strike {
+	text-decoration: line-through;
+	color: #A0A0A0;
+}
+
+/* Black text on a black background?! */
+.rend-cancelled {
+	color: black;
+	background-color: black;
+}
+
+.rend-border {
+	border-style: solid;
+	border-color: #000000;
+	border-width: 2px 2px 2px 2px;
+	padding: 3px;
+}
+
+.rend-overline {
+	border-style: solid;
+	border-color: #000000;
+	border-width: 2px 0px 0px 0px;
+	padding: 3px;
+}
+
+.rend-overdash {
+	border-style: dashed;
+	border-color: #696969;
+	border-width: 2px 0px 0px 0px;
+	padding: 0px;
+	text-decoration: inherit;
+}
+
+.rend-underdash {
+	border-style: dashed;
+	border-color: #696969;
+	border-width: 0px 0px 2px 0px;
+	padding: 0px;
+}
+
+.rend-hr-10 {
+	width: 10%;
+}
+
+.rend-hr-20 {
+	width: 20%;
+}
+
+.rend-hr-25 {
+	width: 25%;
+}
+
+.rend-hr-30 {
+	width: 30%;
+}
+
+.rend-hr-40 {
+	width: 40%;
+}
+
+.rend-hr-50 {
+	width: 50%;
+}
+
+.rend-hr-60 {
+	width: 60%;
+}
+
+.rend-hr-65 {
+	width: 65%;
+}
+
+.rend-hr-70 {
+	width: 70%;
+}
+
+.rend-hr-80 {
+	width: 80%;
+}
+
+.rend-hr-90 {
+	width: 90%;
+}
+
+.rend-hr-100 {
+	width: 100%;
+}
+
+.rend-hr-100em {
+	width: 100em;
+}
+
+.rend-hr-95em {
+	width: 95em;
+}
+
+.rend-hr-90em {
+	width: 90em;
+}
+
+.rend-hr-85em {
+	width: 85em;
+}
+
+.rend-hr-80em {
+	width: 80em;
+}
+
+.rend-hr-75em {
+	width: 75em;
+}
+
+.rend-hr-70em {
+	width: 70em;
+}
+
+.rend-hr-65em {
+	width: 65em;
+}
+
+.rend-hr-60em {
+	width: 60em;
+}
+
+.rend-hr-55em {
+	width: 55em;
+}
+
+.rend-hr-50em {
+	width: 50em;
+}
+
+.rend-hr-45em {
+	width: 45em;
+}
+
+.rend-hr-40em {
+	width: 40em;
+}
+
+.rend-hr-35em {
+	width: 35em;
+}
+
+.rend-hr-30em {
+	width: 30em;
+}
+
+.rend-hr-25em {
+	width: 25em;
+}
+
+.rend-hr-20em {
+	width: 20em;
+}
+
+.rend-hr-15em {
+	width: 15em;
+}
+
+.rend-hr-10em {
+	width: 10em;
+}
+
+hr {
+	display: block;
+	clear: both;
+	text-align: left;
+	margin-left: 0;
+}
+
+.rend-x-small {
+	font-size: x-small;
+}
+
+.rend-xx-small {
+	font-size: xx-small;
+}
+
+.rend-large {
+	font-size: large;
+}
+
+.rend-x-large {
+	font-size: x-large;
+}
+
+.rend-xx-large {
+	font-size: xx-large;
+}
+
+.rend-small {
+	font-size: small;
+}
+
+.rend-erased {
+	color: #cccccc;
+}
+
+.rend-red {
+	color: red;
+}
+
+.rend-blue {
+	color: blue;
+}
+
+.rend-block {
+	margin: 4em;
+}
+
+/* ***** Widths ***** */
+.rend-w-10 {
+	width: 10%;
+}
+
+.rend-w-20 {
+	width: 20%;
+}
+
+.rend-w-30 {
+	width: 30%;
+}
+
+.rend-w-40 {
+	width: 40%;
+}
+
+.rend-w-50 {
+	width: 50%;
+}
+
+.rend-w-60 {
+	width: 60%;
+}
+
+.rend-w-70 {
+	width: 70%;
+}
+
+.rend-w-80 {
+	width: 80%;
+}
+
+.rend-w-90 {
+	width: 90%;
+}
+
+.rend-w-100 {
+	width: 100%;
+}
+
+.rend-w-5em {
+	width: 5em;
+}
+
+.rend-w-10em {
+	width: 10em;
+}
+
+.rend-w-15em {
+	width: 15em;
+}
+
+.rend-w-20em {
+	width: 20em;
+}
+
+.rend-w-25em {
+	width: 25em;
+}
+
+.rend-w-30em {
+	width: 30em;
+}
+
+.rend-w-35em {
+	width: 35em;
+}
+
+.rend-w-40em {
+	width: 40em;
+}
+
+.rend-w-45em {
+	width: 45em;
+}
+
+.rend-w-50em {
+	width: 50em;
+}
+
+.rend-w-55em {
+	width: 55em;
+}
+
+.rend-w-60em {
+	width: 60em;
+}
+
+.rend-w-65em {
+	width: 65em;
+}
+
+.rend-w-70em {
+	width: 70em;
+}
+
+.rend-w-75em {
+	width: 75em;
+}
+
+.rend-w-80em {
+	width: 80em;
+}
+
+.rend-w-85em {
+	width: 85em;
+}
+
+.rend-w-90em {
+	width: 90em;
+}
+
+.rend-w-95em {
+	width: 95em;
+}
+
+.rend-w-100em {
+	width: 100em;
+}
+
+.rend-w-110em {
+	width: 110em;
+}
+
+.rend-w-120em {
+	width: 120em;
+}
+
+.rend-w-130em {
+	width: 130em;
+}
+
+.rend-w-140em {
+	width: 140em;
+}
+
+.rend-w-150em {
+	width: 150em;
+}
+
+.rend-w-200em {
+	width: 200em;
+}
+
+.rend-w-35em-fw {
+	position: relative;
+	float: left;
+	left: 35em;
+	clear: all;
+	border: 0;
+	padding: 0;
+	margin: 0;
+	margin-left: -1em;
+}
+
+/* ***** Indentations ***** */
+.rend-ti--1 {
+	text-indent: -1em;
+	margin: 0;
+	padding: 0;
+}
+
+.rend-ti-0 {
+	margin: 0;
+	padding: 0;
+}
+
+.rend-ti-1 {
+	text-indent: 1em;
+	margin: 0;
+	padding: 0;
+}
+
+.rend-ti-2 {
+	text-indent: 2em;
+	margin: 0;
+	padding: 0;
+}
+
+.rend-ti-3 {
+	text-indent: 3em;
+	margin: 0;
+	padding: 0;
+}
+
+.rend-ti-4 {
+	text-indent: 4em;
+	margin: 0;
+	padding: 0;
+}
+
+.rend-ti-5 {
+	text-indent: 5em;
+	margin: 0;
+	padding: 0;
+}
+
+.rend-ti-6 {
+	text-indent: 5em;
+	margin: 0;
+	padding: 0;
+}
+
+.rend-ti-7 {
+	text-indent: 7em;
+	margin: 0;
+	padding: 0;
+}
+
+.rend-ti-8 {
+	text-indent: 8em;
+	margin: 0;
+	padding: 0;
+}
+
+.rend-ti-9 {
+	text-indent: 9em;
+	margin: 0;
+	padding: 0;
+}
+
+.rend-ti-10 {
+	text-indent: 10em;
+	margin: 0;
+	padding: 0;
+}
+
+.rend-hangPadTop {
+	margin-left: 2em;
+	text-indent: -2em;
+	padding-top: 1em;
+}
+
+.rend-hang {
+	margin-left: 2em;
+	text-indent: -2em;
+	padding: 0;
+}
+
+/* ***** Padded blocks ***** */
+.rend-padl-1 {
+	padding: 0 0 0 1em;
+}
+
+.rend-padl-2 {
+	padding: 0 0 0 2em;
+}
+
+.rend-padl-3 {
+	padding: 0 0 0 3em;
+}
+
+.rend-padl-4 {
+	padding: 0 0 0 4em;
+}
+
+.rend-padl-5 {
+	padding: 0 0 0 5em;
+}
+
+.rend-padl-6 {
+	padding: 0 0 0 6em;
+}
+
+.rend-padl-7 {
+	padding: 0 0 0 7em;
+}
+
+.rend-padl-8 {
+	padding: 0 0 0 8em;
+}
+
+.rend-padl-9 {
+	padding: 0 0 0 9em;
+}
+
+.rend-padl-10 {
+	padding: 0 0 0 10em;
+}
+
+/* ***** Headers ***** */
+
+/* Maps to newton.css h3 */
+/*
+h1 {
+	padding: 2px;
+	margin-left: 15px;
+	margin-top: 15px;
+	margin-bottom: -5px;
+	text-align: justify;
+	font-family: arial;
+	font-size: 14pt;
+	color: #000000;
+	page-break-after: avoid;
+}
+
+h1.small {
+	font-size: 10pt;
+	color: #4b6fda;
+	margin-bottom: 0;
+	page-break-after: avoid;
+}
+*/
+/* Maps to newton.css h4: Page sub-titles/section*/
+
+/* what are we messing with font-size here???    */
+/* we should NEVER make changes like this on HTML elements */
+/* This NEEDS to change at some point */
+/*
+h2 {
+	padding: 2px;
+	margin-top: 15px;
+	margin-bottom: -5px;
+	text-align: justify;
+	font-family: arial;
+	color: #000000;
+	font-weight: bold;
+	page-break-after: avoid;
+}
+
+h3 {
+	font-size: 10pt;
+	color: #000;
+	font-style: italic;
+	page-break-after: avoid;
+}
+
+h4 {
+	font-size: 9pt;
+	color: #000;
+	page-break-after: avoid;
+}
+
+h5 {
+	font-size: 9pt;
+	color: #000;
+	page-break-after: avoid;
+}
+
+h6 {
+	font-size: 9pt;
+	color: #000;
+	page-break-after: avoid;
+}
+
+div.genericHeading {
+	font-size: 9pt;
+	color: #4b6fda;
+	font-weight: bold;
+	page-break-after: avoid;
+}
+
+.head {
+	page-break-after: avoid;
+}
+*/
+
+/* ***** Lists ***** */
+ul.rend-inline {
+	display: inline;
+}
+
+ul.rend-none {
+	list-style-type: none;
+}
+/*li.none { list-style-type:none; }*/
+
+
+ul.type-inlineColumn {
+	display: inline;
+	margin-left: 0;
+	padding-left: 0;
+}
+
+/* This should be an inline *vertical* or columnular list.  Need to come up with proper CSS */
+ul.type-inlineColumn li {
+	display: inline;
+	padding-right: .5em;
+	padding-left: .5em;
+	border-right: 1px dotted grey;
+}
+
+ul.type-inlineColumn li.first {
+	padding-left: 0;
+}
+
+ul.type-inlineColumn li.last {
+	padding-right: 0;
+	border-right: none;
+}
+/*ul.simple { display: inline; list-style: none; }*/
+ul.type-simple {
+	display: inline;
+	list-style: none;
+	margin-left: 0;
+	padding-left: 1em;
+	text-indent: .15em;
+}
+
+/* This is for inline lists, especially bibl, that don't need borders, punctuation, etc. */
+ul.type-inlineclean {
+	display: inline;
+	margin-left: 0;
+	padding-left: 0;
+}
+
+/* This should be an inline *vertical* or columnular list.  Need to come up with proper CSS */
+ul.type-inlineclean li {
+	display: inline;
+	padding-right: .5em;
+	padding-left: .5em;
+}
+
+ul.type-inlineclean li.first {
+	padding-left: 0;
+}
+
+ul.type-inlineclean li.last {
+	padding-right: 0;
+	border-right: none;
+}
+/*
+dt {
+	font-weight: bold;
+	font-size: 9pt;
+	margin-bottom: .2em;
+	page-break-after: avoid;
+}
+
+dd {
+	margin-bottom: .5em;
+}
+.listStyleNone {
+	list-style-type: none;
+}
+*/
+
+li {
+	margin-bottom: .25em;
+}
+
+/*
+.glossTerm {
+	display: block;
+	width: 100%;
+	font-weight: bold;
+	color: #870429;
+	padding: 0;
+	margin: 0;
+}
+
+.gloss {
+	display: block;
+	margin-left: 1em;
+	margin-top: 0;
+}
+
+.noteRef {
+	vertical-align: super;
+	font-size: xx-small;
+}
+*/
+/* ***** Tables ***** */
+/*
+td {
+	font-family: inherit;
+	line-height: 1.5;
+}
+
+td.mono {
+	font-family: courier, monospace;
+	font-size: 10pt;
+}
+
+td ul,ol {
+	padding: 0;
+	margin-left: 1.5em;
+}
+
+table.border td {
+	border: 1px solid black;
+}
+
+th {
+	text-align: left;
+}
+
+td.label {
+	width: 15%;
+	font-weight: bold;
+	vertical-align: top;
+}
+
+tr {
+	page-break-after: avoid;
+}
+*/
+
+
+/* Table cell border styles. */
+td.rend-cellBorderRight {
+	border-right: 1px solid black;
+}    
+td.rend-cellBorderBottom {
+	border-bottom: 1px solid black;
+}
+td.rend-cellBorderLeft {
+	border-left: 1px solid black;
+}
+td.rend-cellBorderTop {
+	border-top: 1px solid black;
+}
+
+
+td.number {
+	width: 30px;
+	text-align: right;
+}
+
+td.label {
+	width: 10em;
+	vertical-align: top;
 }
