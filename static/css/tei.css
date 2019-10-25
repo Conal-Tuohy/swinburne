@@ -110,6 +110,9 @@ li {
 .place-right {
 	text-align: right;
 }
+.place-inline {
+	font-size: small;
+}
 /* Manuscript metadata */
 .tei-teiHeader {
 	border-style: solid;
