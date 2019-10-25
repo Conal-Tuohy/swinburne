@@ -296,7 +296,7 @@
 		</xsl:if>
 	</xsl:template>	
 	<!-- elements rendered only in diplomatic view -->
-	<xsl:template match="choice/orig | choice/sic" priority="1">
+	<xsl:template match="choice/orig | choice/sic | surplus" priority="1">
 		<xsl:if test="$view = 'diplomatic' ">
 			<xsl:next-match/>
 		</xsl:if>
