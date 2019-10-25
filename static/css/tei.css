@@ -63,11 +63,11 @@ span.tei-gap {
 	color: rgb(1, 139, 132);
 }
 .tei-supplied,
-.tei-unclear,
-.tei-sic {
+.tei-unclear {
 	color: #018B84;
 }
 .tei-sic::after {
+	color: #018B84;
 	content: " <sic> ";
 }
 del {
