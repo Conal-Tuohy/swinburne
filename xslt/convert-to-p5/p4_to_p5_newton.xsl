@@ -460,7 +460,16 @@ and with the <add> converted into an <addSpan> and <anchor>, e.g.
          </xsl:choose>
       </xsl:attribute>
    </xsl:template>
-  
+   
+   <!-- conventionally, a del element with @rend='none' was used to signify a deletion which had not been visibly marked as such; i.e. correctly a <surplus> -->
+   <xsl:template match="del[@rend='none']">
+   	<xsl:element name="surplus">
+   		<xsl:apply-templates select="@*"/>
+   		<xsl:apply-templates/>
+   	</xsl:element>
+   </xsl:template>
+   <xsl:template match="del/@rend[.='none']"/>
+   
    <xsl:template match="addSpan/@to">
      <xsl:attribute name="spanTo">
        <xsl:value-of select="concat('#',.)"/>
