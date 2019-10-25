@@ -274,6 +274,12 @@
 		"/>
 	</xsl:template>
 	<xsl:template match="add">
+		<!-- When creating content of an <add> element with rend='caret', prepend an actual textual caret -->
+		<!-- The caret is inserted BEFORE the html:ins element which represents the tei:add, because the html:ins 
+		may by styled as superscript, and we don't want the caret itself superscripted -->
+		<xsl:if test="tokenize(@rend) = 'caret'">
+			<xsl:text>‸</xsl:text>
+		</xsl:if>
 		<xsl:choose>
 			<xsl:when test="$view = 'diplomatic' ">
 				<xsl:element name="ins">

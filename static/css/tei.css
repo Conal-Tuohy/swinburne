@@ -214,10 +214,6 @@ NEW >> April 2012
 		visibility: hidden;
 	}
 */
-.rend-caret::before {
-	font-variant-position: normal;
-	content: "‸";
-}
 .rend-parallel-docs {
 	display: grid;
 }
