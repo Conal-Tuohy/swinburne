@@ -163,6 +163,8 @@
 	<!-- TEI "phrase-level", model.global.edit, "gLike", and "lLike" elements are mapped to html:span -->
 	<!-- Also tei:label since it is only used in the chymistry corpus with phrase content -->
 	<xsl:template priority="-0.1" match="
+		author 
+		|
 		binaryObject | formula | graphic | media | code | distinct | emph | foreign | gloss | ident | mentioned | 
 		soCalled | term | title | hi | caesura | rhyme | address | affiliation | email | date | time | depth | dim | 
 		geo | height | measure | measureGrp | num | unit | width | name | orgName | persName | geogFeat |
@@ -491,12 +493,17 @@
 			<xsl:apply-templates mode="create-content" select="."/>
 		</xsl:element>
 	</xsl:template>
-	<xsl:template match="ref[@type='annotation'][@target]">
+	<!--<xsl:template match="ref[@type='annotation'][@target]">-->
+	<xsl:template match="ref[@target]">
 		<!-- a link to an annotation -->
 		<xsl:element name="a">
 			<xsl:apply-templates mode="create-attributes" select="."/>
 			<xsl:attribute name="title" select="substring-after(@target, '#') => id() => normalize-space()"/>
+			<xsl:apply-templates mode="create-content" select="."/>
 		</xsl:element>
+	</xsl:template>
+	<xsl:template match="ref[@n]" mode="create-content">
+		<xsl:value-of select="@n"/>
 	</xsl:template>
 	<xsl:function name="chymistry:mint-id">
 		<xsl:param name="element"/>
@@ -516,7 +523,8 @@
 		</xsl:choose>
 	</xsl:function>
 	<xsl:key name="reference-by-target" match="*[@target]" use="@target"/>
-	<xsl:template match="note[@type='annotation'][@xml:id]" mode="create-content">
+	<!--<xsl:template match="note[@type='annotation'][@xml:id]" mode="create-content">-->
+	<xsl:template match="note[@xml:id]" mode="create-content">
 		<!-- content of an annotation should start with a link back to the note anchor -->
 		<xsl:variable name="annotation-id" select="@xml:id"/>
 		<header>
