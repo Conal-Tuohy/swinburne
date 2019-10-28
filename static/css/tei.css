@@ -36,6 +36,9 @@ a.tei-bibl::before {
 span[title] {
 	cursor: help;
 }
+.hand {	
+	color: #018B84;
+}
 a.tei-ref.type-annotation::before {
 	content: "📝";
 }

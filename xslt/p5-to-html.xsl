@@ -204,15 +204,22 @@
 					concat('tei-', local-name()),
 					for $rend in tokenize(@rend) return concat('rend-', $rend),
 					for $type in tokenize(@type) return concat('type-', $type),
-					for $place in tokenize(@place) return concat('place-', $place)
+					for $place in tokenize(@place) return concat('place-', $place),
+					if (@hand) then 'hand' else ()
 				),
 				' '
 			)
 		"/>
 		<xsl:for-each select="@xml:lang"><xsl:attribute name="lang" select="."/></xsl:for-each>
 		<xsl:for-each select="@target"><xsl:attribute name="href" select="."/></xsl:for-each>
+		<xsl:if test="@hand">
+			<xsl:variable name="hand" select="key('hand-note-by-reference', @hand)"/>
+			<xsl:attribute name="title" select="concat('Hand: ', $hand/@scribe)"/>
+		</xsl:if>
 		<xsl:copy-of select="chymistry:mint-id(.)"/>
 	</xsl:template>
+	
+	<xsl:key name="hand-note-by-reference" match="handNote" use="concat('#', @xml:id)"/>
 	
 	<!-- populate an HTML element's content -->
 	<xsl:template mode="create-content" match="*">

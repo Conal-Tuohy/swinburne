@@ -216,9 +216,9 @@
 <xsl:template match="handNote">
 	<xsl:variable name="new-id" select="if (lower-case(@id) = 'in') then 'newton' else lower-case(@id)"/>
 	<handNote>
+		<xsl:copy-of select="@scribe"/><!-- copy the scribe's name -->
 		<xsl:if test="$new-id">
 			<xsl:attribute name="xml:id" select="$new-id"/>
-			<xsl:attribute name="scribe" select="$new-id"/>
 		</xsl:if>
 		<xsl:if test="@scope = ('sole', 'major', 'minor', 'sole or major')"><!-- one of the expected scope values was specified -->
 			<xsl:attribute name="scope" select="
@@ -348,7 +348,14 @@ and with the <add> converted into an <addSpan> and <anchor>, e.g.
             select="*|@*[not(local-name()='type')]|processing-instruction()|comment()|text()"/>
       </choice>
    </xsl:template>
-
+   
+   <!-- Newton corpus used a convention of <seg type="hand" corresp="#hand-xxx"/> instead of <seg hand="#hand-xxx"/> -->
+   <!-- Here we rename the @corresp attribute to @hand, and drop the @type attribute -->
+   <xsl:template match="seg[@type='hand']/@corresp">
+   	<xsl:attribute name="hand" select="concat('#', .)"/>
+   </xsl:template>
+   <xsl:template match="seg/@type[.='hand']"/>
+   
    <xsl:template match="c">
       <!-- Change <c> to <g> -->
       <g>

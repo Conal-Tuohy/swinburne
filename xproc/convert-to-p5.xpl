@@ -190,6 +190,6 @@
 			<p:input port="stylesheet">
 				<p:document href="../xslt/convert-to-p5/generate-facsimile.xsl"/>
 			</p:input>
-		</p:xslt>			
+		</p:xslt>
 	</p:declare-step>
 </p:library>
