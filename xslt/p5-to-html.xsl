@@ -163,7 +163,7 @@
 	<!-- TEI "phrase-level", model.global.edit, "gLike", and "lLike" elements are mapped to html:span -->
 	<!-- Also tei:label since it is only used in the chymistry corpus with phrase content -->
 	<xsl:template priority="-0.1" match="
-		author 
+		author | fw
 		|
 		binaryObject | formula | graphic | media | code | distinct | emph | foreign | gloss | ident | mentioned | 
 		soCalled | term | title | hi | caesura | rhyme | address | affiliation | email | date | time | depth | dim | 

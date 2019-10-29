@@ -112,6 +112,7 @@ li {
 }
 .place-right {
 	text-align: right;
+	display: block;
 }
 .place-inline {
 	font-size: small;
@@ -222,6 +223,7 @@ NEW >> April 2012
 */
 .rend-parallel-docs {
 	display: grid;
+	column-gap: 2em;
 }
 .rend-parallel-left {
 	grid-column: 1;
