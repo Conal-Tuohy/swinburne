@@ -344,11 +344,17 @@
 	</xsl:template>
 	
 	<!-- significant white space -->
-	<xsl:template match="space[@dim='vertical']" mode="create-attributes">
-		<xsl:attribute name="style" select="concat('display: block; height: ', @quantity, 'em;')"/>
-	</xsl:template>
-	<xsl:template match="space" mode="create-content">
-		<xsl:text> </xsl:text>
+	<xsl:template match="space[@quantity castable as xs:integer]" mode="create-content">
+		<xsl:choose>
+			<xsl:when test="@dim='vertical'">
+				<xsl:for-each select="1 to @quantity">
+					<lb/>
+				</xsl:for-each>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:text> </xsl:text>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 	<xsl:template match="lb">
 		<xsl:element name="br"/>
