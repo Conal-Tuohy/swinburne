@@ -146,12 +146,6 @@
 		<p:xslt>
 			<p:input port="parameters"><p:empty/></p:input>
 			<p:input port="stylesheet">
-				<p:document href="../xslt/convert-to-p5/links.xsl"/>
-			</p:input>
-		</p:xslt>
-		<p:xslt>
-			<p:input port="parameters"><p:empty/></p:input>
-			<p:input port="stylesheet">
 				<p:document href="../xslt/convert-to-p5/remove-dubious-default.xsl"/>
 			</p:input>
 		</p:xslt>

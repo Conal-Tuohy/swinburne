@@ -111,15 +111,6 @@
    <!-- CT 2018-10-19 ensure resp attribute is not blank -->
    <xsl:template match="@resp[not(normalize-space())]"/>
 
-   <xsl:template match="xref">
-      <!-- Change <xref> to <ref>; change @xlink:href to @target -->
-      <ref>
-         <xsl:attribute name="target">
-            <xsl:value-of select="./@xlink:href"/>
-         </xsl:attribute>
-         <xsl:apply-templates/>
-      </ref>
-   </xsl:template>
    
    <!-- CT
    <ref> is also used with@xlink:href -->
@@ -129,8 +120,8 @@
    		<xsl:apply-templates/>
    	</xsl:element>
    </xsl:template>
-   <xsl:template match="@xlink:href">
-   	<xsl:attribute name="target" select="."/>
+   <xsl:template match="@xlink:href" priority="999">
+   	<xsl:attribute name="target" select="xlink:href-to-target(.)"/>
    </xsl:template>
    
    <!--CT space/@extent can be blank or missing, though in the Newton corpus it usually contains a quantity, and sometimes also a unit -->
@@ -165,13 +156,76 @@
                   <xsl:value-of>http://www.example.com/translation.xml</xsl:value-of>
                </xsl:when>
                <xsl:otherwise>
-                  <xsl:value-of select="./@xlink:href"/>
+                  <xsl:value-of select="xlink:href-to-target(./@xlink:href)"/>
                </xsl:otherwise>
             </xsl:choose>
          </xsl:attribute>
          <xsl:apply-templates/>
       </ptr>
    </xsl:template>
+   
+   <xsl:function name="xlink:href-to-target">
+   	<xsl:param name="href"/><!-- e.g. "/newton/mss/dipl/ALCH00081/f1v" -->
+   	<xsl:variable name="ms-link-regex">/newton/mss/(intro|dipl|norm)/([^/#]*)/?#?(.+)</xsl:variable>
+   	<xsl:variable name="reference-link-regex">/newton/reference/(chemProd|editorialPractices)\.do#?(.*)</xsl:variable>
+   	<xsl:variable name="view-name-map" select="
+   		map{
+			'intro': 'introduction',
+			'dipl': 'diplomatic',
+			'norm': 'normalized'
+		}
+	"/>
+   	<xsl:variable name="reference-map" select="
+   		map{
+			'chemProd': '/page/chymical-products',
+			'editorialPractices': '/page/editorial-practices'
+		}
+	"/>
+   	<xsl:choose>
+   		<xsl:when test="matches($href, $ms-link-regex)">
+   			<xsl:analyze-string select="$href" regex="{$ms-link-regex}">
+   				<xsl:matching-substring>
+   					<xsl:variable name="view" select="
+   						$view-name-map(regex-group(1))
+					"/>
+   					<xsl:variable name="ms-id" select="regex-group(2)"/>
+   					<xsl:variable name="fragment" select="regex-group(3)"/>
+   					<xsl:value-of select="
+   						string-join(
+   							(
+   								concat('/text/', $ms-id, '/', $view), 
+   								$fragment
+   							),
+   							'#'
+   						)
+   					"/>
+   				</xsl:matching-substring>
+   			</xsl:analyze-string>
+   		</xsl:when>
+   		<xsl:when test="matches($href, $reference-link-regex)">
+   			<xsl:analyze-string select="$href" regex="{$reference-link-regex}">
+   				<xsl:matching-substring>
+   					<xsl:variable name="page" select="
+   						$reference-map(regex-group(1))
+					"/>
+   					<xsl:variable name="fragment" select="regex-group(2)"/>
+   					<xsl:value-of select="
+   						string-join(
+   							(
+   								$page, 
+   								$fragment
+   							),
+   							'#'
+   						)
+   					"/>
+   				</xsl:matching-substring>
+   			</xsl:analyze-string>
+   		</xsl:when>
+   		<xsl:otherwise>
+   			<xsl:value-of select="$href"/>
+   		</xsl:otherwise>
+   	</xsl:choose>
+   </xsl:function>
 
    <xsl:template match="@langKey">
       <!-- Rename @langKey to @mainLang -->
