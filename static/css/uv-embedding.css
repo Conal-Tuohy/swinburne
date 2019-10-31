@@ -19,6 +19,7 @@ div.popup.active {
 	animation-duration: 0.5s;
 	animation-timing-function: ease-in;
 	animation-name: show-uv;
+	z-index: 40;
 }
 div.popup.inactive {
 	z-index: -100;
