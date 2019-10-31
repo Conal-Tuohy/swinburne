@@ -3,7 +3,10 @@
 	xmlns="http://www.w3.org/1999/xhtml"
 	xpath-default-namespace="http://www.w3.org/1999/xhtml">
 	<!-- embed universal viewer alongside a transcription-->
+	<!-- manifest URI supplied by the XProc pipeline -->
 	<xsl:param name="manifest-uri"/>
+	<!-- the TEI text may have a IIIF manifest URI embedded in it already -->
+	<xsl:variable name="embedded-manifest-uri" select="/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/altIdentifier[@type='iiif-manifest']"/>
 	<xsl:template match="node()">
 		<xsl:copy>
 			<xsl:copy-of select="@*"/>
@@ -24,7 +27,7 @@
 		<xsl:copy>
 			<xsl:copy-of select="@*"/>
 			<div id="popup" class="popup inactive">
-				<div id="uv" class="uv" data-manifest="{$manifest-uri}"/>
+				<div id="uv" class="uv" data-manifest="{($embedded-manifest-uri, $manifest-uri)[1]}"/>
 			</div>
 			<div class="transcription">
 				<xsl:apply-templates select="node()"/>

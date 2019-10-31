@@ -183,6 +183,7 @@
 			<p:variable name="id" select="replace($relative-uri, $uri-parser, '$1')"/>
 			<p:variable name="view" select="replace($relative-uri, $uri-parser, '$2')"/>
 			<p:variable name="base-uri" select="concat(substring-before(/c:request/@href, '/text/'), '/')"/>
+			<p:variable name="manifest-uri" select="concat($base-uri, 'iiif/', $id, '/manifest')"/>
 			<p:www-form-urldecode name="field-values">
 				<p:with-option name="value" select="substring-after(/c:request/@href, '?')"/>
 			</p:www-form-urldecode>
@@ -205,7 +206,7 @@
 				</p:with-option>
 			</chymistry:highlight-hits>
 			<p:xslt>
-				<p:with-param name="manifest-uri" select="concat($base-uri, 'iiif/', $id, '/manifest')"/>
+				<p:with-param name="manifest-uri" select="$manifest-uri"/>
 				<p:input port="stylesheet">
 					<p:document href="../xslt/embed-universal-viewer.xsl"/>
 				</p:input>

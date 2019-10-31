@@ -149,6 +149,23 @@
 				<p:document href="../xslt/convert-to-p5/remove-dubious-default.xsl"/>
 			</p:input>
 		</p:xslt>
+		<!-- TODO: remove this temporary hack, which is only to insert a test IIIF manifest URI into a particular P4 document -->
+		<!-- We match an msIdentifier which contains an altIdentifier which identifies the particular MS (ALCH00002) and does
+		not already have an 'iiif-manifest' altIdentifier, and we insert an 'iiif-manifest' in there -->
+		<p:insert position="last-child" match="
+			msIdentifier
+				[altIdentifier/idno[@type='iunp']='ALCH00002']
+				[not(altIdentifier/idno[@type='iiif-manifest'])]
+		">
+			<p:input port="insertion">
+				<p:inline>
+					<altIdentifier>
+						<idno type="iiif-manifest">http://webapp-devel.dlib.indiana.edu/pages_devel/concern/scanned_resources/tdf65v796w/manifest</idno>
+					</altIdentifier>
+				</p:inline>
+			</p:input>
+		</p:insert>
+		<!-- temporary hack ends -->
 		<p:xslt>
 			<p:input port="parameters"><p:empty/></p:input>
 			<p:input port="stylesheet">
