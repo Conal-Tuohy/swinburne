@@ -14,12 +14,16 @@
 	<!-- TODO shouldn't the title be a string constructed from msIdentifer? -->
 	<xsl:variable name="title" select="/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msContents/msItem/title"/>
 	
+	<!-- get the IIIF manifest -->
+	<xsl:variable name="embedded-manifest-uri" select="/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/altIdentifier/idno[@type='iiif-manifest']"/>
+	
 	<xsl:template match="/tei:TEI">
 		<html>
 			<head>
 				<title><xsl:value-of select="$title"/></title>
 				<link href="/css/tei.css" rel="stylesheet" type="text/css"/>
 				<link href="/css/highlighting.css" rel="stylesheet" type="text/css"/>
+				<link href="{$embedded-manifest-uri}" rel="alternate" type="application/ld+json" title="iiif-manifest"/>
 			</head>
 			<body>
 				<div class="tei">
@@ -376,10 +380,16 @@
 		<xsl:element name="figure">
 			<xsl:apply-templates mode="create-attributes" select="."/>
 			<xsl:element name="figcaption"><xsl:value-of select="@n"/></xsl:element>
+			<!--
+			disabled in favour of the 📄 character until such time as the TEI actually contains thumbnail URIs
+			-->
+			<!--
 			<xsl:variable name="surface" select="key('surface-by-id', substring-after(@facs, '#'))"/>
 			<a class="large-image" href="{$surface/graphic[@rend='large']/@url}">
 				<img class="thumbnail" src="{$surface/graphic[@rend='thumbnail']/@url}"/>
 			</a>
+			-->
+			<span class="thumbnail">📄</span>
 		</xsl:element>
 	</xsl:template>
 	

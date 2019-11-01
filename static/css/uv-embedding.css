@@ -31,7 +31,7 @@ div.uv {
 	width: 800px;
 	font-family: "Newton Sans";
 }
-div.transcription img.thumbnail {
+div.transcription *.thumbnail {
 	cursor: pointer;
 	border-color: rgba(0, 0, 0, 0);
 	border-style: solid;
@@ -40,7 +40,7 @@ div.transcription img.thumbnail {
 	border-left-width: 3em;
 	border-right-width: 3em;
 }
-div.transcription img.thumbnail:hover {
+div.transcription *.thumbnail:hover {
 	animation-duration: 8s;
 	animation-name: throb;
 	animation-iteration-count: infinite;

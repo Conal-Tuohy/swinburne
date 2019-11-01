@@ -28,6 +28,10 @@ figure.tei-milestone img.thumbnail {
 	width: auto;
 	max-height: 100px;
 }
+figure.tei-milestone span.thumbnail {
+	font-size: 1em;
+	cursor: zoom-in;
+}
 a.tei-bibl::before {
 	content: "📖";
 	margin-right: 0.25em;

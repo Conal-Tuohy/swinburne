@@ -13,7 +13,7 @@ window.addEventListener(
 		var uvDiv = document.getElementById('uv');
 		var popupDiv = document.getElementById('popup');
 		var manifestUri = uvDiv.getAttribute("data-manifest");
-		var thumbnails = document.querySelectorAll("div.transcription img.thumbnail");
+		var thumbnails = document.querySelectorAll("div.transcription *.thumbnail");
 		/*
 			Attach a "click" event listener to each thumbnail image, to update the UV's current canvas to match that thumbnail
 		*/

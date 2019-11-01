@@ -1,12 +1,12 @@
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="2.0"
-	xmlns:c="http://www.w3.org/ns/xproc-step" 
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="3.0"
 	xmlns="http://www.w3.org/1999/xhtml"
 	xpath-default-namespace="http://www.w3.org/1999/xhtml">
 	<!-- embed universal viewer alongside a transcription-->
 	<!-- manifest URI supplied by the XProc pipeline -->
 	<xsl:param name="manifest-uri"/>
 	<!-- the TEI text may have a IIIF manifest URI embedded in it already -->
-	<xsl:variable name="embedded-manifest-uri" select="/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/altIdentifier[@type='iiif-manifest']"/>
+	<!-- <link href="http://webapp-devel.dlib.indiana.edu/pages_devel/concern/scanned_resources/tdf65v796w/manifest" rel="alternate" type="application/ld+json" title="iiif-manifest"> -->
+	<xsl:variable name="embedded-manifest-uri" select="//html/head/link[@rel='alternate'][@type='application/ld+json'][@title='iiif-manifest']/@href"/>
 	<xsl:template match="node()">
 		<xsl:copy>
 			<xsl:copy-of select="@*"/>
