@@ -366,4 +366,68 @@
 		<z:make-http-response content-type="text/html"/>
 
 	</p:declare-step>
+	
+	<p:declare-step name="list-metadata" type="chymistry:list-metadata">
+		<!-- a step for reviewing the consistency of metadata values -->
+		<p:input port="source"/>
+		<p:output port="result"/>
+		<p:directory-list path="../p5" include-filter="^.*.xml$" exclude-filter="schemas\.xml|CHYM000001.xml"/>
+		<p:viewport name="item" match="c:file">
+			<p:variable name="name" select="/c:file/@name"/>
+			<p:load name="tei">
+				<p:with-option name="href" select="concat('../p5/', $name)"/>
+			</p:load>
+			<p:insert match="/*" position="first-child">
+				<p:input port="source">
+					<p:pipe step="item" port="current"/>
+				</p:input>
+				<p:input port="insertion">
+					<p:pipe step="tei" port="result"/>
+				</p:input>
+			</p:insert>
+		</p:viewport>
+		<p:xslt>
+			<p:input port="parameters">
+				<p:empty/>
+			</p:input>
+			<p:input port="stylesheet">
+				<p:inline>
+					<xsl:stylesheet 
+						xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="3.0" 
+						xmlns:c="http://www.w3.org/ns/xproc-step" 
+						xmlns:tei="http://www.tei-c.org/ns/1.0" 
+						xmlns="http://www.w3.org/1999/xhtml"
+						xpath-default-namespace="http://www.tei-c.org/ns/1.0"
+						expand-text="yes">
+						<xsl:variable name="max-values" select="500"/>
+						<xsl:template match="/c:directory">
+							<html>
+								<head>
+									<title>Metadata</title>
+									<style type="text/css">
+									</style>
+								</head>
+								<body>
+									<h1>Metadata</h1>
+									<table>
+										<tr>
+											<th>ID</th>
+											<th>Title</th>
+										</tr>
+										<xsl:for-each select="c:file">
+											<tr>
+												<td>{@name}</td>
+												<td>{TEI/teiHeader/fileDesc/sourceDesc/msDesc/msContents/msItem/title[@type='main']}</td>
+											</tr>
+										</xsl:for-each>
+									</table>
+								</body>
+							</html>
+						</xsl:template>
+					</xsl:stylesheet>
+				</p:inline>
+			</p:input>
+		</p:xslt>
+		<z:make-http-response content-type="text/html"/>
+	</p:declare-step>
 </p:library>

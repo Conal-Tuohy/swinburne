@@ -83,6 +83,10 @@
 			<chymistry:list-elements/>
 			<chymistry:add-site-navigation current-uri="/analysis/elements"/>
 		</p:when>
+		<p:when test="$relative-uri = 'analysis/metadata' ">
+			<chymistry:list-metadata/>
+			<chymistry:add-site-navigation current-uri="/analysis/metadata"/>
+		</p:when>
 		<p:when test="$relative-uri = 'analysis/list-classification-attributes' ">
 			<chymistry:list-classification-attributes/>
 			<chymistry:add-site-navigation current-uri="/list-classification-attributes"/>
