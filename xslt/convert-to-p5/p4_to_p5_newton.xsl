@@ -37,7 +37,14 @@
    	<!-- so we have to ensure that each alternative is uniquely identified. -->
    	<xsl:variable name="preceding-alternatives" select="preceding::milestone[@unit='folio'][normalize-space(replace(@n, $bracketed-text, ''))=$n]"/>
    	<xsl:if test="$n">
-	   	<xsl:attribute name="xml:id" select="concat('folio-', $n, '-', count($preceding-alternatives))"/>
+	   	<xsl:attribute name="xml:id" select="
+	   		concat(
+	   			'f', $n, 
+	   			if ($preceding-alternatives) then 
+	   				concat('-', count($preceding-alternatives))
+	   			else ()
+	   		)
+	   	"/>
 	</xsl:if>
    	<xsl:attribute name="facs" select="concat('#surface-', $n)"/>
    </xsl:template>
@@ -163,6 +170,10 @@
          <xsl:apply-templates/>
       </ptr>
    </xsl:template>
+   
+   <xsl:function name="xlink:map-fragment">
+   	<!-- maps an existing URI fragment to a new style fragment -->
+   </xsl:function>
    
    <xsl:function name="xlink:href-to-target">
    	<xsl:param name="href"/><!-- e.g. "/newton/mss/dipl/ALCH00081/f1v" -->
