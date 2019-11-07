@@ -194,8 +194,8 @@
 		</xsl:element>
 	</xsl:template>
 	
-	<!-- non-phrase-level TEI elements are mapped to html:div -->
-	<xsl:template match="*">
+	<!-- non-phrase-level TEI elements (plus author and title within the item description) are mapped to html:div -->
+	<xsl:template match="* | fileDesc/sourceDesc/msDesc/msContents/msItem/author | fileDesc/sourceDesc/msDesc/msContents/msItem/title">
 		<xsl:element name="div">
 			<xsl:apply-templates mode="create-attributes" select="."/>
 			<xsl:apply-templates mode="create-content" select="."/>
