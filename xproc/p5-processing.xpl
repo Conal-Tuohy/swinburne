@@ -171,6 +171,16 @@
 				<p:document href="../xslt/html-to-solr-field.xsl"/>
 			</p:input>
 		</p:xslt>
+		<!-- generate an HTML summary of the P5 text, serialized into a Solr field -->
+		<p:xslt name="metadata-summary-field">
+			<p:input port="parameters"><p:empty/></p:input>
+			<p:input port="source">
+				<p:pipe step="text" port="result"/>
+			</p:input>
+			<p:input port="stylesheet">
+				<p:document href="../xslt/metadata-summary-as-solr-field.xsl"/>
+			</p:input>
+		</p:xslt>
 		<p:insert name="insert-text-fields" match="doc" position="last-child">
 			<p:input port="source">
 				<p:pipe step="metadata-fields" port="result"/>
@@ -179,6 +189,7 @@
 				<p:pipe step="introduction-field" port="result"/>
 				<p:pipe step="diplomatic-field" port="result"/>
 				<p:pipe step="normalized-field" port="result"/>
+				<p:pipe step="metadata-summary-field" port="result"/>
 			</p:input>
 		</p:insert>
 	</p:declare-step>	

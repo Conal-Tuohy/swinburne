@@ -8,7 +8,7 @@
 	<!-- transform a TEI document into an HTML page-->
 	<xsl:import href="render-metadata.xsl"/>
 	
-	<xsl:param name="view" required="true"/><!-- 'diplomatic' or 'normalized' or 'introduction' -->
+	<xsl:param name="view"/><!-- 'diplomatic' or 'normalized' or 'introduction' -->
 	<xsl:key name="char-by-ref" match="char[@xml:id]" use="concat('#', @xml:id)"/>
 	
 	<!-- TODO shouldn't the title be a string constructed from msIdentifer? -->

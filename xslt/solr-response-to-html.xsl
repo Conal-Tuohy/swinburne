@@ -45,6 +45,7 @@
 				<title>Search</title>
 				<link rel="shortcut icon" href="http://webapp1.dlib.indiana.edu/newton/favicon.ico" type="image/x-icon" />
 				<link rel="stylesheet" href="/css/search.css" type="text/css"/>
+				<link rel="stylesheet" href="/css/tei.css" type="text/css"/>
 			</head>
 			<body>
 				<section class="content">
@@ -169,6 +170,8 @@
 						<xsl:with-param name="has-introduction" select="f:array[@key='introduction']"/>
 						<xsl:with-param name="base-uri" select="concat('/text/', $id, '/')"/>
 					</xsl:call-template>
+					<!-- The Solr record contains a summary of the metadata pre-rendered as an HTML summary widget -->
+					<xsl:sequence select="parse-xml(f:string[@key='metadata-summary'])"/>
 					<xsl:variable name="matching-views" select="$highlighting[@key=$id]/f:array"/>
 					<xsl:if test="exists($matching-views)">
 						<!-- contains the views ('introduction', 'normalized', or 'diplomatic') which match the query -->
