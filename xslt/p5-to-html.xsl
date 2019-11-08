@@ -347,7 +347,7 @@
 		</xsl:if>
 	</xsl:template>
 	
-	<!-- significant white space -->
+	<!-- quantified significant white space -->
 	<xsl:template match="space[@quantity castable as xs:integer]" mode="create-content">
 		<xsl:choose>
 			<xsl:when test="@dim='vertical'">
@@ -356,17 +356,14 @@
 				</xsl:for-each>
 			</xsl:when>
 			<xsl:otherwise>
-				<xsl:text> </xsl:text>
+				<xsl:for-each select="1 to @quantity">
+					<xsl:text> </xsl:text>
+				</xsl:for-each>
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
 	<xsl:template match="lb">
 		<xsl:element name="br"/>
-	</xsl:template>
-	<xsl:template match="space[@dim='horizontal'][@quantity castable as xs:integer]" mode="create-content">
-		<xsl:for-each select="1 to @quantity">
-			<xsl:text> </xsl:text>
-		</xsl:for-each>
 	</xsl:template>
 	
 	<!-- render the name of a special character using a @title -->
