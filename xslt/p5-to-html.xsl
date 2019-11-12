@@ -442,7 +442,7 @@
 		<!-- for now, just extract the text nodes of the citation -->
 		<div class="citation-popup">
 			<p>
-				<xsl:apply-templates mode="citation-popup" select="monogr/author"/>
+				<xsl:apply-templates mode="citation-popup" select="monogr/author[*]"/>
 				<xsl:apply-templates mode="citation-popup" select="monogr/title[@type='short']"/>
 				<xsl:apply-templates mode="citation-popup" select="monogr/imprint"/>
 			</p>
