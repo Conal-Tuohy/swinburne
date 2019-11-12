@@ -1194,3 +1194,58 @@ td.label {
 	width: 10em;
 	vertical-align: top;
 }
+
+/* bibliography styles */
+.rendition-i {
+	font-style: italic;
+}
+
+ul.tei-listBibl {
+	list-style-type: none;
+}
+
+ul.tei-listBibl li {
+	margin-top: 1em;
+	margin-bottom: 2em;
+	border-top: solid thin black;
+}
+
+ul.tei-listBibl li h2 {
+	font-size: 1rem;
+	margin-bottom: 2pt;
+}
+
+ul.tei-listBibl li p,
+ul.tei-listBibl li cite
+{
+	font-size: 1rem;
+	margin-top: 2pt;
+}
+
+
+/* bibliographic popups */
+details.tei-bibl {
+	display: inline;
+	text-indent: 0;
+}
+details.tei-bibl summary {
+	display: inline-block;
+}
+details.tei-bibl summary::before {
+	display: inline-block;
+	content: "📖";
+	margin-right: 0.25em;
+	width: 1em;
+}
+details.tei-bibl[open] summary::before{
+	content: "✖";
+}
+details.tei-bibl div.citation-popup {
+	position: absolute;
+	background-color: white;
+	padding: 1em;
+	border-style: solid;
+	border-width: thin;
+	border-color: black;
+	border-radius: 0.5em;	
+}

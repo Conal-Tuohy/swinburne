@@ -427,16 +427,55 @@
 	<xsl:template match="bibl[@corresp]" mode="create-attributes">
 		<xsl:variable name="id" select="substring-after(@corresp, '#')"/>
 		<xsl:variable name="full-citation" select="key('citation-by-id', $id)"/>
-		<xsl:attribute name="title">
+		<xsl:variable name="formatted-citation">
 			<xsl:apply-templates mode="citation-popup" select="$full-citation"/>
+		</xsl:variable>
+		<xsl:attribute name="title">
+			<xsl:apply-templates mode="citation-popup" select="serialize($formatted-citation)"/>
 		</xsl:attribute>
 		<xsl:attribute name="href" select="concat('/bibliography#', $id)"/>
 		<xsl:next-match/>
 	</xsl:template>
 	
-	<xsl:template match="*" mode="citation-popup">
+	<!-- bibliographic citation popups -->
+	<xsl:template match="biblStruct" mode="citation-popup">
 		<!-- for now, just extract the text nodes of the citation -->
-		<xsl:apply-templates mode="citation-popup"/>
+		<div class="citation-popup">
+			<p>
+				<xsl:apply-templates mode="citation-popup" select="monogr/author"/>
+				<xsl:apply-templates mode="citation-popup" select="monogr/title[@type='short']"/>
+				<xsl:apply-templates mode="citation-popup" select="monogr/imprint"/>
+			</p>
+			<p>
+				<a href="/bibliography#{@xml:id}">[View Full Citation]</a>
+				<xsl:for-each select="monogr/title/@ref">
+					<xsl:text> </xsl:text>
+					<a href="{.}">[View Full Text]</a>
+				</xsl:for-each>
+			</p>
+		</div>
+	</xsl:template>
+	
+	<xsl:template mode="citation-popup" match="imprint">
+		<xsl:value-of select="
+			concat(
+				string-join(
+					(publisher, date), 
+					', '
+				),
+				'.'
+			)
+		"/>
+	</xsl:template>
+	
+	<xsl:template mode="citation-popup" match="title[@type='short']">
+		<cite><xsl:value-of select="."/></cite>.
+	</xsl:template>
+	
+	<xsl:template match="author" mode="citation-popup">
+		<xsl:value-of select="string-join((surname, forename), ', ')"/>
+		<xsl:value-of select="name"/>
+		<xsl:text>. </xsl:text>
 	</xsl:template>
 	
 	<!-- lists and tables -->
