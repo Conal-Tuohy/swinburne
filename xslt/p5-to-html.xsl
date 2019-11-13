@@ -54,77 +54,79 @@
 	<xsl:variable name="introduction" select="/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msContents/msItem/note[@type='introduction']"/>
 	
 	<xsl:template match="teiHeader">
-		<details class="tei-teiHeader">
-			<summary>Manuscript Information</summary>
-			<div class="expansion">
-				<xsl:variable name="now" select="current-dateTime()"/>
-				<xsl:apply-templates select="fileDesc/sourceDesc/msDesc/msContents/msItem/author" />
-				<xsl:apply-templates select="fileDesc/sourceDesc/msDesc/msContents/msItem/title" />
-				<xsl:apply-templates select="fileDesc/sourceDesc/msDesc/msContents/msItem/note[@type='description']" />
-				<xsl:apply-templates select="fileDesc/sourceDesc/msDesc/physDesc/objectDesc/supportDesc" />
-				<xsl:apply-templates select="profileDesc/langUsage"/>
-				<xsl:apply-templates select="fileDesc/sourceDesc/msDesc/history" />
-				<!-- identifiers -->
-				<xsl:variable name="msIdentifier" select="fileDesc/sourceDesc/msDesc/msIdentifier"/>
-				<div>
-					<h2 class="inline">Physical Location:</h2>
-					<xsl:value-of select="string-join(
-						(
-							$msIdentifier/collection, 
+		<div class="tei-teiHeader">
+			<xsl:apply-templates select="fileDesc/sourceDesc/msDesc/msContents/msItem/author" />
+			<xsl:apply-templates select="fileDesc/sourceDesc/msDesc/msContents/msItem/title" />
+			<xsl:apply-templates select="fileDesc/sourceDesc/msDesc/msContents/msItem/note[@type='description']" />
+			<details class="tei-teiHeader">
+				<summary></summary>
+				<div class="expansion">
+					<xsl:variable name="now" select="current-dateTime()"/>
+					<xsl:apply-templates select="fileDesc/sourceDesc/msDesc/physDesc/objectDesc/supportDesc" />
+					<xsl:apply-templates select="profileDesc/langUsage"/>
+					<xsl:apply-templates select="fileDesc/sourceDesc/msDesc/history" />
+					<!-- identifiers -->
+					<xsl:variable name="msIdentifier" select="fileDesc/sourceDesc/msDesc/msIdentifier"/>
+					<div>
+						<h2 class="inline">Physical Location:</h2>
+						<xsl:value-of select="string-join(
+							(
+								$msIdentifier/collection, 
+								$msIdentifier/idno, 
+								$msIdentifier/repository, 
+								$msIdentifier/institution, 
+								string-join(
+									(
+										$msIdentifier/settlement, 
+										$msIdentifier/region, 
+										$msIdentifier/country
+									),
+									', '
+								)
+							),
+							'&#160;'
+						)"/>
+					</div>
+					<div>
+						<h2 class="inline">Electronic Publication:</h2>
+						<xsl:value-of select="concat(
+							$msIdentifier/altIdentifier/idno[@type='collection'], 
+							'&#160;', 
 							$msIdentifier/idno, 
-							$msIdentifier/repository, 
-							$msIdentifier/institution, 
-							string-join(
-								(
-									$msIdentifier/settlement, 
-									$msIdentifier/region, 
-									$msIdentifier/country
-								),
-								', '
+							'. '
+						)"/>
+						<xsl:for-each select="fileDesc/publicationStmt">
+							<xsl:value-of select="concat('Published ', date, ', ', publisher, '&#160;', pubPlace, '.')"/>
+						</xsl:for-each>
+					</div>
+					<xsl:apply-templates select="fileDesc/titleStmt/respStmt" />
+					<div>
+						<h2>Preferred Citation:</h2>
+						<xsl:for-each select="fileDesc/sourceDesc/msDesc/msContents/msItem/author">
+							<xsl:value-of select="concat(., '. ')"/>
+						</xsl:for-each>
+						<xsl:value-of select="
+							concat(
+								'&quot;',
+								fileDesc/sourceDesc/msDesc/msIdentifier/altIdentifier/idno[@type='collection'],
+								'&#160;',
+								fileDesc/sourceDesc/msDesc/msIdentifier/idno,
+								'&quot;.'
 							)
-						),
-						'&#160;'
-					)"/>
+						"/>
+						<em>The Chymistry of Isaac Newton</em>
+						<xsl:text>.  Ed. </xsl:text>
+						<xsl:value-of select="titleStmt/respStmt/name[@type='editor']"/>
+						<xsl:text>&#160;</xsl:text>
+						<xsl:value-of select="fileDesc/publicationStmt/date"/>
+						<xsl:text>. Retrieved </xsl:text>
+						<xsl:value-of select="format-dateTime($now, '[MNn] [D], [Y]', 'en', (),() )"/>
+						<xsl:text> from: http://purl.dlib.indiana.edu/iudl/newton/</xsl:text>
+						<xsl:value-of select="//altIdentifier/idno[@type='iunp']"/>
+					</div>
 				</div>
-				<div>
-					<h2 class="inline">Electronic Publication:</h2>
-					<xsl:value-of select="concat(
-						$msIdentifier/altIdentifier/idno[@type='collection'], 
-						'&#160;', 
-						$msIdentifier/idno, 
-						'. '
-					)"/>
-					<xsl:for-each select="fileDesc/publicationStmt">
-						<xsl:value-of select="concat('Published ', date, ', ', publisher, '&#160;', pubPlace, '.')"/>
-					</xsl:for-each>
-				</div>
-				<xsl:apply-templates select="fileDesc/titleStmt/respStmt" />
-				<div>
-					<h2>Preferred Citation:</h2>
-					<xsl:for-each select="fileDesc/sourceDesc/msDesc/msContents/msItem/author">
-						<xsl:value-of select="concat(., '. ')"/>
-					</xsl:for-each>
-					<xsl:value-of select="
-						concat(
-							'&quot;',
-							fileDesc/sourceDesc/msDesc/msIdentifier/altIdentifier/idno[@type='collection'],
-							'&#160;',
-							fileDesc/sourceDesc/msDesc/msIdentifier/idno,
-							'&quot;.'
-						)
-					"/>
-					<em>The Chymistry of Isaac Newton</em>
-					<xsl:text>.  Ed. </xsl:text>
-					<xsl:value-of select="titleStmt/respStmt/name[@type='editor']"/>
-					<xsl:text>&#160;</xsl:text>
-					<xsl:value-of select="fileDesc/publicationStmt/date"/>
-					<xsl:text>. Retrieved </xsl:text>
-					<xsl:value-of select="format-dateTime($now, '[MNn] [D], [Y]', 'en', (),() )"/>
-					<xsl:text> from: http://purl.dlib.indiana.edu/iudl/newton/</xsl:text>
-					<xsl:value-of select="//altIdentifier/idno[@type='iunp']"/>
-				</div>
-			</div>
-		</details>
+			</details>
+		</div>
 	</xsl:template>
 	<xsl:template match="titleStmt/respStmt" mode="create-content">
 		<xsl:if test="name/@type=('editor', 'reviewer', 'transcriber')">
