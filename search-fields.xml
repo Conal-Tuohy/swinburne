@@ -21,10 +21,16 @@
 	<field name="title"
 		label="Title"
 		xpath="
-			(
-				/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msContents/msItem/title[@type='main'],
-				/TEI/teiHeader/fileDesc/titleStmt/title
-			)[1]
+			let $id := /TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier
+			return string-join(
+				(
+					$id/settlement,
+					concat($id/collection, ' ', $id/idno),
+					$id/repository,
+					$id/institution
+				),
+				', '
+			)
 		"
 	/>
 	<field name="description" label="Description"
