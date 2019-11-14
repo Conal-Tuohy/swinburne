@@ -10,6 +10,9 @@
 	
 	The @label attribute provides the field's label in the UI. Fields with no @label will not appear in the UI at all.
 	
+	The @type attribute controls how the content of the field is indexed by Solr: a type of "facet" causes the text to be treated as a single token;
+	as does a type of "sort". Otherwise Solr treats the field as free text, and performs various kinds of tokenisation, stemming, etc, on it.
+	
 	The @xpath attribute defines the content of the field. 
 	An XPath which returns a sequence of more than one item will produce a multi-valued field.
 	The TEI namespace is the default. 
@@ -17,7 +20,13 @@
 -->
 
 <fields>
+	<!--
+	This field defines an "id" field which must identify the text uniquely and persistently. It is used by Solr as a unique identifier.
+	-->
 	<field name="id" xpath="/TEI/@xml:id"/>
+	<!-- 
+	This field defines a "title" field containing a composite value aggregated from various components of the msIdentifier.
+	-->
 	<field name="title"
 		label="Title"
 		xpath="
@@ -33,11 +42,24 @@
 			)
 		"
 	/>
+	<!--
+	This field defines a text field to contain the brief description of the text as given in the manuscript description.
+	-->
 	<field name="description" label="Description"
 		xpath="/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msContents/msItem/note[@type='description']"
 	/>
+	<!-- 
+	This field defines an "institution" facet whose value is the name of the institution given in the manuscript description.
+	-->
 	<field name="institution" label="Institution" xpath="/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/institution" type="facet"/>
+	<!-- 
+	This field defines a "repository" facet whose value is the name of the repository given in the manuscript description.
+	-->
 	<field name="repository" label="Repository" xpath="/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/repository" type="facet"/>
+	<!-- 
+	This field defines a "symbol" facet whose values come from the <char> elements in the header.
+	The value of the facet contains both the symbol itself and its textual name, e.g. "♂ IRON (MARS)".
+	-->
 	<field 
 		name="symbol" 
 		label="Symbol" 
@@ -47,11 +69,21 @@
 			return concat($character/mapping, ' ', $character/charName)
 		"
 		type="facet"/>
+	<!-- 
+	This field defines a "person" facet which uses the string content of <persName> elements, normalized to exclude any text
+	which is enclosed in <orig> or <abbrev> elements.
+	-->
 	<field
 		name="person"
 		label="People"
 		xpath="for $person-name in //persName return string-join($person-name//text()[not(ancestor::orig)][not(ancestor::abbrev)])"
 		type="facet"/>
+	<!-- 
+	This field, called "sort", is used as a sort key of last resort when displaying search results.
+	When two or more documents are equally relevant to a search (which is the case, for instance, with a blank search,
+	which returns all documents), then the documents will be sorted according to the settlement, region, collection, and idno.
+	The field is not intended to be used for searching; only for sorting.
+	-->
 	<field
 		name="sort"
 		xpath="
