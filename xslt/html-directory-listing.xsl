@@ -33,7 +33,7 @@
 						<tr>
 							<td><xsl:value-of select="@name"/></td>
 							<td><a href="{$xubmit-base-url}{@name}">Download source P4 from Xubmit</a></td>
-							<td><a href="{$name}/">View converted TEI P5</a></td>
+							<td><a href="{$name}.xml">View converted TEI P5</a></td>
 							<td><a href="../text/{$name}/normalized">View as normalized HTML</a></td>
 							<td><a href="../text/{$name}/diplomatic">View as diplomatic HTML</a></td>
 							<td><a href="../solr/{$name}/">View Solr record update message</a></td>

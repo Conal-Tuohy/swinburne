@@ -137,7 +137,7 @@
 				<p:document href="../xslt/p4-to-p5-conversion-report.xsl"/>
 			</p:input>
 		</p:xslt>
-		<z:make-http-response content-type="application/xml"/>
+		<z:make-http-response content-type="application/xhtml+xml"/>
 	</p:declare-step>
 	
 	<p:declare-step name="transform-p4-to-p5" type="chymistry:transform-p4-to-p5">

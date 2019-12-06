@@ -26,7 +26,7 @@
 			<td>
 				<xsl:choose>
 					<xsl:when test="@converted='true'">
-						<a href="{substring-before(@name, '.xml')}/">P5</a>
+						<a href="{@name}">P5</a>
 					</xsl:when>
 					<xsl:otherwise>
 						<xsl:text>conversion failed</xsl:text>
