@@ -3,7 +3,8 @@
 	xmlns:c="http://www.w3.org/ns/xproc-step" 
 	xmlns:z="https://github.com/Conal-Tuohy/XProc-Z" 
 	xmlns:chymistry="tag:conaltuohy.com,2018:chymistry"
-	xmlns:fn="http://www.w3.org/2005/xpath-functions">
+	xmlns:fn="http://www.w3.org/2005/xpath-functions"
+	xmlns:cx="http://xmlcalabash.com/ns/extensions">
 	
 	<p:import href="http://xmlcalabash.com/extension/steps/library-1.0.xpl"/>
 	
@@ -21,6 +22,7 @@
 									<style type="text/css">
 										div.content  {display: flex; gap: 1em;}
 										div.content button {width: 100%; margin-top: 0.5em;}
+										button.obsolete { color: grey }
 									</style>
 								</head>
 								<body>
@@ -31,11 +33,14 @@
 												<form method="post" action="download-bibliography">
 													<button>Update bibiography P5 file from Xubmit</button>
 												</form>
-												<form method="post" action="p4/">
-													<button>Update manuscript P4 files from Xubmit</button>
+												<form method="post" action="p4/" title="NB: P4 files have been deprecated in favor of P5 files (see below)">
+													<button class="obsolete">Update manuscript P4 files from Xubmit</button>
 												</form>
 												<form method="post" action="p5/">
-													<button>Convert downloaded P4 files to P5</button>
+													<button class="obsolete" title="WARNING: this will overwrite any P5 files downloaded directly from Xubmit">Convert downloaded P4 files to P5</button>
+												</form>
+												<form method="post" action="download-p5/">
+													<button>Update manuscript P5 files from Xubmit</button>
 												</form>
 												<form method="post" action="reindex/">
 													<button>Rebuild Solr index from P5 files</button>
@@ -83,5 +88,81 @@
 				</p:inline>
 			</p:input>
 		</p:identity>
+	</p:declare-step>
+	<p:declare-step name="download-p5" type="chymistry:download-p5">
+		<p:input port="source"/>
+		<p:output port="result"/>
+		<!-- algernon.dlib.indiana.edu:8080 -->
+		<!-- host was textproc.dlib.indiana.edu -->
+		<p:variable name="xubmit-base-uri" select=" 'http://textproc.dlib.indiana.edu/xubmit/rest/repository/newtonchym/' "/>
+		<p:xslt name="manifest">
+			<p:with-param name="base-uri" select="$xubmit-base-uri"/>
+			<p:input port="stylesheet">
+				<p:inline>
+					<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="3.0">
+						<xsl:param name="base-uri"/>
+						<xsl:variable name="xubmit-manifest" select="json-doc(concat($base-uri, 'list?limit=9999'))"/>
+						<xsl:template match="/">
+							<collection>
+								<xsl:for-each select="$xubmit-manifest?results?*">
+									<xsl:variable name="href" select="concat($base-uri, .('@rdf:about'), '.xml')"/>
+									<xsl:variable name="id" select=".('@rdf:about')"/>
+									<xsl:variable name="date" select=".('cvs:date')"/>
+									<text id="{$id}" date="{$date}" href="{$href}">
+										<c:request href="{$href}" method="GET" detailed="true" override-content-type="application/octet-stream"/>
+									</text>
+								</xsl:for-each>
+							</collection>
+						</xsl:template>
+					</xsl:stylesheet>
+				</p:inline>
+			</p:input>
+		</p:xslt>
+		<p:viewport name="text-to-download" match="/collection/text">
+			<p:variable name="id" select="/text/@id"/>
+			<p:variable name="href" select="/text/@href"/>
+			<p:variable name="date" select="/text/@date"/>
+			<p:viewport name="download" match="c:request">
+				<p:http-request/>
+			</p:viewport>
+			<p:for-each name="successful-download">
+				<p:iteration-source select="/text/c:response[@status='200']/c:body">
+					<p:pipe step="download" port="result"/>
+				</p:iteration-source>
+				<p:store method="text" cx:decode="true">
+					<p:with-option name="href" select="concat('../p5/', $id, '.xml')"/>
+				</p:store>
+			</p:for-each>
+			<p:for-each name="unsuccessful-download">
+				<p:iteration-source select="/text/c:response[@status!='200']/c:body">
+					<p:pipe step="download" port="result"/>
+				</p:iteration-source>
+				<p:store method="text" cx:decode="true">
+					<p:with-option name="href" select="concat('../p4/errors/', $id, '.json')"/>
+				</p:store>
+			</p:for-each>
+			<!-- discard the actual TEI P5 content of a successful download, retaining the body only if the download failed -->
+			<p:delete match="/text/c:response[@status='200']/c:body">
+				<p:input port="source">
+					<p:pipe step="download" port="result"/>
+				</p:input>
+			</p:delete>
+			<p:add-attribute match="/*" attribute-name="id">
+				<p:with-option name="attribute-value" select="$id"/>
+			</p:add-attribute>
+			<p:add-attribute match="/*" attribute-name="date">
+				<p:with-option name="attribute-value" select="$date"/>
+			</p:add-attribute>
+			<p:add-attribute match="/*" attribute-name="href">
+				<p:with-option name="attribute-value" select="$href"/>
+			</p:add-attribute>
+		</p:viewport>
+		<p:xslt>
+			<p:input port="parameters"><p:empty/></p:input>
+			<p:input port="stylesheet">
+				<p:document href="../xslt/xubmit-downloads-report.xsl"/>
+			</p:input>
+		</p:xslt>
+		<z:make-http-response content-type="application/xhtml+xml"/>
 	</p:declare-step>
 </p:library>

@@ -131,6 +131,7 @@
 		<p:when test="$relative-uri = 'p4/' ">
 			<!-- Download the latest P4 files from Xubmit -->
 			<chymistry:download-p4/>
+			<chymistry:add-site-navigation/>
 		</p:when>
 		<p:when test="$relative-uri = 'p5/' ">
 			<p:choose>
@@ -142,6 +143,11 @@
 					<chymistry:list-p5/>
 				</p:otherwise>
 			</p:choose>
+			<chymistry:add-site-navigation/>
+		</p:when>
+		<p:when test="$relative-uri = 'download-p5/' ">
+			<!-- Download the latest P4 files from Xubmit -->
+			<chymistry:download-p5/>
 			<chymistry:add-site-navigation/>
 		</p:when>
 		<p:when test="starts-with($relative-uri, 'solr/')">
