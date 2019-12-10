@@ -21,7 +21,7 @@
 						<xsl:variable name="xubmit-manifest" select="json-doc(concat($base-uri, 'list?limit=9999'))"/>
 						<xsl:template match="/">
 							<collection>
-								<xsl:for-each select="$xubmit-manifest?results?*">
+								<xsl:for-each select="$xubmit-manifest?results?*[.('dc:coverage')='Production']">
 									<xsl:variable name="href" select="concat($base-uri, .('@rdf:about'), '.xml')"/>
 									<xsl:variable name="id" select=".('@rdf:about')"/>
 									<xsl:variable name="date" select=".('cvs:date')"/>
