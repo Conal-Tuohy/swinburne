@@ -276,6 +276,19 @@
          <xsl:apply-templates select="*|processing-instruction()|comment()|text()"/>
       </handDesc>
    </xsl:template>
+	
+	<xsl:template match="msIdentifier">
+		<!-- need to insert the IIIF manifest URI as an alternative identifier -->
+		<msIdentifier>
+			<xsl:apply-templates select="@*"/>
+			<xsl:apply-templates/>
+			<altIdentifier>
+				<idno type="iiif-manifest">https://purl.dlib.indiana.edu/iudl/newton/iiif/<xsl:value-of select="/TEI.2/@id"/></idno>
+			</altIdentifier>   		
+		</msIdentifier>
+	</xsl:template>
+	
+	<xsl:template match="altIdentifier[idno/@type='iiif-manifest']"/>
 
 <xsl:template match="handNote">
 	<xsl:variable name="new-id" select="if (lower-case(@id) = 'in') then 'newton' else lower-case(@id)"/>
