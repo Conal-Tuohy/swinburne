@@ -277,11 +277,12 @@
       </handDesc>
    </xsl:template>
 
-
 <xsl:template match="handNote">
 	<xsl:variable name="new-id" select="if (lower-case(@id) = 'in') then 'newton' else lower-case(@id)"/>
 	<handNote>
-		<xsl:copy-of select="@scribe"/><!-- copy the scribe's name -->
+		<xsl:for-each select="@scribe"><!-- copy the scribe's name, normalized as a valid XML Name (P5 is stricter than P4) -->
+			<xsl:attribute name="scribe" select="replace(., '\W+', '_')"/>
+		</xsl:for-each>
 		<xsl:if test="$new-id">
 			<xsl:attribute name="xml:id" select="$new-id"/>
 		</xsl:if>
