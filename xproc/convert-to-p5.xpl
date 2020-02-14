@@ -11,17 +11,20 @@
 	<p:declare-step name="download-p4" type="chymistry:download-p4">
 		<p:input port="source"/>
 		<p:output port="result"/>
+		<p:option name="dc-coverage-regex"/>
 		<p:variable name="xubmit-base-uri" select=" 'http://algernon.dlib.indiana.edu:8080/xubmit/rest/repository/newton/' "/>
 		<p:xslt name="manifest">
 			<p:with-param name="base-uri" select="$xubmit-base-uri"/>
+			<p:with-param name="dc-coverage-regex" select="$dc-coverage-regex"/>
 			<p:input port="stylesheet">
 				<p:inline>
 					<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="3.0">
 						<xsl:param name="base-uri"/>
+						<xsl:param name="dc-coverage-regex"/>
 						<xsl:variable name="xubmit-manifest" select="json-doc(concat($base-uri, 'list?limit=9999'))"/>
 						<xsl:template match="/">
 							<collection>
-								<xsl:for-each select="$xubmit-manifest?results?*[.('dc:coverage')='Production']">
+								<xsl:for-each select="$xubmit-manifest?results?*[matches(.('dc:coverage'), $dc-coverage-regex)]">
 									<xsl:variable name="href" select="concat($base-uri, .('@rdf:about'), '.xml')"/>
 									<xsl:variable name="id" select=".('@rdf:about')"/>
 									<xsl:variable name="date" select=".('cvs:date')"/>

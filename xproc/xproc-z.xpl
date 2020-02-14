@@ -130,7 +130,11 @@
 		</p:when>
 		<p:when test="$relative-uri = 'p4/' ">
 			<!-- Download the latest P4 files from Xubmit -->
-			<chymistry:download-p4/>
+			<chymistry:download-p4>
+				<p:with-option name="dc-coverage-regex" select="/c:param-set/c:param[@name='dc-coverage-regex']/@value">
+					<p:pipe step="configuration" port="result"/>
+				</p:with-option>
+			</chymistry:download-p4>
 			<chymistry:add-site-navigation/>
 		</p:when>
 		<p:when test="$relative-uri = 'p5/' ">
@@ -147,7 +151,11 @@
 		</p:when>
 		<p:when test="$relative-uri = 'download-p5/' ">
 			<!-- Download the latest P4 files from Xubmit -->
-			<chymistry:download-p5/>
+			<chymistry:download-p5>
+				<p:with-option name="dc-coverage-regex" select="/c:param-set/c:param[@name='dc-coverage-regex']/@value">
+					<p:pipe step="configuration" port="result"/>
+				</p:with-option>
+			</chymistry:download-p5>
 			<chymistry:add-site-navigation/>
 		</p:when>
 		<p:when test="starts-with($relative-uri, 'solr/')">
