@@ -9,6 +9,8 @@
 	name="main">
 
 
+	<!-- This is the main application pipeline which dispatches each request to the appropriate pipeline, depending on the request URI -->
+	
 	<p:input port='source' primary='true'/>
 	<!-- The pipeline's input document (an http request) has this XML structure:
 	
@@ -28,7 +30,10 @@
 		</request>
 	-->
 	
+	<!-- The "parameters" port supplies a list of parameters including environment variables and servlet configuration parameters -->
 	<p:input port='parameters' kind='parameter' primary='true'/>
+	
+	<!-- The pipeline sends its HTTP response to the "result" port -->
 	<p:output port="result" primary="true" sequence="true"/>
 	
 	<!-- common web application utility pipelines -->
@@ -47,9 +52,8 @@
 	<p:import href="search.xpl"/>
 	<!-- proxying to the Latent Semantic Analysis back end service -->
 	<p:import href="lsa.xpl"/>
-	<!-- (temporary) step for building index-chemicus.html file from legacy disaggregated pages -->
-	<p:import href="temp-migrate-index-chemicus.xpl"/>
-	<!-- dispatch the request to the appropriate pipeline, depending on the request URI -->
+	
+	<!-- the "relative URI" is produced by discarding the URL scheme, hostname, and port number (which vary across the dev, test, and production instances) -->
 	<p:variable name="relative-uri" select="
 		replace(
 			/c:request/@href, 
@@ -57,17 +61,22 @@
 			'$3'
 		)
 	"/>
+	
+	<!-- convert the servlet parameters to an XML document -->
 	<p:parameters name="configuration">
 		<p:input port="parameters">
 			<p:pipe step="main" port="parameters"/>
 		</p:input>
 	</p:parameters>
+	
+	<!-- copy the request from the main pipeline input port; this makes the HTTP request available from the "default readable port" -->
 	<p:identity>
 		<p:input port="source">
 			<p:pipe step="main" port="source"/>
 		</p:input>
 	</p:identity>
 	
+	<!-- dispatch the request to the appropriate sub-pipeline -->
 	<p:choose>
 		<p:when test="$relative-uri = '' ">
 			<!-- home page -->
@@ -79,6 +88,7 @@
 			<chymistry:site-index/>
 			<chymistry:add-site-navigation current-uri="/site-index"/>
 		</p:when>
+		<!-- pipelines for analysing the TEI corpus -->
 		<p:when test="$relative-uri = 'analysis/elements' ">
 			<chymistry:list-elements/>
 			<chymistry:add-site-navigation current-uri="/analysis/elements"/>
@@ -269,10 +279,6 @@
 		<p:when test="$relative-uri = 'parameters/'">
 			<!-- for debugging - show details of the request -->
 			<z:dump-parameters/>
-		</p:when>
-		<!-- temp; for generating index chemicus -->
-		<p:when test="$relative-uri = 'index-chemicus.xml' ">
-			<chymistry:migrate-index-chemicus/>
 		</p:when>
 		<p:otherwise>
 			<!-- request URI not recognised -->
