@@ -4,7 +4,8 @@
 	xmlns:z="https://github.com/Conal-Tuohy/XProc-Z" 
 	xmlns:fn="http://www.w3.org/2005/xpath-functions"
 	xmlns:chymistry="tag:conaltuohy.com,2018:chymistry"
-	xmlns:cx="http://xmlcalabash.com/ns/extensions">
+	xmlns:cx="http://xmlcalabash.com/ns/extensions"
+	xmlns:tei="http://www.tei-c.org/ns/1.0">
 	
 	<p:import href="http://xmlcalabash.com/extension/steps/library-1.0.xpl"/>
 	
@@ -45,38 +46,130 @@
 		<p:output port="result"/>
 		<p:option name="solr-base-uri" required="true"/>
 		<!-- reindex all the P5 files except the bibliography file CHYM000001.xml -->
-		<p:directory-list name="list-p5-files" path="../p5/" include-filter=".+\.xml$" exclude-filter="CHYM000001\.xml"/>
-		<p:add-xml-base relative="false" all="true"/>
-		<p:for-each>
-			<p:iteration-source select="//c:file"/>
-			<p:variable name="file-name" select="/c:file/@name"/>
-			<p:variable name="file-id" select="substring-before($file-name, '.xml')"/>
-			<p:variable name="file-uri" select="encode-for-uri($file-name)"/>
-			<p:variable name="input-file" select="resolve-uri($file-uri, /c:file/@xml:base)"/>
-			<p:variable name="output-file" select="concat('../p5/', $file-uri)"/>
-			<cx:message>
-				<p:with-option name="message" select="$file-name"/>
-			</cx:message>
-			<p:load name="read-p5">
-				<p:with-option name="href" select="$input-file"/>
-			</p:load>
-			<chymistry:convert-p5-to-solr>
-				<p:with-option name="solr-base-uri" select="$solr-base-uri"/>
-				<p:with-option name="text" select="$file-id"/>
-			</chymistry:convert-p5-to-solr>
-			<!--
-			<p:xslt>
-				<p:with-param name="id" select="$file-id"/>
-				<p:with-param name="solr-base-uri" select="$solr-base-uri"/>
-				<p:input port="stylesheet">
-					<p:pipe step="indexing-stylesheet" port="result"/>
-				</p:input>
-			</p:xslt>
-			-->
-			<p:http-request/>
-		</p:for-each>
+		<p:try>
+			<p:group name="process-directory">
+				<p:directory-list name="list-p5-files" path="../p5/" include-filter=".+\.xml$"/>
+				<p:add-xml-base relative="false" all="true"/>
+				<p:for-each>
+					<p:iteration-source select="//c:file"/>
+					<p:variable name="file-name" select="/c:file/@name"/>
+					<p:variable name="file-id" select="substring-before($file-name, '.xml')"/>
+					<p:variable name="file-uri" select="encode-for-uri($file-name)"/>
+					<p:variable name="input-file" select="resolve-uri($file-uri, /c:file/@xml:base)"/>
+					<p:variable name="output-file" select="concat('../p5/', $file-uri)"/>
+					<cx:message>
+						<p:with-option name="message" select="$file-name"/>
+					</cx:message>
+					<p:load name="read-p5">
+						<p:with-option name="href" select="$input-file"/>
+					</p:load>
+					<chymistry:convert-p5-to-solr>
+						<p:with-option name="solr-base-uri" select="$solr-base-uri"/>
+						<p:with-option name="text" select="$file-id"/>
+					</chymistry:convert-p5-to-solr>
+					<!--
+					<p:xslt>
+						<p:with-param name="id" select="$file-id"/>
+						<p:with-param name="solr-base-uri" select="$solr-base-uri"/>
+						<p:input port="stylesheet">
+							<p:pipe step="indexing-stylesheet" port="result"/>
+						</p:input>
+					</p:xslt>
+					-->
+					<p:http-request/>
+				</p:for-each>
+			</p:group>
+			<p:catch name="process-directory-caught-error">
+				<p:identity>
+					<p:input port="source">
+						<p:pipe step="process-directory-caught-error" port="error"/>
+					</p:input>
+				</p:identity>
+			</p:catch>
+		</p:try>
 		<p:wrap-sequence wrapper="solr-index-responses"/>
 		<z:make-http-response/>
+	</p:declare-step>
+	
+	<p:declare-step name="xinclude" type="chymistry:xinclude">
+		<p:input port="source"/>
+		<p:output port="result"/>
+		<!-- perform xincludes to create a snapshot of XML in /p5/result -->
+				<p:directory-list name="list-p5-files" path="../p5/" include-filter=".+\.xml$"/>
+				<p:add-xml-base relative="false" all="true"/>
+				<p:for-each>
+					<p:iteration-source select="//c:file"/>
+					<p:variable name="file-name" select="/c:file/@name"/>
+					<p:variable name="file-id" select="substring-before($file-name, '.xml')"/>
+					<p:variable name="file-uri" select="encode-for-uri($file-name)"/>
+					<p:variable name="input-file" select="resolve-uri($file-uri, /c:file/@xml:base)"/>
+					<p:variable name="output-file" select="concat('../p5/result/', $file-uri)"/>
+					<cx:message>
+						<p:with-option name="message" select="$file-name"/>
+					</cx:message>
+					<p:load name="read-p5">
+						<p:with-option name="href" select="$input-file"/>
+					</p:load>
+					<p:xinclude/>
+					<p:store>
+						<p:with-option name="href" select="$output-file"/>
+					</p:store>
+				</p:for-each>				
+				<p:identity>
+					<p:input port="source">
+						<p:inline>
+							<c:response status="200">
+								<c:body content-type="text/html" xmlns="http://www.w3.org/1999/xhtml">
+									<html>
+										<head>
+											<title>xinclude processing succeeded</title>
+										</head>
+										<body>
+											<h1>xincludes processing succeeded</h1>
+										</body>
+									</html>
+								</c:body>
+							</c:response>
+						</p:inline>
+					</p:input>
+				</p:identity>
+				<!--
+				<p:template>
+					<p:input port="parameters"><p:empty/></p:input>
+					<p:input port="source">
+						<p:pipe step="process-directory-caught-error" port="error"/>
+					</p:input>
+					<p:input port="template">
+						<p:inline>
+							<c:response status="200">
+								<c:body content-type="text/html" xmlns="http://www.w3.org/1999/xhtml">
+									<html>
+										<head>
+											<title>xinclude processing failed</title>
+										</head>
+										<body>
+											<h1>xincluded processing failed</h1>
+											<pre>{
+												string-join(
+													for $e in //c:error return concat(
+														string-join(
+															for $attribute in ($e/@name, $e/@type, $e/@code, $e/@href, $e/@line, $e/@column, $e/@offset) return concat(local-name($attribute), ': ', $attribute),
+															', '
+														),
+														codepoints-to-string(10),
+														$e
+													),
+													codepoints-to-string(10)
+												)
+											}</pre>
+										</body>
+									</html>
+								</c:body>
+							</c:response>
+						</p:inline>
+					</p:input>
+				</p:template>
+				-->
 	</p:declare-step>
 	
 	<p:declare-step name="generate-indexer" type="chymistry:generate-indexer">
@@ -277,11 +370,6 @@
 		<p:load name="text">
 			<p:with-option name="href" select="concat('../p5/', $text, '.xml')"/>
 		</p:load>
-		<p:insert name="bibliography" match="tei:sourceDesc" position="first-child">
-			<p:input port="insertion" select="/tei:TEI/tei:text/tei:body/tei:listBibl">
-				<p:document href="../p5/CHYM000001.xml"/>
-			</p:input>
-		</p:insert>
 		<p:xslt name="text-as-html">
 			<p:with-param name="view" select="$view"/>
 			<p:input port="stylesheet">
@@ -295,9 +383,30 @@
 		<p:input port="source"/>
 		<p:output port="result"/>
 		<p:variable name="text" select="substring-after(/c:request/@href, '/p5/')"/>
+		<p:load name="xtm" href="../../acsproj/data/swinburne.xtm"/>
+		<p:xslt name="tei-from-topicmap">
+			<p:input port="parameters"><p:empty/></p:input>
+			<p:input port="stylesheet">
+				<p:document href="../xslt/convert-to-p5/xtm-to-p5.xsl"/>
+			</p:input>
+		</p:xslt>
 		<p:load name="text">
 			<p:with-option name="href" select="concat('../p5/', $text)"/>
 		</p:load>
+		<p:xinclude/>
+		<!-- insert subsidiary material; bibliographies, personographies, gazeteers, etc. -->
+		<!-- TODO ensure the document has a profileDesc to insert the particDesc into -->
+		<p:insert name="personography" match="tei:profileDesc" position="first-child">
+			<p:input port="insertion" select="//tei:particDesc">
+				<p:pipe step="tei-from-topicmap" port="result"/>
+			</p:input>
+		</p:insert>
+		<!-- insert the listPlace etc -->
+		<p:insert name="gazetteer" match="tei:sourceDesc" position="first-child">
+			<p:input port="insertion" select="//tei:sourceDesc/*">
+				<p:pipe step="tei-from-topicmap" port="result"/>
+			</p:input>
+		</p:insert>
 		<z:make-http-response content-type="application/xml"/>
 	</p:declare-step>
 	

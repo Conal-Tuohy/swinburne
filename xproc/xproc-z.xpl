@@ -108,15 +108,6 @@
 		<p:when test="$relative-uri = 'analysis/sample-xml-text' ">
 			<chymistry:sample-xml-text/>
 		</p:when>
-		<!-- Latent Semantic Analysis pages -->
-		<p:when test="starts-with($relative-uri, 'newton/')">
-			<chymistry:lsa>
-				<p:with-option name="relative-uri" select="$relative-uri"/>
-			</chymistry:lsa>
-			<p:viewport match="html:html[html:head/html:title]">
-				<chymistry:add-site-navigation/>
-			</p:viewport>
-		</p:when>
 		<p:when test="starts-with($relative-uri, 'page/')">
 			<!-- html page -->
 			<chymistry:html-page>
@@ -140,17 +131,13 @@
 		</p:when>
 		<p:when test="$relative-uri = 'p4/' ">
 			<!-- Download the latest P4 files from Xubmit -->
-			<chymistry:download-p4>
-				<p:with-option name="dc-coverage-regex" select="/c:param-set/c:param[@name='dc-coverage-regex']/@value">
-					<p:pipe step="configuration" port="result"/>
-				</p:with-option>
-			</chymistry:download-p4>
+			<chymistry:download-source/>
 			<chymistry:add-site-navigation/>
 		</p:when>
 		<p:when test="$relative-uri = 'p5/' ">
 			<p:choose>
 				<p:when test="matches(/c:request/@method, 'POST', 'i')"><!-- re-convert local P4 files to P5 -->
-					<chymistry:convert-p4-to-p5/>
+					<chymistry:convert-source-to-p5/>
 				</p:when>
 				<p:otherwise>
 					<!-- list already-converted files -->
@@ -159,13 +146,9 @@
 			</p:choose>
 			<chymistry:add-site-navigation/>
 		</p:when>
-		<p:when test="$relative-uri = 'download-p5/' ">
-			<!-- Download the latest P4 files from Xubmit -->
-			<chymistry:download-p5>
-				<p:with-option name="dc-coverage-regex" select="/c:param-set/c:param[@name='dc-coverage-regex']/@value">
-					<p:pipe step="configuration" port="result"/>
-				</p:with-option>
-			</chymistry:download-p5>
+		<p:when test="$relative-uri = 'xinclude/' ">
+			<!-- perform xincludes and save results in p5/result -->
+			<chymistry:xinclude/>
 			<chymistry:add-site-navigation/>
 		</p:when>
 		<p:when test="starts-with($relative-uri, 'solr/')">

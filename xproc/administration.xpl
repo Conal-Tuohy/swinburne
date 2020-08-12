@@ -18,7 +18,7 @@
 						<c:body content-type="application/xhtml+xml">
 							<html xmlns="http://www.w3.org/1999/xhtml">
 								<head>
-									<title>Chymistry admin</title>
+									<title>Administration</title>
 									<style type="text/css">
 										div.content  {display: flex; gap: 1em;}
 										div.content button {width: 100%; margin-top: 0.5em;}
@@ -29,21 +29,15 @@
 									<section class="content">
 										<div class="content">
 											<div>
-												<h1>Chymistry admin</h1>
-												<form method="post" action="download-bibliography">
-													<button>Update bibiography P5 file from Xubmit</button>
-												</form>
-												<form method="post" action="p4/" title="NB: P4 files have been deprecated in favor of P5 files (see below)">
-													<button class="obsolete">Update manuscript P4 files from Xubmit</button>
-												</form>
+												<h1>Administration</h1>
 												<form method="post" action="p5/">
-													<button class="obsolete" title="WARNING: this will overwrite any P5 files downloaded directly from Xubmit">Convert downloaded P4 files to P5</button>
+													<button title="Make normalized copy of source data files">Ingest source TEI from <code>acsproj/data</code> to <code>p5/</code></button>
 												</form>
-												<form method="post" action="download-p5/">
-													<button>Update manuscript P5 files from Xubmit</button>
+												<form method="post" action="xinclude/">
+													<button>Perform xincludes on files in <code>p5/</code> and save to <code>p5/result/</code></button>
 												</form>
 												<form method="post" action="reindex/">
-													<button>Rebuild Solr index from P5 files</button>
+													<button>Rebuild Solr index from normalized data files</button>
 												</form>
 												<form method="post" action="update-schema/">
 													<button>Update Solr schema from <em>search-fields.xml</em></button>
