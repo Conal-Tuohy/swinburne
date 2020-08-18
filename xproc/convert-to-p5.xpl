@@ -41,11 +41,15 @@
 			<p:variable name="file-name" select="/c:file/@name"/>
 			<p:variable name="file-uri" select="encode-for-uri($file-name)"/>
 			<p:variable name="input-file" select="resolve-uri($file-uri, /c:file/@xml:base)"/>
+			<p:variable name="output-file" select="concat('../p5/includes/', $file-uri)"/>
+			<cx:message>
+				<p:with-option name="message" select="concat('copying file from ', $input-file, ' to ', $output-file, '...')"/>
+			</cx:message>
 			<p:load name="read-source">
 				<p:with-option name="href" select="$input-file"/>
 			</p:load>
-			<p:store>
-				<p:with-option name="href" select="concat('../p5/includes/', $file-uri)"/>
+			<p:store name="save-include-file">
+				<p:with-option name="href" select="$output-file"/>
 			</p:store>
 		</p:for-each>
 		
