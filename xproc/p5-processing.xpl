@@ -383,30 +383,10 @@
 		<p:input port="source"/>
 		<p:output port="result"/>
 		<p:variable name="text" select="substring-after(/c:request/@href, '/p5/')"/>
-		<p:load name="xtm" href="../../acsproj/data/swinburne.xtm"/>
-		<p:xslt name="tei-from-topicmap">
-			<p:input port="parameters"><p:empty/></p:input>
-			<p:input port="stylesheet">
-				<p:document href="../xslt/convert-to-p5/xtm-to-p5.xsl"/>
-			</p:input>
-		</p:xslt>
 		<p:load name="text">
 			<p:with-option name="href" select="concat('../p5/', $text)"/>
 		</p:load>
 		<p:xinclude/>
-		<!-- insert subsidiary material; bibliographies, personographies, gazeteers, etc. -->
-		<!-- TODO ensure the document has a profileDesc to insert the particDesc into -->
-		<p:insert name="personography" match="tei:profileDesc" position="first-child">
-			<p:input port="insertion" select="//tei:particDesc">
-				<p:pipe step="tei-from-topicmap" port="result"/>
-			</p:input>
-		</p:insert>
-		<!-- insert the listPlace etc -->
-		<p:insert name="gazetteer" match="tei:sourceDesc" position="first-child">
-			<p:input port="insertion" select="//tei:sourceDesc/*">
-				<p:pipe step="tei-from-topicmap" port="result"/>
-			</p:input>
-		</p:insert>
 		<z:make-http-response content-type="application/xml"/>
 	</p:declare-step>
 	

@@ -33,6 +33,20 @@
 		<!-- source data location is specified here -->
 		<p:variable name="acsproj-data" select=" '../../acsproj/data/' "/>
 		
+		<!-- convert topic maps -->
+		<p:group name="convert-topic-maps">
+			<p:load name="xtm" href="../../acsproj/data/swinburne.xtm"/>
+			<p:xslt name="tei-from-topicmap">
+				<p:input port="parameters"><p:empty/></p:input>
+				<p:input port="stylesheet">
+					<p:document href="../xslt/convert-to-p5/xtm-to-p5.xsl"/>
+				</p:input>
+			</p:xslt>
+			<!-- TODO merge the metadata from the other topic map -->
+			<chymistry:assign-schema schema="../../schema/swinburne.rng"/>
+			<p:store href="../p5/includes/personography.xml"/>
+		</p:group>
+	
 		<!-- first copy the "includes" folder -->
 		<p:directory-list name="list-includes-files" path="../../acsproj/data/includes/"/>
 		<p:add-xml-base relative="false" all="true"/>
@@ -104,6 +118,7 @@
 									<p:with-option name="attribute-value" select="concat('../', /xi:include/@href)"/>
 								</p:add-attribute>
 							</p:viewport>
+							<chymistry:assign-schema schema="../../schema/swinburne.rng"/>
 							<p:store name="save-md-file">
 								<p:with-option name="href" select="concat('../p5/metadata/', $file-uri)"/>
 							</p:store>
@@ -116,6 +131,7 @@
 							</cx:message>
 							<p:group name="normalized-combo-file">
 								<p:output port="result"/>
+								<chymistry:assign-schema schema="../../schema/swinburne.rng"/>
 								<!-- replace xinclude statements pointing to "includes/blah" with "../includes/blah" since we're moving the combo files into a subfolder -->
 								<!-- TODO BUT ONLY IF THEY ARE IN FACT COMBO FILES, NOT e.g. acs0000501-01.xml -->
 								<p:viewport match="xi:include[starts-with(@href, 'includes/')]">
@@ -147,6 +163,8 @@
 										<p:document href="../xslt/convert-to-p5/generate-component-xinclude-file.xsl"/>
 									</p:input>
 								</p:xslt>
+								<chymistry:assign-schema schema="../schema/swinburne.rng"/>
+								<chymistry:insert-personography-xinclude/>
 								<p:store name="save-combo-part" indent="true">
 									<p:with-option name="href" select="concat('../p5/', $component-id, '.xml')"/>
 								</p:store>
@@ -177,6 +195,8 @@
 									<p:with-option name="attribute-value" select="concat('combo/', /xi:include/@href)"/>
 								</p:add-attribute>
 							</p:viewport>
+							<chymistry:assign-schema schema="../schema/swinburne.rng"/>
+							<chymistry:insert-personography-xinclude/>
 							<p:store name="save-ordinary-text">
 								<p:with-option name="href" select="concat('../p5/', $file-uri)"/>
 							</p:store>
@@ -213,23 +233,63 @@
 		<z:make-http-response content-type="application/xhtml+xml"/>
 	</p:declare-step>
 	
-	<p:declare-step name="transform-source-to-p5" type="chymistry:transform-source-to-p5">
+	<!-- remove old schema assignment and add a new one -->
+	<p:declare-step name="assign-schema" type="chymistry:assign-schema">
 		<p:input port="source"/>
 		<p:output port="result"/>
-		<!-- perform xinclusions specified in the P5 source -->
-		<p:xinclude/>
-		<!-- include all the metadata which is associated implicitly, in the -md.xml files -->
-		<!-- Each text file contains a number of <text> elements whose @xml:id implicitly associates them with an external metadata file named "{@xml:id}-md.xml" -->
-		<!-- Metadata must be extracted from these files and inserted into the main text file's teiHeader, and @decls used to associate it with the appropriate <text> -->
-		<!-- See /Users/jawalsh/Dropbox/Development/utilities/xml/tmp.xsl for details of processing the -md.xml files -->
-		<!--
+		<p:option name="schema" required="true"/>
 		<p:xslt>
-			<p:input port="parameters"><p:empty/></p:input>
+			<p:with-param name="schema" select="$schema"/>
 			<p:input port="stylesheet">
-				<p:document href="../xslt/convert-to-p5/remove-dubious-default.xsl"/>
+				<p:inline>
+					<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="3.0" expand-text="true">
+						<xsl:param name="schema"/>
+						<xsl:mode on-no-match="shallow-copy"/>
+						<!-- discard "oxygen" schema reference -->
+						<xsl:template match="/processing-instruction('oxygen')"/>
+						<xsl:template match="/">
+							<!-- insert new schema reference using <?xml-model?> processing instruction -->
+							<xsl:processing-instruction name="xml-model"> href="{$schema}" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"</xsl:processing-instruction>
+							<xsl:sequence select="codepoints-to-string(10)"/><!-- line break -->
+							<xsl:apply-templates/>
+						</xsl:template>
+					</xsl:stylesheet>
+				</p:inline>
 			</p:input>
 		</p:xslt>
-		-->
-		<p:identity/>
 	</p:declare-step>
+	
+	<p:declare-step type="chymistry:insert-personography-xinclude">
+		<p:input port="source"/>
+		<p:output port="result"/>
+		<!-- insert subsidiary material; bibliographies, personographies, gazeteers, etc. -->
+		<!-- ensure the document has a profileDesc to insert a particDesc into -->
+		<p:insert name="empty-profile-desc" match="tei:teiHeader[not(tei:profileDesc)]/tei:fileDesc" position="after">
+			<p:input port="insertion">
+				<p:inline xmlns="http://www.tei-c.org/ns/1.0" exclude-inline-prefixes="#all">
+					<profileDesc/>
+				</p:inline>
+			</p:input>
+		</p:insert>
+		<p:insert name="personography" match="tei:profileDesc" position="first-child">
+			<p:input port="insertion">
+				<p:inline exclude-inline-prefixes="#all">
+					<xi:include href="includes/personography.xml" xpointer="xmlns(tei=http://www.tei-c.org/ns/1.0) xpath(//tei:particDesc)">
+						<xi:fallback><!-- personography.xml missing --></xi:fallback>
+					</xi:include>
+				</p:inline>
+			</p:input>
+		</p:insert>
+		<!-- insert the listPlace etc -->
+		<p:insert name="gazetteer" match="tei:sourceDesc" position="first-child">
+			<p:input port="insertion">
+				<p:inline>
+					<xi:include href="includes/gazetteer.xml" xpointer="xmlns(tei=http://www.tei-c.org/ns/1.0) xpath(//tei:sourceDesc/*)">
+						<xi:fallback><!-- gazetteer.xml missing --></xi:fallback>
+					</xi:include>
+				</p:inline>
+			</p:input>  
+		</p:insert>
+	</p:declare-step>
+	
 </p:library>
