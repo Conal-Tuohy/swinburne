@@ -14,7 +14,6 @@
 		<p:output port="result"/>
 		<p:option name="highlight"/>
 		<p:option name="id"/>
-		<p:option name="view"/>
 		<p:option name="solr-base-uri" required="true"/>
 		<cx:message>
 			<p:with-option name="message" select="$highlight"/>
@@ -30,7 +29,7 @@
 						</p:input>
 					</p:xslt>
 					<p:template name="solr-highlight-query">
-						<p:with-param name="view" select="$view"/>
+						<p:with-param name="view" select=" 'normalized' "/><!-- TODO get rid of view param altogether -->
 						<p:with-param name="id" select="$id"/>
 						<p:with-param name="solr-base-uri" select="$solr-base-uri"/>
 						<p:with-param name="highlight" select="$highlight"/>

@@ -190,9 +190,8 @@
 		</p:when>
 		<p:when test="starts-with($relative-uri, 'text/') ">
 			<!-- Represent an individual P5 text as an HTML page -->
-			<p:variable name="uri-parser" select=" 'text/([^/]*)/([^?]*).*' "/>
+			<p:variable name="uri-parser" select=" 'text/([^/]*)/' "/>
 			<p:variable name="id" select="replace($relative-uri, $uri-parser, '$1')"/>
-			<p:variable name="view" select="replace($relative-uri, $uri-parser, '$2')"/>
 			<p:variable name="base-uri" select="concat(substring-before(/c:request/@href, '/text/'), '/')"/>
 			<p:variable name="manifest-uri" select="concat($base-uri, 'iiif/', $id, '/manifest')"/>
 			<p:www-form-urldecode name="field-values">
@@ -200,7 +199,6 @@
 			</p:www-form-urldecode>
 			<chymistry:p5-as-html name="text-as-html">
 				<p:with-option name="text" select="$id"/>
-				<p:with-option name="view" select="$view"/>
 				<p:with-option name="base-uri" select="$base-uri"/>
 				<p:input port="source">
 					<p:pipe step="main" port="source"/>
@@ -210,7 +208,6 @@
 				<p:with-option name="highlight" select="/c:param-set/c:param[@name='highlight']/@value">
 					<p:pipe step="field-values" port="result"/>
 				</p:with-option>
-				<p:with-option name="view" select="$view"/>
 				<p:with-option name="id" select="$id"/>
 				<p:with-option name="solr-base-uri" select="/c:param-set/c:param[@name='solr-base-uri']/@value">
 					<p:pipe step="configuration" port="result"/>

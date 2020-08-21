@@ -365,13 +365,13 @@
 		<p:input port="source"/>
 		<p:output port="result"/>
 		<p:option name="text" required="true"/>
-		<p:option name="view" required="true"/>
 		<p:option name="base-uri" required="true"/>
 		<p:load name="text">
 			<p:with-option name="href" select="concat('../p5/', $text, '.xml')"/>
 		</p:load>
+		<p:xinclude/>
 		<p:xslt name="text-as-html">
-			<p:with-param name="view" select="$view"/>
+			<p:with-param name="view" select=" 'normalized' "/><!-- TODO get rid of view param altogether -->
 			<p:input port="stylesheet">
 				<p:document href="../xslt/p5-to-html.xsl"/>
 			</p:input>
