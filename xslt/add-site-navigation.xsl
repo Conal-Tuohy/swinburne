@@ -8,6 +8,10 @@
 	<xsl:param name="current-uri"/>
 	<xsl:variable name="keyboard" select="document('../keyboard.xhtml')"/>
 	<xsl:variable name="menus" select="json-to-xml(unparsed-text('../menus.json'))"/>
+	<!-- TODO -->
+	<!-- NB this template effectively disables this stylesheet (which is currently the Newton Chymistry site -->
+	<xsl:template match="/"><xsl:copy-of select="."/></xsl:template>
+	
 	<xsl:template match="node()">
 		<xsl:copy>
 			<xsl:copy-of select="@*"/>

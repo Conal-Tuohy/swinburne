@@ -6,7 +6,7 @@
 	xmlns="http://www.w3.org/1999/xhtml"
 	xpath-default-namespace="http://www.tei-c.org/ns/1.0">
 	<!-- transform a TEI document into an HTML page-->
-	<xsl:import href="render-metadata.xsl"/>
+	<!--<xsl:import href="render-metadata.xsl"/>-->
 	
 	<xsl:param name="view"/><!-- 'diplomatic' or 'normalized' or 'introduction' -->
 	<xsl:key name="char-by-ref" match="char[@xml:id]" use="concat('#', @xml:id)"/>
@@ -27,11 +27,7 @@
 			</head>
 			<body>
 				<div class="tei">
-					<xsl:call-template name="render-document-header">
-						<xsl:with-param name="title" select="$title"/>
-						<xsl:with-param name="current-view" select="$view"/>
-						<xsl:with-param name="has-introduction" select="normalize-space($introduction)"/>
-					</xsl:call-template>
+					<cite><xsl:value-of select="$title"/></cite>
 					<!-- render the document metadata details -->
 					<xsl:apply-templates select="tei:teiHeader"/>
 					<!-- render the relevant part of the text itself -->

@@ -41,6 +41,67 @@
 		<z:make-http-response/>
 	</p:declare-step>
 	
+<!-- for request URI "admin/purge", clear the Solr index -->
+	<p:declare-step name="purge-index" type="chymistry:purge-index">
+		<p:input port="source"/>
+		<p:output port="result"/>
+		<p:option name="solr-base-uri" required="true"/>
+		<!-- generate the HTTP POST command to purge Solr's index -->
+		<p:add-attribute name="solr-purge-command" match="/c:request" attribute-name="href">
+			<p:with-option name="attribute-value" select="concat($solr-base-uri, 'update?commit=true')"/>
+			<p:input port="source">
+				<p:inline>
+					<c:request method="post">
+						<c:body content-type="text/xml">
+							<delete>
+								<query>*:*</query>
+							</delete>
+						</c:body>
+					</c:request>
+				</p:inline>
+			</p:input>
+		</p:add-attribute>
+		<!-- submit the deletion request to Solr -->
+		<p:http-request/>
+		<!-- convert Solr response to a friendly HTML page -->
+		<p:template name="purge-report">
+			<p:with-param name="response-code" select="/response/lst[@name='responseHeader']/int[@name='status']/text()"/>
+			<p:input port="template">
+				<p:inline>
+					<html xmlns="http://www.w3.org/1999/xhtml">
+						<head><title>Solr index purge</title></head>
+						<body>
+							<section class="content">
+								<div>
+									<h1>Solr index purge</h1>
+									<p>
+									{
+										if ($response-code='0') then 
+											'Solr index purged' 
+										else 
+											concat(
+												'Failed to purge Solr index. ',
+												if ($response-code) then
+													concat(
+														'Solr returned response code ', 
+														$response-code
+													)
+												else
+													''
+											)
+									}
+									</p>
+									<p><a href="../admin">Return to admin page</a></p>
+								</div>
+							</section>
+						</body>
+					</html>
+				</p:inline>
+			</p:input>
+		</p:template>
+		<z:make-http-response content-type="text/html"/>
+	</p:declare-step>
+
 	<p:declare-step name="reindex" type="chymistry:reindex">
 		<p:input port="source"/>
 		<p:output port="result"/>
@@ -219,6 +280,7 @@
 				<p:pipe step="indexing-stylesheet" port="result"/>
 			</p:input>
 		</p:xslt>
+		<!--
 		<p:xslt name="introduction-html">
 			<p:with-param name="view" select=" 'introduction' "/>
 			<p:input port="source">
@@ -249,6 +311,7 @@
 				<p:document href="../xslt/html-to-solr-field.xsl"/>
 			</p:input>
 		</p:xslt>
+		-->
 		<p:xslt name="normalized-html">
 			<p:with-param name="view" select=" 'normalized' "/>
 			<p:input port="source">
@@ -279,8 +342,10 @@
 				<p:pipe step="metadata-fields" port="result"/>
 			</p:input>
 			<p:input port="insertion">
+			<!--
 				<p:pipe step="introduction-field" port="result"/>
 				<p:pipe step="diplomatic-field" port="result"/>
+				-->
 				<p:pipe step="normalized-field" port="result"/>
 				<p:pipe step="metadata-summary-field" port="result"/>
 			</p:input>

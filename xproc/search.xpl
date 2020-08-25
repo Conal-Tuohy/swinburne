@@ -29,7 +29,7 @@
 						</p:input>
 					</p:xslt>
 					<p:template name="solr-highlight-query">
-						<p:with-param name="view" select=" 'normalized' "/><!-- TODO get rid of view param altogether -->
+						<p:with-param name="view" select=" 'normalized' "/>
 						<p:with-param name="id" select="$id"/>
 						<p:with-param name="solr-base-uri" select="$solr-base-uri"/>
 						<p:with-param name="highlight" select="$highlight"/>

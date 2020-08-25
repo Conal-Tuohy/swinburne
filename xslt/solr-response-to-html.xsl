@@ -9,7 +9,7 @@
 	xmlns="http://www.w3.org/1999/xhtml"
 	exclude-result-prefixes="c f dashboard map xs">
 	
-	<xsl:import href="render-metadata.xsl"/>
+	<!--<xsl:import href="render-metadata.xsl"/>-->
 	<xsl:param name="default-results-limit" required="true"/>
 	
 	<!-- the parameters from the request URL  -->
@@ -43,7 +43,6 @@
 		<html>
 			<head>
 				<title>Search</title>
-				<link rel="shortcut icon" href="http://webapp1.dlib.indiana.edu/newton/favicon.ico" type="image/x-icon" />
 				<link rel="stylesheet" href="/css/search.css" type="text/css"/>
 				<link rel="stylesheet" href="/css/tei.css" type="text/css"/>
 			</head>
@@ -165,69 +164,36 @@
 				<xsl:variable name="id" select="f:string[@key='id']"/>
 				<xsl:variable name="title" select="*[@key='title']"/>
 				<li class="result">
-					<xsl:call-template name="render-document-header">
-						<xsl:with-param name="title" select="$title"/>
-						<xsl:with-param name="has-introduction" select="f:array[@key='introduction']"/>
-						<xsl:with-param name="base-uri" select="concat('/text/', $id, '/')"/>
-					</xsl:call-template>
+					<a href="/text/{$id}/"><cite><xsl:value-of select="$title"/></cite></a>
 					<!-- The Solr record contains a summary of the metadata pre-rendered as an HTML summary widget -->
-					<xsl:sequence select="parse-xml(f:string[@key='metadata-summary'])"/>
-					<xsl:variable name="matching-views" select="$highlighting[@key=$id]/f:array"/>
-					<xsl:if test="exists($matching-views)">
-						<!-- contains the views ('introduction', 'normalized', or 'diplomatic') which match the query -->
-						<!-- NB the user doesn't necessarily have to submit a text query; their search my be just a selection of facet values. -->
-						<!-- In this case, this div will not appear -->
-						<div class="matching-views">
-							<ul class="matching-views">
-								<xsl:for-each select="$matching-views">
-									<!-- sort the views; first the "introduction" view, then the "normalized", then "diplomatic" -->
-									<xsl:sort select="@key!='introduction'"/>
-									<xsl:sort select="@key!='normalized'"/>
-									<xsl:sort select="@key!='diplomatic'"/>
-									<li class="matching-view">
-										<xsl:variable name="matching-view" select="@key"/>
-										<xsl:variable name="view-heading" select="
-											map{
-												'diplomatic': 'Matches in Diplomatic Transcription',
-												'normalized': 'Matches in Normalized Transcription',
-												'introduction': 'Matches in Introduction'
-											}
-										"/>
-										<div class="matching-view">
-											<header><xsl:value-of select="$view-heading($matching-view)"/></header>
-											<!-- list the snippets of matching text which were found in this particular view -->
-											<ul class="matching-snippets">
-												<xsl:for-each select="f:string">
-													<li class="matching-snippet">
-														<a href="/text/{$id}/{$matching-view}?highlight={$request/c:param[@name='text']/@value}#hit{position()}">
-															<!-- Within each snippet, Solr marks up individual matching words with escaped(!) <em> tags -->
-															<xsl:variable name="match-escaped-em-elements">(&lt;em&gt;[^&lt;]+&lt;/em&gt;)</xsl:variable>
-															<xsl:analyze-string select="." regex="{$match-escaped-em-elements}">
-																<xsl:matching-substring>
-																	<!-- mark up the matched words -->
-																	<xsl:element name="mark">
-																		<xsl:value-of select="
-																			substring-before(
-																				substring-after(., '&lt;em&gt;'),
-																				'&lt;/em&gt;'
-																			)
-																		"/>
-																	</xsl:element>
-																</xsl:matching-substring>
-																<xsl:non-matching-substring>
-																	<xsl:value-of select="."/>
-																</xsl:non-matching-substring>
-															</xsl:analyze-string>
-														</a>
-													</li>
-												</xsl:for-each>
-											</ul>
-										</div>
-									</li>
-								</xsl:for-each>
-							</ul>
-						</div>
-					</xsl:if>
+					<xsl:sequence select="f:string[@key='metadata-summary'] => parse-xml()"/>
+					<!-- list the snippets of matching text which were found in this particular view -->
+					<ul class="matching-snippets">
+						<xsl:for-each select="$highlighting[@key=$id]/f:array/f:string">
+							<li class="matching-snippet">
+								<a href="/text/{$id}/?highlight={$request/c:param[@name='text']/@value}#hit{position()}">
+									<!-- Within each snippet, Solr marks up individual matching words with escaped(!) <em> tags -->
+									<xsl:variable name="match-escaped-em-elements">(&lt;em&gt;[^&lt;]+&lt;/em&gt;)</xsl:variable>
+									<xsl:analyze-string select="." regex="{$match-escaped-em-elements}">
+										<xsl:matching-substring>
+											<!-- mark up the matched words -->
+											<xsl:element name="mark">
+												<xsl:value-of select="
+													substring-before(
+														substring-after(., '&lt;em&gt;'),
+														'&lt;/em&gt;'
+													)
+												"/>
+											</xsl:element>
+										</xsl:matching-substring>
+										<xsl:non-matching-substring>
+											<xsl:value-of select="."/>
+										</xsl:non-matching-substring>
+									</xsl:analyze-string>
+								</a>
+							</li>
+						</xsl:for-each>
+					</ul>
 				</li>
 			</xsl:for-each>
 		</ul>

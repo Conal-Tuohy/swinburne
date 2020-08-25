@@ -165,6 +165,15 @@
 				</p:with-option>
 			</chymistry:update-schema>
 		</p:when>
+		<p:when test="$relative-uri = 'admin/purge' ">
+			<!-- purge the search index -->
+			<chymistry:purge-index>
+				<p:with-option name="solr-base-uri" select="/c:param-set/c:param[@name='solr-base-uri']/@value">
+					<p:pipe step="configuration" port="result"/>
+				</p:with-option>
+			</chymistry:purge-index>
+			<chymistry:add-site-navigation/>
+		</p:when>
 		<p:when test="$relative-uri = 'reindex/' ">
 			<!-- Update the search index -->
 			<chymistry:reindex>
@@ -190,7 +199,7 @@
 		</p:when>
 		<p:when test="starts-with($relative-uri, 'text/') ">
 			<!-- Represent an individual P5 text as an HTML page -->
-			<p:variable name="uri-parser" select=" 'text/([^/]*)/' "/>
+			<p:variable name="uri-parser" select=" 'text/([^/]*)/.*' "/>
 			<p:variable name="id" select="replace($relative-uri, $uri-parser, '$1')"/>
 			<p:variable name="base-uri" select="concat(substring-before(/c:request/@href, '/text/'), '/')"/>
 			<p:variable name="manifest-uri" select="concat($base-uri, 'iiif/', $id, '/manifest')"/>

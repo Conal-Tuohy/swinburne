@@ -36,6 +36,9 @@
 												<form method="post" action="xinclude/">
 													<button>Perform xincludes on files in <code>p5/</code> and save to <code>p5/result/</code></button>
 												</form>
+												<form method="post" action="admin/purge">
+													<button title="Remove all documents from the Solr index">Purge Solr index</button>
+												</form>
 												<form method="post" action="reindex/">
 													<button>Rebuild Solr index from normalized data files</button>
 												</form>

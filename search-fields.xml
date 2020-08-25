@@ -29,18 +29,7 @@
 	-->
 	<field name="title"
 		label="Title"
-		xpath="
-			let $id := /TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier
-			return string-join(
-				(
-					$id/settlement,
-					concat($id/collection, ' ', $id/idno),
-					$id/repository,
-					$id/institution
-				),
-				', '
-			)
-		"
+		xpath=" /TEI/teiHeader/fileDesc/titleStmt/title"
 	/>
 	<!--
 	This field defines a text field to contain the brief description of the text as given in the manuscript description.
