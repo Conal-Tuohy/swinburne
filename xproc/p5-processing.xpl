@@ -270,6 +270,7 @@
 		<p:load name="text">
 			<p:with-option name="href" select="concat('../p5/', $text, '.xml')"/>
 		</p:load>
+		<p:xinclude/>
 		<p:xslt name="metadata-fields">
 			<p:with-param name="id" select="$text"/>
 			<p:with-param name="solr-base-uri" select="$solr-base-uri"/>
