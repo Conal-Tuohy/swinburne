@@ -120,6 +120,13 @@
 					</p:load>
 					<!-- discard any xml:base attributes because they are spurious -->
 					<p:delete match="@xml:base"/>
+					<!-- coerce the document into a regular form, fixing any corrigible errors, etc -->
+					<p:xslt>
+						<p:input port="parameters"><p:empty/></p:input>
+						<p:input port="stylesheet">
+							<p:document href="../xslt/convert-to-p5/regularize-p5.xsl"/>
+						</p:input>
+					</p:xslt>
 					<!-- for each each of the "combo" files generate a sequence of template files containing xinclude statements which select:
 						part of the combo file
 						the corresponding piece of metadata from the -md.xml metadata file
