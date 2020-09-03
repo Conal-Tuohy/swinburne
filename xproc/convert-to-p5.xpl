@@ -17,7 +17,24 @@
 		<z:make-http-response content-type="application/xml"/>
 	</p:declare-step>
 	
-
+	<p:declare-step name="prepare-tei-file-for-subfolder" type="chymistry:prepare-tei-file-for-subfolder">
+		<p:input port="source"/>
+		<p:output port="result"/>
+		<chymistry:assign-schema schema="../../schema/swinburne.rng"/>
+		<!-- replace xinclude statements pointing to "includes/blah" with "../includes/blah" since we're moving the combo files into a subfolder -->
+		<!-- TODO BUT ONLY IF THEY ARE IN FACT COMBO FILES, NOT e.g. acs0000501-01.xml -->
+		<p:viewport match="xi:include[starts-with(@href, 'includes/')]">
+			<p:add-attribute match="*" attribute-name="href">
+				<p:with-option name="attribute-value" select="concat('../', /xi:include/@href)"/>
+			</p:add-attribute>
+		</p:viewport>
+		<!-- replace xinclude statements pointing to metadata files ("*-md.xml") with "../metadata/blah" since we're moving the combo and metadata files into subfolders -->
+		<p:viewport match="xi:include[ends-with(@href, '-md.xml')]">
+			<p:add-attribute match="*" attribute-name="href">
+				<p:with-option name="attribute-value" select="concat('../metadata/', /xi:include/@href)"/>
+			</p:add-attribute>
+		</p:viewport>
+	</p:declare-step>
 	
 	<p:declare-step name="convert-source-to-p5" xpath-version="2.0" type="chymistry:convert-source-to-p5"
 		xmlns:p="http://www.w3.org/ns/xproc" 
@@ -89,6 +106,8 @@
 						process the source files according to the following classification:
 						• *-md.xml files contain metadata which is to be transcluded into a full TEI text
 							• File them in "p5/metadata" folder
+						• acs0000001-0{n}.xml files are components which are to be transcluded into a full TEI text acs0000001-00.xml
+							• File them in "p5/component" folder						
 						• "combo" files, which are other .xml files containing tei:index/@corresp, which contain transcriptions to be transcluded into individual TEI texts
 							• File them in "p5/combo" folder
 							• Generate XInclude template files in "p5" folder for each tei:index/@corresp, containing xinclude references to the corresponding combo section and metadata record
@@ -99,6 +118,8 @@
 					<p:load name="read-source">
 						<p:with-option name="href" select="$input-file"/>
 					</p:load>
+					<!-- discard any xml:base attributes because they are spurious -->
+					<p:delete match="@xml:base"/>
 					<!-- for each each of the "combo" files generate a sequence of template files containing xinclude statements which select:
 						part of the combo file
 						the corresponding piece of metadata from the -md.xml metadata file
@@ -123,29 +144,26 @@
 								<p:with-option name="href" select="concat('../p5/metadata/', $file-uri)"/>
 							</p:store>
 						</p:when>
+							<!-- this is a "component" file which is a component part of the source file acs0000001-00.xml -->
+							<!--
+						<p:when test="matches($file-name, 'acs0000001-0[1-9]/.xml')">
+							<p:variable name="tei-id" select="/tei:TEI/@xml:id"/>
+							<cx:message>
+								<p:with-option name="message" select="concat('Ingesting combo file ', $input-file)"/>
+							</cx:message>
+							<chymistry:prepare-tei-file-for-subfolder/>
+							<p:store name="save-component-file">
+								<p:with-option name="href" select="concat('../p5/component/', $file-uri)"/>
+							</p:store>
+						</p:when>
+						-->
 						<p:when test="//tei:index[ends-with(@corresp, '-md.xml')]">
 							<!-- this is a "combo" file which contains references to a metadata file -->
 							<p:variable name="tei-id" select="/tei:TEI/@xml:id"/>
 							<cx:message>
 								<p:with-option name="message" select="concat('Ingesting combo file ', $input-file)"/>
 							</cx:message>
-							<p:group name="normalized-combo-file">
-								<p:output port="result"/>
-								<chymistry:assign-schema schema="../../schema/swinburne.rng"/>
-								<!-- replace xinclude statements pointing to "includes/blah" with "../includes/blah" since we're moving the combo files into a subfolder -->
-								<!-- TODO BUT ONLY IF THEY ARE IN FACT COMBO FILES, NOT e.g. acs0000501-01.xml -->
-								<p:viewport match="xi:include[starts-with(@href, 'includes/')]">
-									<p:add-attribute match="*" attribute-name="href">
-										<p:with-option name="attribute-value" select="concat('../', /xi:include/@href)"/>
-									</p:add-attribute>
-								</p:viewport>
-								<!-- replace xinclude statements pointing to metadata files ("*-md.xml") with "../metadata/blah" since we're moving the combo and metadata files into subfolders -->
-								<p:viewport match="xi:include[ends-with(@href, '-md.xml')]">
-									<p:add-attribute match="*" attribute-name="href">
-										<p:with-option name="attribute-value" select="concat('../metadata/', /xi:include/@href)"/>
-									</p:add-attribute>
-								</p:viewport>
-							</p:group>
+							<chymistry:prepare-tei-file-for-subfolder name="normalized-combo-file"/>
 							<!-- Generate Xinclude template file(s) -->
 							<p:for-each name="combo-section">
 								<p:iteration-source select="//*[tei:index[@indexName='text'][ends-with(@corresp, '-md.xml')]]"/>
@@ -188,9 +206,8 @@
 								</p:add-attribute>
 							</p:viewport>
 							<!-- replace xinclude statements pointing to transcripts with "combo/blah" since those referenced files are combo files which we've moved into a subfolder -->
-							<!-- NB this leaves the acs0000500-01.xml and its component acs0000501-01.xml in the p5/ folder -->
-							<!-- TODO sort out what to do about acs0000500-01.xml -->
-							<p:viewport match="//tei:text/tei:body/xi:include | //tei:text/tei:front/xi:include">
+							<!-- NB this leaves the biography acs0000500-01.xml and the bibliography (which it also transcludes a few biblStructs from) acs0000501-01.xml in the p5/ folder -->
+							<p:viewport match="//tei:text/tei:body/xi:include | //tei:text/tei:front/xi:include | //tei:text/tei:group/xi:include">
 								<p:add-attribute match="*" attribute-name="href">
 									<p:with-option name="attribute-value" select="concat('combo/', /xi:include/@href)"/>
 								</p:add-attribute>
@@ -241,20 +258,7 @@
 		<p:xslt>
 			<p:with-param name="schema" select="$schema"/>
 			<p:input port="stylesheet">
-				<p:inline>
-					<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="3.0" expand-text="true">
-						<xsl:param name="schema"/>
-						<xsl:mode on-no-match="shallow-copy"/>
-						<!-- discard "oxygen" schema reference -->
-						<xsl:template match="/processing-instruction('oxygen')"/>
-						<xsl:template match="/">
-							<!-- insert new schema reference using <?xml-model?> processing instruction -->
-							<xsl:processing-instruction name="xml-model"> href="{$schema}" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"</xsl:processing-instruction>
-							<xsl:sequence select="codepoints-to-string(10)"/><!-- line break -->
-							<xsl:apply-templates/>
-						</xsl:template>
-					</xsl:stylesheet>
-				</p:inline>
+				<p:document href="../xslt/assign-schema.xsl"/>
 			</p:input>
 		</p:xslt>
 	</p:declare-step>
@@ -283,7 +287,7 @@
 		<!-- insert the listPlace etc -->
 		<p:insert name="gazetteer" match="tei:sourceDesc" position="first-child">
 			<p:input port="insertion">
-				<p:inline>
+				<p:inline exclude-inline-prefixes="#all">
 					<xi:include href="includes/gazetteer.xml" xpointer="xmlns(tei=http://www.tei-c.org/ns/1.0) xpath(//tei:sourceDesc/*)">
 						<xi:fallback><!-- gazetteer.xml missing --></xi:fallback>
 					</xi:include>

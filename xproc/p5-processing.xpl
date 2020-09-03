@@ -102,6 +102,17 @@
 		<z:make-http-response content-type="text/html"/>
 	</p:declare-step>
 
+	<p:declare-step name="create-xinclude-fallbacks" type="chymistry:create-xinclude-fallbacks">
+		<p:input port="source"/>
+		<p:output port="result"/>
+		<p:xslt>
+			<p:input port="parameters"><p:empty/></p:input>
+			<p:input port="stylesheet">
+				<p:document href="../xslt/insert-xinclude-fallbacks.xsl"/>
+			</p:input>
+		</p:xslt>
+	</p:declare-step>
+					
 	<p:declare-step name="reindex" type="chymistry:reindex">
 		<p:input port="source"/>
 		<p:output port="result"/>
@@ -156,10 +167,14 @@
 		<p:input port="source"/>
 		<p:output port="result"/>
 		<!-- perform xincludes to create a snapshot of XML in /p5/result -->
+				<!--
+				<p:directory-list name="list-p5-files" path="../p5/" include-filter="acs0000005-01\.xml$"/>
+				-->
 				<p:directory-list name="list-p5-files" path="../p5/" include-filter=".+\.xml$"/>
+				
+
 				<p:add-xml-base relative="false" all="true"/>
-				<p:for-each>
-					<p:iteration-source select="//c:file"/>
+				<p:viewport name="file" match="c:file">
 					<p:variable name="file-name" select="/c:file/@name"/>
 					<p:variable name="file-id" select="substring-before($file-name, '.xml')"/>
 					<p:variable name="file-uri" select="encode-for-uri($file-name)"/>
@@ -171,11 +186,132 @@
 					<p:load name="read-p5">
 						<p:with-option name="href" select="$input-file"/>
 					</p:load>
+					<!-- create and populate fallback elements to track any transclusion errors -->
+					<chymistry:create-xinclude-fallbacks/>
+					<!--<p:add-xml-base relative="true"/>-->
+					<!-- attempt the transclusions -->
 					<p:xinclude/>
+					<p:identity name="post-xinclusion"/>
 					<p:store>
 						<p:with-option name="href" select="$output-file"/>
 					</p:store>
-				</p:for-each>				
+					<!-- insert any elements containing xinclude-error PIs into the c:file element, for later reporting -->
+					<p:insert match="c:file" position="first-child">
+						<p:input port="source">
+							<p:pipe step="file" port="current"/>
+						</p:input>
+						<p:input port="insertion"  select="//*[processing-instruction('xinclude-error')]">
+							<p:pipe step="post-xinclusion" port="result"/>
+						</p:input>
+					</p:insert>
+				</p:viewport>
+				<p:xslt>
+					<p:input port="parameters"><p:empty/></p:input>
+					<p:input port="stylesheet">
+						<p:inline>		
+							<xsl:stylesheet version="3.0" 
+								xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+								xmlns:c="http://www.w3.org/ns/xproc-step"
+								xmlns="http://www.w3.org/1999/xhtml"
+								expand-text="yes">
+								<xsl:template match="/">
+									<xsl:variable name="errors" select="//processing-instruction('xinclude-error')"/>
+									<xsl:variable name="title" select="if ($errors) then 'Processing completed with errors' else 'Processing completed successfully'"/>
+									<c:response status="200">
+										<c:body content-type="text/html" xmlns="http://www.w3.org/1999/xhtml">
+											<html>
+												<head>
+													<title>{$title}</title>
+													<style type="text/css" xsl:expand-text="no">
+														table {
+														  border: 1px solid #1C6EA4;
+														  background-color: #EEEEEE;
+														  width: 100%;
+														  text-align: left;
+														  border-collapse: collapse;
+														}
+														table td, table th {
+														  border: 1px solid #AAAAAA;
+														  padding: 3px 2px;
+														}
+														table tbody td {
+														  font-size: 13px;
+														}
+														table tr:nth-child(even) {
+														  background: #D0E4F5;
+														}
+														table thead {
+														  background: #1C6EA4;
+														  background: -moz-linear-gradient(top, #5592bb 0%, #327cad 66%, #1C6EA4 100%);
+														  background: -webkit-linear-gradient(top, #5592bb 0%, #327cad 66%, #1C6EA4 100%);
+														  background: linear-gradient(to bottom, #5592bb 0%, #327cad 66%, #1C6EA4 100%);
+														  border-bottom: 2px solid #444444;
+														}
+														table thead th {
+														  font-size: 15px;
+														  font-weight: bold;
+														  color: #FFFFFF;
+														  border-left: 2px solid #D0E4F5;
+														}
+														table thead th:first-child {
+														  border-left: none;
+														}
+														
+														table tfoot {
+														  font-size: 14px;
+														  font-weight: bold;
+														  color: #FFFFFF;
+														  background: #D0E4F5;
+														  background: -moz-linear-gradient(top, #dcebf7 0%, #d4e6f6 66%, #D0E4F5 100%);
+														  background: -webkit-linear-gradient(top, #dcebf7 0%, #d4e6f6 66%, #D0E4F5 100%);
+														  background: linear-gradient(to bottom, #dcebf7 0%, #d4e6f6 66%, #D0E4F5 100%);
+														  border-top: 2px solid #444444;
+														}
+														table tfoot td {
+														  font-size: 14px;
+														}
+														table tfoot .links {
+														  text-align: right;
+														}
+														table tfoot .links a{
+														  display: inline-block;
+														  background: #1C6EA4;
+														  color: #FFFFFF;
+														  padding: 2px 8px;
+														  border-radius: 5px;
+														}
+														</style>
+												</head>
+												<body>
+													<h1>{$title}</h1>
+													<xsl:if test="$errors">
+														<table>
+															<thead>
+																<tr>
+																	<th>filename</th>
+																	<th>error</th>
+																</tr>
+															</thead>
+															<tbody>
+																<xsl:for-each select="$errors">
+																	<tr>
+																		<td>{ancestor::c:file/@name}</td>
+																		<td>{.}</td>
+																	</tr>
+																</xsl:for-each>
+															</tbody>
+														</table>
+													</xsl:if>
+												</body>
+											</html>
+										</c:body>
+									</c:response>
+							</xsl:template>
+						</xsl:stylesheet>
+					</p:inline>
+				</p:input>
+			</p:xslt>
+				<!--
 				<p:identity>
 					<p:input port="source">
 						<p:inline>
@@ -194,6 +330,7 @@
 						</p:inline>
 					</p:input>
 				</p:identity>
+				-->
 				<!--
 				<p:template>
 					<p:input port="parameters"><p:empty/></p:input>
