@@ -9,6 +9,17 @@
 		<xsl:attribute name="unit" select="."/>
 	</xsl:template>
 	
+	<!-- discard empty @when found in topicmaps --> 
+	<xsl:template match="@when[.='']"/>
+	
+	<!-- fix attribute names -->
+	<xsl:template match="@not_after">
+		<xsl:attribute name="notAfter" select="."/>
+	</xsl:template>
+	<xsl:template match="@not_before">
+		<xsl:attribute name="notBefore" select="."/>
+	</xsl:template>
+	
 	<!-- ensure that the children of monogr elements are in the right order -->
 	<xsl:template match="monogr[title][idno][author]">
 		<xsl:call-template name="copy-and-reorder-children">

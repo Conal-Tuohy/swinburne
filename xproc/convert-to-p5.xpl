@@ -22,7 +22,6 @@
 		<p:output port="result"/>
 		<chymistry:assign-schema schema="../../schema/swinburne.rng"/>
 		<!-- replace xinclude statements pointing to "includes/blah" with "../includes/blah" since we're moving the combo files into a subfolder -->
-		<!-- TODO BUT ONLY IF THEY ARE IN FACT COMBO FILES, NOT e.g. acs0000501-01.xml -->
 		<p:viewport match="xi:include[starts-with(@href, 'includes/')]">
 			<p:add-attribute match="*" attribute-name="href">
 				<p:with-option name="attribute-value" select="concat('../', /xi:include/@href)"/>
@@ -34,6 +33,17 @@
 				<p:with-option name="attribute-value" select="concat('../metadata/', /xi:include/@href)"/>
 			</p:add-attribute>
 		</p:viewport>
+	</p:declare-step>
+	
+	<p:declare-step name="regularize-tei" type="chymistry:regularize-tei">
+		<p:input port="source"/>
+		<p:output port="result"/>
+		<p:xslt>
+			<p:input port="parameters"><p:empty/></p:input>
+			<p:input port="stylesheet">
+				<p:document href="../xslt/convert-to-p5/regularize-p5.xsl"/>
+			</p:input>
+		</p:xslt>
 	</p:declare-step>
 	
 	<p:declare-step name="convert-source-to-p5" xpath-version="2.0" type="chymistry:convert-source-to-p5"
@@ -60,11 +70,12 @@
 				</p:input>
 			</p:xslt>
 			<!-- TODO merge the metadata from the other topic map -->
+			<chymistry:regularize-tei name="fix-topicmap-tei-errors"/><!-- fix up regular errors -->
 			<chymistry:assign-schema schema="../../schema/swinburne.rng"/>
-			<p:store href="../p5/includes/personography.xml"/>
+			<p:store href="../p5/includes/personography.xml" indent="true"/>
 		</p:group>
 	
-		<!-- first copy the "includes" folder -->
+		<!-- next copy the "includes" folder -->
 		<p:directory-list name="list-includes-files" path="../../acsproj/data/includes/"/>
 		<p:add-xml-base relative="false" all="true"/>
 		<p:for-each name="includes-file">
@@ -79,6 +90,7 @@
 			<p:load name="read-source">
 				<p:with-option name="href" select="$input-file"/>
 			</p:load>
+			<chymistry:regularize-tei name="fix-include-file-tei-errors"/>
 			<p:store name="save-include-file">
 				<p:with-option name="href" select="$output-file"/>
 			</p:store>
@@ -121,12 +133,7 @@
 					<!-- discard any xml:base attributes because they are spurious -->
 					<p:delete match="@xml:base"/>
 					<!-- coerce the document into a regular form, fixing any corrigible errors, etc -->
-					<p:xslt>
-						<p:input port="parameters"><p:empty/></p:input>
-						<p:input port="stylesheet">
-							<p:document href="../xslt/convert-to-p5/regularize-p5.xsl"/>
-						</p:input>
-					</p:xslt>
+					<chymistry:regularize-tei name="fix-tei-errors"/>
 					<!-- for each each of the "combo" files generate a sequence of template files containing xinclude statements which select:
 						part of the combo file
 						the corresponding piece of metadata from the -md.xml metadata file
@@ -275,6 +282,8 @@
 		<p:output port="result"/>
 		<!-- insert subsidiary material; bibliographies, personographies, gazeteers, etc. -->
 		<!-- ensure the document has a profileDesc to insert a particDesc into -->
+		<p:identity name="leave-until-topicmap-derived-tei-is-valid"/><!-- TODO re-enable this when XTM conversion done -->
+		<!--
 		<p:insert name="empty-profile-desc" match="tei:teiHeader[not(tei:profileDesc)]/tei:fileDesc" position="after">
 			<p:input port="insertion">
 				<p:inline xmlns="http://www.tei-c.org/ns/1.0" exclude-inline-prefixes="#all">
@@ -285,22 +294,18 @@
 		<p:insert name="personography" match="tei:profileDesc" position="first-child">
 			<p:input port="insertion">
 				<p:inline exclude-inline-prefixes="#all">
-					<xi:include href="includes/personography.xml" xpointer="xmlns(tei=http://www.tei-c.org/ns/1.0) xpath(//tei:particDesc)">
-						<xi:fallback><!-- personography.xml missing --></xi:fallback>
-					</xi:include>
+					<xi:include href="includes/personography.xml" xpointer="xmlns(tei=http://www.tei-c.org/ns/1.0) xpath(//tei:particDesc)"/>
 				</p:inline>
 			</p:input>
 		</p:insert>
-		<!-- insert the listPlace etc -->
 		<p:insert name="gazetteer" match="tei:sourceDesc" position="first-child">
 			<p:input port="insertion">
 				<p:inline exclude-inline-prefixes="#all">
-					<xi:include href="includes/gazetteer.xml" xpointer="xmlns(tei=http://www.tei-c.org/ns/1.0) xpath(//tei:sourceDesc/*)">
-						<xi:fallback><!-- gazetteer.xml missing --></xi:fallback>
-					</xi:include>
+					<xi:include href="includes/gazetteer.xml" xpointer="xmlns(tei=http://www.tei-c.org/ns/1.0) xpath(//tei:sourceDesc/*)"/>
 				</p:inline>
 			</p:input>  
 		</p:insert>
+		-->
 	</p:declare-step>
 	
 </p:library>
