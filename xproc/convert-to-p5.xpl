@@ -71,7 +71,7 @@
 			</p:xslt>
 			<!-- TODO merge the metadata from the other topic map -->
 			<chymistry:regularize-tei name="fix-topicmap-tei-errors"/><!-- fix up regular errors -->
-			<chymistry:assign-schema schema="../../schema/swinburne.rng"/>
+			<chymistry:assign-schema schema="../../schema/tei_all.rng"/>
 			<p:store href="../p5/includes/personography.xml" indent="true"/>
 		</p:group>
 	
