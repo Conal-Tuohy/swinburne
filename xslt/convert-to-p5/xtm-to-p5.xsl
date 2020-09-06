@@ -144,9 +144,15 @@ TODO ????
 			/xtm2:occurrence[xtm2:type/xtm2:topicRef/@href='#description']">
 		<desc><xsl:apply-templates/></desc>
 	</xsl:template>
-	
+
+	<!-- tei snippets -->	
 	<xsl:template match="xtm2:resourceData/tei:div">
 		<xsl:copy-of select="*"/>
+	</xsl:template>
+	
+	<!-- references to external resources -->
+	<xsl:template match="xtm2:occurrence[xtm2:resourceRef]">
+		<ptr type="{translate(xtm2:type/xtm2:topicRef/@href, '#', '')}" target="{xtm2:resourceRef/@href}"/>
 	</xsl:template>
 	<!--
 	<xsl:template match="xtm2:topic">

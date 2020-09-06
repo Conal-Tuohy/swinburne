@@ -11,13 +11,17 @@
 	
 	<!-- discard empty @when found in topicmaps --> 
 	<xsl:template match="@when[.='']"/>
+	<!-- years with less than 4 digits need zero padding -->
+	<xsl:template match="@when[matches(., '^\d{1,3}$')]">
+		<xsl:attribute name="when" select="format-number(., '9999')"/>
+	</xsl:template>
 	
 	<!-- fix attribute names -->
-	<xsl:template match="@not_after">
-		<xsl:attribute name="notAfter" select="."/>
+	<xsl:template match="@not_after | @notAfter">
+		<xsl:attribute name="notAfter" select="format-number(., '9999')"/>
 	</xsl:template>
-	<xsl:template match="@not_before">
-		<xsl:attribute name="notBefore" select="."/>
+	<xsl:template match="@not_before | @notBefore">
+		<xsl:attribute name="notBefore" select="format-number(., '9999')"/>
 	</xsl:template>
 	
 	<!-- ensure that the children of monogr elements are in the right order -->
