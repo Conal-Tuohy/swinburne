@@ -1,5 +1,8 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="3.0"
-	xpath-default-namespace="http://www.tei-c.org/ns/1.0">
+	xpath-default-namespace="http://www.tei-c.org/ns/1.0"
+	xmlns:tei="http://www.tei-c.org/ns/1.0"
+	xmlns="http://www.tei-c.org/ns/1.0"
+	exclude-result-prefixes="tei">
 	<!-- regularize P5 content, fixing any common problems -->
 	
 	<xsl:mode on-no-match="shallow-copy"/>
@@ -9,8 +12,8 @@
 		<xsl:attribute name="unit" select="."/>
 	</xsl:template>
 	
-	<!-- discard empty @when found in topicmaps --> 
-	<xsl:template match="@when[.='']"/>
+	<!-- discard empty @when, @from, @to, found in topicmaps --> 
+	<xsl:template match="(@when | @from | @to)[.='']"/>
 	<!-- years with less than 4 digits need zero padding -->
 	<xsl:template match="@when[matches(., '^\d{1,3}$')]">
 		<xsl:attribute name="when" select="format-number(., '9999')"/>
@@ -43,6 +46,18 @@
 				<xsl:copy-of select="following-sibling::node()[1]/self::text()"/><!-- copy any trailing white space -->
 			</xsl:for-each>
 		</xsl:copy>
+	</xsl:template>
+	
+	<!-- use the default namespace rather than a prefix for TEI -->
+	<xsl:template match="tei:*">
+		<xsl:element name="{local-name(.)}" namespace="http://www.tei-c.org/ns/1.0">
+			<xsl:apply-templates select="@*"/>
+			<xsl:apply-templates/>
+		</xsl:element>
+	</xsl:template>
+	
+	<xsl:template match="@*">
+		<xsl:copy-of select="."/>
 	</xsl:template>
 	
 </xsl:stylesheet>
