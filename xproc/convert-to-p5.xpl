@@ -35,6 +35,38 @@
 		</p:viewport>
 	</p:declare-step>
 	
+	<p:declare-step name="convert-xtm2-to-tei" type="chymistry:convert-xtm2-to-tei">
+		<p:output port="result"/>
+		<p:option name="href"/>
+		<p:load name="xtm">
+			<p:with-option name="href" select="$href"/>
+		</p:load>
+		<p:xslt name="tei-from-topicmap">
+			<p:input port="parameters"><p:empty/></p:input>
+			<p:input port="stylesheet">
+				<p:document href="../xslt/convert-to-p5/xtm2-to-p5.xsl"/>
+			</p:input>
+		</p:xslt>
+		<chymistry:regularize-tei name="fix-topicmap-tei-errors"/><!-- fix up regular errors -->
+		<chymistry:assign-schema schema="../../schema/tei_all.rng"/>
+	</p:declare-step>
+	
+	<p:declare-step name="convert-xtm1-to-tei" type="chymistry:convert-xtm1-to-tei">
+		<p:output port="result"/>
+		<p:option name="href"/>
+		<p:load name="xtm">
+			<p:with-option name="href" select="$href"/>
+		</p:load>
+		<p:xslt name="tei-from-topicmap">
+			<p:input port="parameters"><p:empty/></p:input>
+			<p:input port="stylesheet">
+				<p:document href="../xslt/convert-to-p5/xtm1-to-p5.xsl"/>
+			</p:input>
+		</p:xslt>
+		<chymistry:regularize-tei name="fix-topicmap-tei-errors"/><!-- fix up regular errors -->
+		<chymistry:assign-schema schema="../../schema/tei_all.rng"/>
+	</p:declare-step>
+	
 	<p:declare-step name="regularize-tei" type="chymistry:regularize-tei">
 		<p:input port="source"/>
 		<p:output port="result"/>
@@ -62,17 +94,26 @@
 		
 		<!-- convert topic maps -->
 		<p:group name="convert-topic-maps">
-			<p:load name="xtm" href="../../acsproj/data/swinburne.xtm"/>
-			<p:xslt name="tei-from-topicmap">
+			<chymistry:convert-xtm2-to-tei href="../../acsproj/data/swinburne.xtm" name="swinburne"/>
+			<p:store href="../p5/includes/personography.xml" indent="true"/>
+			<chymistry:convert-xtm1-to-tei href="../../acsproj/data/tristram.xtm" name="tristram"/>
+			<p:store href="../p5/includes/tristram.xml" indent="true"/>
+			<chymistry:convert-xtm1-to-tei href="../../acsproj/data/arthurian.xtm" name="arthurian"/>
+			<p:store href="../p5/includes/arthurian.xml" indent="true"/>
+			<p:wrap-sequence wrapper="teiCorpus" wrapper-namespace="http://www.tei-c.org/ns/1.0">
+				<p:input port="source">
+					<p:pipe step="swinburne" port="result"/>
+					<p:pipe step="tristram" port="result"/>
+					<p:pipe step="arthurian" port="result"/>
+				</p:input>
+			</p:wrap-sequence>
+			<p:xslt name="merge-authority-files">
 				<p:input port="parameters"><p:empty/></p:input>
 				<p:input port="stylesheet">
-					<p:document href="../xslt/convert-to-p5/xtm-to-p5.xsl"/>
+					<p:document href="../xslt/convert-to-p5/merge-authority-files.xsl"/>
 				</p:input>
 			</p:xslt>
-			<!-- TODO merge the metadata from the other topic map -->
-			<chymistry:regularize-tei name="fix-topicmap-tei-errors"/><!-- fix up regular errors -->
-			<chymistry:assign-schema schema="../../schema/tei_all.rng"/>
-			<p:store href="../p5/includes/personography.xml" indent="true"/>
+			<p:store href="../p5/authority.xml" indent="true"/>
 		</p:group>
 	
 		<!-- next copy the "includes" folder -->
