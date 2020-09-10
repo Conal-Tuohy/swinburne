@@ -273,7 +273,15 @@
 	
 	<!-- references to external resources -->
 	<xsl:template match="occurrence[resourceRef]">
-		<ptr ana="{instanceOf/topicRef/@xlink:href}" target="{resourceRef/@xlink:href}"/>
+		<xsl:variable name="ana" select="string-join(instanceOf/topicRef/@xlink:href, ' ')"/>
+		<xsl:for-each select="resourceRef">
+			<xsl:element name="ptr">
+				<xsl:attribute name="target" select="@xlink:href"/>
+				<xsl:if test="$ana">
+					<xsl:attribute name="ana" select="$ana"/>
+				</xsl:if>
+			</xsl:element>
+		</xsl:for-each>
 	</xsl:template>
 
 	<xsl:template match="instanceOf"/>

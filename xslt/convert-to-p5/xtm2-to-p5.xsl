@@ -307,7 +307,15 @@
 	
 	<!-- references to external resources -->
 	<xsl:template match="xtm2:occurrence[xtm2:resourceRef]">
-		<ptr ana="{xtm2:type/xtm2:topicRef/@href}" target="{xtm2:resourceRef/@href}"/>
+		<xsl:variable name="ana" select="string-join(xtm2:type/xtm2:topicRef/@href, ' ')"/>
+		<xsl:for-each select="xtm2:resourceRef">
+			<xsl:element name="ptr">
+				<xsl:attribute name="target" select="@href"/>
+				<xsl:if test="$ana">
+					<xsl:attribute name="ana" select="$ana"/>
+				</xsl:if>
+			</xsl:element>
+		</xsl:for-each>
 	</xsl:template>
 
 	<xsl:template match="xtm2:instanceOf"/>
