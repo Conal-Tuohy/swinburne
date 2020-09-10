@@ -95,11 +95,11 @@
 		<!-- convert topic maps -->
 		<p:group name="convert-topic-maps">
 			<chymistry:convert-xtm2-to-tei href="../../acsproj/data/swinburne.xtm" name="swinburne"/>
-			<p:store href="../p5/includes/personography.xml" indent="true"/>
+			<p:store href="../p5/includes/swinburne-xtm.xml" indent="true"/>
 			<chymistry:convert-xtm1-to-tei href="../../acsproj/data/tristram.xtm" name="tristram"/>
-			<p:store href="../p5/includes/tristram.xml" indent="true"/>
+			<p:store href="../p5/includes/tristram-xtm.xml" indent="true"/>
 			<chymistry:convert-xtm1-to-tei href="../../acsproj/data/arthurian.xtm" name="arthurian"/>
-			<p:store href="../p5/includes/arthurian.xml" indent="true"/>
+			<p:store href="../p5/includes/arthurian-xtm.xml" indent="true"/>
 			<p:wrap-sequence wrapper="teiCorpus" wrapper-namespace="http://www.tei-c.org/ns/1.0">
 				<p:input port="source">
 					<p:pipe step="swinburne" port="result"/>
@@ -237,7 +237,7 @@
 									</p:input>
 								</p:xslt>
 								<chymistry:assign-schema schema="../schema/swinburne.rng"/>
-								<chymistry:insert-personography-xinclude/>
+								<chymistry:insert-authority-xinclude/>
 								<p:store name="save-combo-part" indent="true">
 									<p:with-option name="href" select="concat('../p5/', $component-id, '.xml')"/>
 								</p:store>
@@ -268,7 +268,7 @@
 								</p:add-attribute>
 							</p:viewport>
 							<chymistry:assign-schema schema="../schema/swinburne.rng"/>
-							<chymistry:insert-personography-xinclude/>
+							<chymistry:insert-authority-xinclude/>
 							<p:store name="save-ordinary-text">
 								<p:with-option name="href" select="concat('../p5/', $file-uri)"/>
 							</p:store>
@@ -318,35 +318,49 @@
 		</p:xslt>
 	</p:declare-step>
 	
-	<p:declare-step type="chymistry:insert-personography-xinclude">
+	<p:declare-step type="chymistry:insert-authority-xinclude">
 		<p:input port="source"/>
 		<p:output port="result"/>
 		<!-- insert subsidiary material; bibliographies, personographies, gazeteers, etc. -->
-		<!-- ensure the document has a profileDesc to insert a particDesc into -->
+		<!-- ensure the document has a profileDesc containing a particDesc, to insert into -->
 		<p:identity name="leave-until-topicmap-derived-tei-is-valid"/><!-- TODO re-enable this when XTM conversion done -->
-		<!--
-		<p:insert name="empty-profile-desc" match="tei:teiHeader[not(tei:profileDesc)]/tei:fileDesc" position="after">
+		<p:insert name="empty-encoding-desc" match="tei:teiHeader[not(tei:encodingDesc)]/tei:fileDesc" position="after">
 			<p:input port="insertion">
 				<p:inline xmlns="http://www.tei-c.org/ns/1.0" exclude-inline-prefixes="#all">
-					<profileDesc/>
+					<encodingDesc/>
 				</p:inline>
 			</p:input>
 		</p:insert>
-		<p:insert name="personography" match="tei:profileDesc" position="first-child">
+		<p:insert name="empty-class-decl" match="tei:teiHeader/tei:encodingDesc" position="first-child">
 			<p:input port="insertion">
-				<p:inline exclude-inline-prefixes="#all">
-					<xi:include href="includes/personography.xml" xpointer="xmlns(tei=http://www.tei-c.org/ns/1.0) xpath(//tei:particDesc)"/>
+				<p:inline xmlns="http://www.tei-c.org/ns/1.0" exclude-inline-prefixes="#all">
+					<classDecl/>
 				</p:inline>
 			</p:input>
 		</p:insert>
-		<p:insert name="gazetteer" match="tei:sourceDesc" position="first-child">
+		<p:insert name="taxonomy" match="tei:classDecl" position="first-child">
 			<p:input port="insertion">
 				<p:inline exclude-inline-prefixes="#all">
-					<xi:include href="includes/gazetteer.xml" xpointer="xmlns(tei=http://www.tei-c.org/ns/1.0) xpath(//tei:sourceDesc/*)"/>
+					<xi:include href="authority.xml" xpointer="xmlns(tei=http://www.tei-c.org/ns/1.0) xpath(/tei:TEI/tei:teiHeader/tei:encodingDesc/tei:classDecl/tei:taxonomy)"/>
 				</p:inline>
 			</p:input>  
 		</p:insert>
-		-->
+		<p:insert name="authority-lists" match="tei:sourceDesc" position="first-child">
+			<p:input port="insertion">
+				<p:inline exclude-inline-prefixes="#all">
+					<xi:include href="authority.xml" xpointer="
+						xmlns(tei=http://www.tei-c.org/ns/1.0) 
+						xpath(
+							/tei:TEI/tei:text/tei:body/tei:div/tei:listBibl | 
+							/tei:TEI/tei:text/tei:body/tei:div/tei:listPerson | 
+							/tei:TEI/tei:text/tei:body/tei:div/tei:listOrg | 
+							/tei:TEI/tei:text/tei:body/tei:div/tei:listEvent | 
+							/tei:TEI/tei:text/tei:body/tei:div/tei:listPlace
+						)
+					"/>
+				</p:inline>
+			</p:input>
+		</p:insert>
 	</p:declare-step>
 	
 </p:library>
