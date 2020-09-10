@@ -105,6 +105,8 @@
 		</TEI>
 	</xsl:template>
 		
+	<xsl:template match="text()[not(normalize-space())]"/>
+		
 	<!-- residue -->
 	<xsl:template match="*">
 		<xsl:copy-of select="."/>
