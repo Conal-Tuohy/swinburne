@@ -96,7 +96,8 @@
 		• Child elements are deduplicated if they are deep-equal.
 		-->
 		<xsl:param name="items"/>
-		<xsl:for-each-group select="$items" group-by="@xml:id">
+		<xsl:copy-of select="$items[not(@xml:id)]"/>
+		<xsl:for-each-group select="$items[@xml:id]" group-by="@xml:id">
 			<xsl:copy>
 				<xsl:for-each-group select="current-group()/@*" group-by="name()">
 					<xsl:attribute name="{name()}" select="string-join(distinct-values(current-group()), ' ')"/>
