@@ -5,13 +5,14 @@ The combo file contains a number of "components" (div and text elements) which a
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="3.0" 
 		xpath-default-namespace="http://www.tei-c.org/ns/1.0" 
 		expand-text="true"
-		 xmlns:xi="http://www.w3.org/2001/XInclude">
+		xmlns="http://www.tei-c.org/ns/1.0"
+		xmlns:xi="http://www.w3.org/2001/XInclude">
 	<xsl:param name="resulting-metadata-file"/><!-- the relative URI of the metadata file to transclude from -->
 	<!--<xsl:param name="source-metadata-file"/>--><!-- URI of the metadata file (to examine its contents to work out what needs to be included from it -->
 	<xsl:param name="component-id"/><!-- the @xml:id of this component of the "combo" file. -->
 	<xsl:param name="resulting-file-uri"/><!-- the relative URI of the combo file to transclude from -->
 	<xsl:template match="/">
-		<TEI xmlns="http://www.tei-c.org/ns/1.0">
+		<TEI xml:id="{$component-id}">
 			<teiHeader>
 				<fileDesc>
 					<xi:include href="{$resulting-metadata-file}" xpointer="xmlns(tei=http://www.tei-c.org/ns/1.0) xpath(/tei:TEI/tei:teiHeader/tei:fileDesc/*)">

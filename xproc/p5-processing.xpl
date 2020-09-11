@@ -117,10 +117,10 @@
 		<p:input port="source"/>
 		<p:output port="result"/>
 		<p:option name="solr-base-uri" required="true"/>
-		<!-- reindex all the P5 files except the bibliography file CHYM000001.xml -->
+		<!-- reindex all the P5 files -->
 		<p:try>
 			<p:group name="process-directory">
-				<p:directory-list name="list-p5-files" path="../p5/" include-filter=".+\.xml$"/>
+				<p:directory-list name="list-p5-files" path="../p5/result/" include-filter=".+\.xml$"/>
 				<p:add-xml-base relative="false" all="true"/>
 				<p:for-each>
 					<p:iteration-source select="//c:file"/>
@@ -192,6 +192,12 @@
 					<!-- attempt the transclusions -->
 					<p:xinclude/>
 					<p:identity name="post-xinclusion"/>
+					<p:xslt>
+						<p:with-param name="schema" select=" '../../schema/tei_all.rng' "/>
+						<p:input port="stylesheet">
+							<p:document href="../xslt/assign-schema.xsl"/>
+						</p:input>
+					</p:xslt>
 					<p:store>
 						<p:with-option name="href" select="$output-file"/>
 					</p:store>
@@ -404,10 +410,9 @@
 		<chymistry:generate-indexer name="indexing-stylesheet">
 			<p:with-option name="solr-base-uri" select="$solr-base-uri"/>
 		</chymistry:generate-indexer>
-		<p:load>
-			<p:with-option name="href" select="concat('../p5/', $text, '.xml')"/>
+		<p:load  name="text">
+			<p:with-option name="href" select="concat('../p5/result/', $text, '.xml')"/>
 		</p:load>
-		<p:xinclude  name="text"/>
 		<p:xslt name="metadata-fields">
 			<p:with-param name="id" select="$text"/>
 			<p:with-param name="solr-base-uri" select="$solr-base-uri"/>
@@ -496,7 +501,7 @@
 		<p:variable name="base-uri" select="concat(substring-before(/c:request/@href, '/iiif/'), '/iiif/')"/>
 		<p:variable name="text-id" select="substring-before(substring-after(/c:request/@href, '/iiif/'), '/')"/>
 		<p:load name="text">
-			<p:with-option name="href" select="concat('../p5/', $text-id, '.xml')"/>
+			<p:with-option name="href" select="concat('../p5/result/', $text-id, '.xml')"/>
 		</p:load>
 		<p:xslt>
 			<p:with-param name="base-uri" select="$base-uri"/>
@@ -533,7 +538,7 @@
 			)
 		"/>
 		<p:load name="text">
-			<p:with-option name="href" select="concat('../p5/', $text-id, '.xml')"/>
+			<p:with-option name="href" select="concat('../p5/result/', $text-id, '.xml')"/>
 		</p:load>
 		<p:xslt>
 			<p:with-param name="base-uri" select="$base-uri"/>
@@ -570,9 +575,8 @@
 		<p:option name="text" required="true"/>
 		<p:option name="base-uri" required="true"/>
 		<p:load name="text">
-			<p:with-option name="href" select="concat('../p5/', $text, '.xml')"/>
+			<p:with-option name="href" select="concat('../p5/result/', $text, '.xml')"/>
 		</p:load>
-		<p:xinclude/>
 		<p:xslt name="text-as-html">
 			<p:with-param name="view" select=" 'normalized' "/><!-- TODO get rid of view param altogether -->
 			<p:input port="stylesheet">
@@ -587,16 +591,15 @@
 		<p:output port="result"/>
 		<p:variable name="text" select="substring-after(/c:request/@href, '/p5/')"/>
 		<p:load name="text">
-			<p:with-option name="href" select="concat('../p5/', $text)"/>
+			<p:with-option name="href" select="concat('../p5/result/', $text)"/>
 		</p:load>
-		<p:xinclude/>
 		<z:make-http-response content-type="application/xml"/>
 	</p:declare-step>
 	
 	<p:declare-step name="list-p5" type="chymistry:list-p5">
 		<p:input port="source"/>
 		<p:output port="result"/>
-		<p:directory-list name="list-p5-files" path="../p5/" exclude-filter="schemas.xml" include-filter=".+\.xml$"/>
+		<p:directory-list name="list-p5-files" path="../p5/result/" exclude-filter="schemas.xml" include-filter=".+\.xml$"/>
 		<p:xslt>
 			<p:input port="parameters"><p:empty/></p:input>
 			<p:input port="stylesheet">
