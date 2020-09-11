@@ -65,7 +65,7 @@
 	<field
 		name="person"
 		label="People"
-		xpath="for $person-name in //persName return string-join($person-name//text()[not(ancestor::orig)][not(ancestor::abbrev)])"
+		xpath="for $person-name in /TEI/text//persName return string-join($person-name//text()[not(ancestor::orig)][not(ancestor::abbrev)])"
 		type="facet"/>
 	<!-- 
 	This field, called "sort", is used as a sort key of last resort when displaying search results.
