@@ -239,7 +239,6 @@
 			string-join(
 				(
 					concat('tei-', local-name()),
-					for $rend in tokenize(@rend) return concat('rend-', $rend),
 					for $type in tokenize(@type) return concat('type-', $type),
 					for $place in tokenize(@place) return concat('place-', $place),
 					for $rendition in tokenize(
@@ -250,6 +249,7 @@
 				' '
 			)
 		"/>
+		<xsl:for-each select="@rend"><xsl:attribute name="style" select="."/></xsl:for-each>
 		<xsl:for-each select="@xml:lang"><xsl:attribute name="lang" select="."/></xsl:for-each>
 		<xsl:for-each select="@target"><xsl:attribute name="href" select="."/></xsl:for-each>
 		<xsl:if test="@hand">
