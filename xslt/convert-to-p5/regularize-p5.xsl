@@ -6,6 +6,11 @@
 	<!-- regularize P5 content, fixing any common problems -->
 	
 	<xsl:mode on-no-match="shallow-copy"/>
+	
+	<!-- use @ref to make URI reference to e.g. person, place, etc, contextual elements by their @xml:id -->
+	<xsl:template match="@key">
+		<xsl:attribute name="ref" select="concat('#', .)"/>
+	</xsl:template>
 
 	<xsl:template match="biblScope/@type">
 		<!-- biblScope/@type should be @unit -->
