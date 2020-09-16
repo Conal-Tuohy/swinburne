@@ -24,6 +24,38 @@
 				<link href="/css/tei.css" rel="stylesheet" type="text/css"/>
 				<link href="/css/highlighting.css" rel="stylesheet" type="text/css"/>
 				<link href="{$embedded-manifest-uri}" rel="alternate" type="application/ld+json" title="iiif-manifest"/>
+				<!-- output the rendition elements as CSS rules -->
+				<!-- TODO move CSS validation into schematron rules -->
+				<style type="text/css">
+					<xsl:value-of select="
+						let 
+							$properties-regex:='^\s*[^:\s]+\s*:[^;]+(;\s?[^:\s]+\s*:[^;]+)*', (: i.e. 'property:value; property-2: value; ...' :)
+							$css-comment-regex:='/\*.*?\*/' (: i.e. /* this is a comment */ :)
+						return string-join(
+							for $rendition in teiHeader/encodingDesc/tagsDecl/rendition
+								[not(@scheme!='css')] (: rendition specifies CSS, explicitly or implicitly :)
+							return 
+								let 
+									$properties:=normalize-space(string-join(tokenize($rendition, $css-comment-regex))),
+									$selector:=concat('.rendition-', $rendition/@xml:id, if ($rendition/@scope) then concat(':', $rendition/@scope) else '')
+								return concat(
+									$selector,
+									' {', codepoints-to-string(10),
+									if (matches($properties, '[{}]') or not(matches($properties, $properties-regex))) then (: rules containing media queries not allowed :)
+										'   /* invalid CSS */'
+									else 
+										string-join(
+											for $property in tokenize($properties, ';')[normalize-space()] 
+											return concat('   ', $property, ';'), 
+											codepoints-to-string(10)
+										),
+									codepoints-to-string(10),
+									'}'
+								),							
+							codepoints-to-string((10, 10))
+						)
+					"/>
+				</style>
 			</head>
 			<body>
 				<div class="tei">
@@ -200,6 +232,7 @@
 		</xsl:element>
 	</xsl:template>
 	
+	<xsl:variable name="tag-usage" select="/TEI/teiHeader/encodingDesc/tagsDecl/namespace/tagUsage"/>
 	<!-- populate an HTML element's set of attributes -->
 	<xsl:template mode="create-attributes" match="*">
 		<xsl:attribute name="class" select="
@@ -209,6 +242,9 @@
 					for $rend in tokenize(@rend) return concat('rend-', $rend),
 					for $type in tokenize(@type) return concat('type-', $type),
 					for $place in tokenize(@place) return concat('place-', $place),
+					for $rendition in tokenize(
+						if (@rendition) then @rendition else $tag-usage[@gi=local-name(current())]/@rendition
+					) return concat('rendition-', substring-after($rendition, '#')),
 					if (@hand) then 'hand' else ()
 				),
 				' '
