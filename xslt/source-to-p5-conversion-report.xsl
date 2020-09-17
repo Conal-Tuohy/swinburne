@@ -25,6 +25,7 @@
 				<h1>{$title}</h1>
 				<table>
 					<xsl:apply-templates select="c:file">
+						<xsl:sort select="@converted"/>
 						<xsl:sort select="@name"/>
 					</xsl:apply-templates>
 				</table>
