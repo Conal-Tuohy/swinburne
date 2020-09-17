@@ -25,13 +25,13 @@
 	</xsl:template>
 	
 	<!-- fix attribute names -->
-	<xsl:template match="@not_after | @notAfter">
+	<xsl:template match="(@not_after | @notAfter)[matches(., '^\d{1,3}$')]">
 		<xsl:attribute name="notAfter" select="format-number(., '9999')"/>
 	</xsl:template>
-	<xsl:template match="@not_before | @notBefore">
+	<xsl:template match="(@not_before | @notBefore)[matches(., '^\d{1,3}$')]">
 		<xsl:attribute name="notBefore" select="format-number(., '9999')"/>
 	</xsl:template>
-	
+		
 	<!-- ensure that the children of monogr elements are in the right order -->
 	<xsl:template match="monogr[title][idno][author]">
 		<xsl:call-template name="copy-and-reorder-children">
