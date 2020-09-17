@@ -87,4 +87,12 @@
 			)
 		"
 		type="sort"/>
+	<!-- 
+	This field defines a "rendition" facet which uses the identifier of the styles used in the text.
+	-->
+	<field
+		name="rendition"
+		label="Rendition id"
+		xpath="distinct-values(for $rendition in //*/@rendition return tokenize($rendition))"
+		type="facet"/>
 </fields>

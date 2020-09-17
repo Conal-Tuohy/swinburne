@@ -117,7 +117,7 @@
 						</xsl:choose>
 						<f:string key="field"><xsl:value-of select="@name"/></f:string>
 						<f:number key="mincount">0</f:number>
-						<f:number key="limit">40</f:number>
+						<f:number key="limit">400</f:number>
 						<f:boolean key="numBuckets">true</f:boolean>
 						<f:map key="domain">
 							<f:string key="excludeTags"><xsl:value-of select="@name"/></f:string>
