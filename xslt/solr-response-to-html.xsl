@@ -15,8 +15,6 @@
 	<!-- the parameters from the request URL  -->
 	<xsl:variable name="request" select="/*/c:param-set"/>
 	
-	<xsl:variable name="keyboard" select="document('../keyboard.xhtml')"/>
-	
 	<!-- the specification of the searchable fields and facets; previously used to convert the above request parameters into a Solr search -->
 	<xsl:variable name="field-definitions" select="/*/fields/field[@label]"/>
 	<xsl:variable name="facet-definitions" select="$field-definitions[@type='facet']"/>
@@ -260,7 +258,6 @@
 			</xsl:choose>
 		</xsl:for-each>
 		<button>search</button>
-		<xsl:copy-of select="$keyboard"/>
 	</xsl:template>
 	
 	<xsl:template name="render-facets">
