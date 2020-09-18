@@ -6,59 +6,50 @@
 	exclude-result-prefixes="fn map">
 	<!-- embed the page in global navigation -->
 	<xsl:param name="current-uri"/>
-	<xsl:variable name="keyboard" select="document('../keyboard.xhtml')"/>
 	<xsl:variable name="menus" select="json-to-xml(unparsed-text('../menus.json'))"/>
-	<!-- TODO -->
-	<!-- NB this template effectively disables this stylesheet (which is currently the Newton Chymistry site -->
-	<xsl:template match="/"><xsl:copy-of select="."/></xsl:template>
 	
-	<xsl:template match="node()">
-		<xsl:copy>
-			<xsl:copy-of select="@*"/>
-			<xsl:apply-templates/>
-		</xsl:copy>
-	</xsl:template>
+	<xsl:mode on-no-match="shallow-copy"/>
+	
+	<!-- insert link to global CSS, any global <meta> elements belong here too -->
 	<xsl:template match="head">
 		<xsl:copy>
 			<xsl:copy-of select="@*"/>
 			<xsl:apply-templates select="*"/>
 			<meta charset="utf-8" />
-			<meta name="keywords" content="science,chemistry,history,isaac newton,chymistry,alchemical manuscripts,national science foundation,laboratory,chymistry of isaac newton,indiana university,digtial library,alchemy,newton" />
-			<meta name="description" content="Isaac Newton, like Albert Einstein, is a quintessential symbol of the human intellect and its ability to decode the secrets of nature. Newton wrote and transcribed about a million words on the subject of alchemy, of which only a tiny fraction has today been published. With the support of the National Science Foundation and the National Endowment for the Humanities, The Chymistry of Isaac Newton hosted by Indiana University's Digital Library Program, is producing a scholarly online edition of Newton's alchemical manuscripts integrated with new research on Newton's chymistry." />
 			<link rel="stylesheet" type="text/css" href="/css/global.css"/>
 		</xsl:copy>
 	</xsl:template>
+	
+	<!-- add a global suffix to every page title -->
 	<xsl:template match="title">
 		<xsl:copy>
-			<xsl:value-of select="concat(., ': The Chymistry of Isaac Newton Project')"/>
+			<xsl:value-of select="concat(., ': The Algernon Charles Swinburne Project')"/>
 		</xsl:copy>
 	</xsl:template>
+	
+	<!-- insert boiler plate into the body -->
 	<xsl:template match="body">
 		<xsl:copy>
 			<xsl:copy-of select="@*"/>
+			<!-- masthead -->
 			<header class="page-header">
-				<section class="chymistry">
-					<div class="masthead">
-						<a class="masthead-link" href="/" title="Chymistry of Isaac Newton Project HOME">
-							<img id="newton-masthead-image" src="/image/newtonImage.transparent.png" alt="Image of Isaac Newton" title="Image of Isaac Newton"/>
-						</a>
-						<a class="masthead-link" href="/" title="Chymistry of Isaac Newton Project HOME">
-							<img id="newton-masthead-text" src="/image/masthead.png" alt="The Chymistry of Isaac Newton Project" title="The Chymistry of Isaac Newton Project"/>
-						</a>
-						<xsl:if test="not(//form[@id='advanced-search'])">
-							<form id="quick-search" action="/search/" method="GET">
-								<xsl:copy-of select="$keyboard"/>
-								<input type="text" name="text" placeholder="Search manuscripts"/>
-								<button type="submit">Search</button>
-								<a href="/search/">Advanced search</a>
-							</form>
-						</xsl:if>
-					</div>
+				<section class="project-site">
+					<a href="/" title="Home"><img src="/image/banner_portrait.png" alt="Portrait of Algernon Charles Swinburne" /></a>
+					<a href="/" title="Home"><img src="/image/banner_title.png" alt="Algernon Charles Swinburne" /></a>
+					<xsl:if test="not(//form[@id='advanced-search'])">
+						<form id="quick-search" action="/search/" method="GET">
+							<input type="text" name="text" placeholder="search texts"/>
+							<button type="submit">Search</button>
+							<a href="/search/">Advanced search</a>
+						</form>
+					</xsl:if>
 				</section>
 			</header>
+			<!-- menus read from menus.json -->
 			<nav id="main-nav">
 				<xsl:apply-templates select="$menus" mode="main-menu"/>
 			</nav>
+			<!-- contextual sidebar of the menu to which this page belongs, if any -->
 			<xsl:variable name="sub-menu">
 				<xsl:call-template name="sub-menu"/>
 			</xsl:variable>
@@ -75,7 +66,9 @@
 					<xsl:copy-of select="node()"/>
 				</xsl:otherwise>
 			</xsl:choose>
+			<!-- footer -->
 			<xsl:call-template name="footer"/>
+			<!-- global Javascript -->
 			<script src="/js/global.js"></script>
 		</xsl:copy>
 	</xsl:template>
@@ -151,27 +144,20 @@
 					</xsl:for-each>
 				</div>
 				<div class="links">
-					<p>General Editor: William R. Newman, Professor of 
-					<a href="http://www.indiana.edu/~hpscdept/" title="History of Science Department" target="_blank">History of Science</a>, 
-					<a href="http://www.iub.edu/" title="Indiana University" target="_blank">Indiana University</a><br/>
-					Technical Editor: John A. Walsh,  Assistant Professor of 
-					<a href="http://www.slis.indiana.edu/" title="School of Library and Information Science" target="_blank">Library and Information Science</a>, 
-					<a href="http://www.iub.edu/" title="Indiana University" target="_blank">Indiana University</a><br/>
-					In collaboration with the <a href="http://www.dlib.indiana.edu" target="_blank" title="Digital Library Program at IU">IU Digital Library Program</a> 
-					| <a href="http://www.libraries.iub.edu/index.php?pageId=1137" title="Libraries Privacy Policy" target="_blank">Libraries Privacy Policy</a> 
-					| In association with <a href="http://www.newtonproject.sussex.ac.uk/" title="Newton Project at Sussex" target="_blank">The Newton Project</a> - 
-					University of Sussex<br/>
-					<a href="/page/copyright" title="Copyright">© Copyright 2005—<xsl:value-of select="year-from-date(current-date())"/>, 
-					William R. Newman.<!--
-					 | Updated: 12/4/15 7:05 PM | URL: https://webapp1.dlib.indiana.edu:443/newton/project/publication.do
-					 --></a><br />
-					Peer reviewed by <a href="http://18thconnect.org/" target="_blank">18thConnect</a>.</p>
-					<p>This material is based upon work supported by the <a href="http://www.nsf.gov/" title="NSF" target="_blank">National Science Foundation</a> 
-					under Grant Nos. 0324310 and 0620868 and by the <a href="http://www.neh.gov/" title="NEH" target="_blank">National Endowment for the Humanities</a> 
-					under Grant No. RZ-50798. Any opinions, findings, and conclusions or recommendations expressed in this material are those of the author(s) and do not 
-					necessarily reflect the views of the National Science Foundation or the National Endowment for the Humanities.</p>
-					<!-- temporary link to site admin page -->
-					<p style="text-align: right"><a href="/admin">℞</a></p>
+					<p>Comments: <a href="mailto:jawalsh@indiana.edu">jawalsh@indiana.edu</a></p>
+					<p>Published by the Digital Culture Lab, <a href="http://www.slis.indiana.edu">School of Library and Information Science</a>, 
+					<a href="http://www.iub.edu">Indiana University</a>. 
+					Copyright © 1997-2012 <a href="http://www.slis.indiana.edu/faculty/jawalsh/">John A. Walsh</a>.</p>
+					<p><a href="http://www.nines.org/about/scholarship/peer-review/">Peer Reviewed</a> by <a href="http://www.nines.org/">NINES</a>.</p>
+					<p><a rel="license" href="http://creativecommons.org/licenses/by/3.0/us/"><img
+						alt="Creative Commons License"
+						style="border-width:0;position:relative;top:3px;"
+						src="http://i.creativecommons.org/l/by/3.0/us/80x15.png" /></a>
+						<cite>The Algernon Charles Swinburne Project</cite> by <a
+						href="mailto:jawalsh@indiana.edu">John A. Walsh</a> is licensed under a <a
+						rel="license" href="http://creativecommons.org/licenses/by/3.0/us/">Creative
+						Commons Attribution 3.0 United States License</a>.
+					</p>
 				</div>
 			</div>
 		</footer>

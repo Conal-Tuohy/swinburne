@@ -1,225 +1,100 @@
+
 <html xmlns="http://www.w3.org/1999/xhtml">
-	<head><title>Home</title></head>
-	<style type="text/css">
-		section.adverts {
-			background-color: #790A10;
+	<head>
+		<title>The Algernon Charles Swinburne Project</title>
+		<style type="text/css">
+		#epigraph {
+		font-size:80%;
+		width:90%;
+		margin:auto;
+		font-style:italic;
 		}
-		div.main,
-		div.adverts {
-			margin-left: auto;
-			margin-right: auto;
-			width: 70rem;
-		}
-		div.main {
-			background-color: #FFF;
-			display: grid;
-			grid-template-columns: 50% 50%;
-			grid-gap: 1em;
-			padding-top: 1em;
-			padding-bottom: 1em;
-		}
-		div.front-page {
-			padding-right: 1em;
-			line-height: 1.5em;
-		}
-		div.front-page:first-letter {
-			font-size: 5em;
-			float: left;
-			margin-top: 0.3em;
-			margin-bottom: 0.3em;
-			margin-right: 0.1em;
-		}
-		div.slideshow img {
-			max-width: 100%;
-			margin: 0;
-			border: thin solid #C0C0C0;
-		}
-		div.slideshow {
-			display: flex;
-		}
-		div.slideshow figcaption {
-			width: 100%;
-			text-align: center;
-			font-size: 1em;
-			line-height: 1em;
-			min-height: 2.5em;
-			background-color: #DFD9BD;
-			margin: 0;
-			padding: 1em;
-			border-bottom-right-radius: 0.4em;
-			border-bottom-left-radius: 0.4em;
-		}
-		div.slideshow figure * {
-			display: block;
-			margin: 0;
-		}
-		div.slideshow a {
-			text-decoration: none;
-			color: #990000;
-		}
-		div.slideshow figure {
-			margin: 0;
-			padding: 0;
-			z-index: 1;
-			animation-iteration-count: infinite;
-			animation-duration: 15s;
-			animation-timing-function: step-end;
-			animation-fill-mode: both;
-		}
-		div.slideshow figure * {
-			z-index: 0 !important;
-		}
-		div.slideshow figure:nth-child(1) {
-			animation-name: slide1;
-		}
-		div.slideshow figure:nth-child(2) {
-			animation-name: slide2;
-		}
-		div.slideshow figure:nth-child(3) {
-			animation-name: slide3;
-		}
-		@keyframes slide1 {
-			0% {
-				opacity: 0;
-				width: 0;
-			}
-			33% {
-				opacity: 1;
-				width: auto;
-			}
-			66% {
-				opacity: 0;
-				width: 0;
-			}
-			100% {
-				opacity: 0;
-				width: 0;
-			}
-		}
-		@keyframes slide2 {
-			0% {
-				opacity: 0;
-				width: 0;
-			}
-			33% {
-				opacity: 0;
-				width: 0;
-			}
-			66% {
-				opacity: 1;
-				width: auto;
-			}
-			100% {
-				opacity: 0;
-				width: 0;
-			}
-		}
-		@keyframes slide3 {
-			0% {
-				opacity: 1;
-				width: auto;
-			}
-			33% {
-				opacity: 0;
-				width: 0;
-			}
-			66% {
-				opacity: 0;
-				width: 0;
-			}
-			100% {
-				opacity: 1;
-				width: auto;
-			}
-		}
-		div.adverts {
-			display: flex;
-			flex-wrap: wrap;
-			justify-content: space-between;
-			background-color: #903430;
-			padding: 1rem;
-		}
-		div.adverts div {
-			flex-basis: 20rem;
-			color: #F7F6F2;
-			font-weight: lighter;
-			line-height: normal;
-			padding-left: 0.5em;
-			padding-right: 0.5em;
-		}
-		div.adverts div h2 {
-			color: #FFC;
-			font-weight: normal;
-			font-size: small;
-		}
-		div.adverts a {
-			text-decoration: none;
-			color: #FFC;
-		}
-		div.adverts p {
-			margin-top: 0.5em;
-			margin-bottom 0.5em;
-		}
-	</style>
-	<body>	
-		<section class="main">
-			<div class="main">
-				<div class="slideshow">
-					<figure class="slide1"><a href="/page/font"><img alt="Photo showing some symbols from the Newton Font" src="/image/slideshow/advert_newtonFont.plain.png" title="Photo showing some symbols from the Newton Font" /></a>
-						<figcaption><a href="/page/font">The Newton Font, supporting new Unicode® 6 alchemical symbols.</a></figcaption>
-					</figure>
-					<figure class="slide2"><a href="/page/mineral"><img alt="Photo of Oyl of Vitriol in the Making" src="/image/slideshow/advert_oylVitriol.plain.png" title="Photo of Oyl of Vitriol in the Making"/></a>
-						<figcaption><a href="/page/mineral">Recreating Mineral Acid from Newton's Instructions</a></figcaption>
-					</figure>
-					<figure class="slide3"><a href="/page/glossary"><img alt="Image of term from Alchemical Glossary" src="/image/slideshow/advert_alchemicalGlossary.plain.png" title="Image of term from Alchemical Glossary"/></a>
-						<figcaption><a href="/page/glossary">Review the Alchemical Glossary Today</a></figcaption>
-					</figure>
+		</style>
+	</head>
+	<body>
+		<div id="content">
+			<div id="home-text">
+				<div id="epigraph" class="epigraph">
+					<p style="margin-bottom:0;padding-bottom:0;">
+					“For the matter of it—I consent to much—I regret much—I blame or reject nothing. I should as soon think of finding fault with you as with a thundercloud or a nightshade blossom. All I can say of you or them—is that God made you, and that you are very wonderful and beautiful.” 
+				</p>
+					<p style="padding-left:3em; font-size:90%; margin-top:0;padding-top:0;width:90%;">
+					—John Ruskin, from a letter to Swinburne, commenting on the poet’s <cite style="font-style:normal;">Poems and Ballads</cite>. 
+				</p>
 				</div>
-				<div class="front-page">
-					<p>Isaac Newton, like Albert Einstein, is a quintessential symbol of the human intellect and its ability to decode the secrets of nature. Newton's fundamental contributions to science include the quantification of gravitational attraction, the discovery that white light is actually a mixture of immutable spectral colors, and the formulation of the calculus. Yet there is another, more mysterious side to Newton that is imperfectly known, a realm of activity that spanned some thirty years of his life, although he kept it largely hidden from his contemporaries and colleagues. We refer to Newton's involvement in the discipline of alchemy, or as it was often called in seventeenth-century England, "chymistry." Newton wrote and transcribed about a million words on the subject of alchemy. Newton's alchemical manuscripts include a rich and diverse set of document types, including laboratory notebooks, indices of alchemical substances, and Newton's transcriptions from other sources.</p>
+				<p>
+					<span class="drop">T</span>he Swinburne Project is a digital collection and scholarly project devoted to the life and work of Victorian poet Algernon Charles Swinburne and to digital encounters with Swinburne's works and related documents and information resources.<!--When complete the project will provide students and scholars with access to all available original works by Swinburne and selected contextual materials, including contemporary critical reactions, biographical works, and images of artwork about which Swinburne wrote. -->
+				</p>
+				<div class="headedtextbox">
+					<div class="textboxHead">
+					News 
+				</div>
+					<div class="textboxBody">
+						<h3 class="styled" style="font-size:90%">New Edition of <cite>The Algernon Charles Swinburne Project</cite>
+						</h3>
+						<p>
+						In March, 2012 a major new edition of <cite>The Algernon Charles Swinburne Project</cite> was published online. The new edition includes a fresh architecture and design and a great deal of new content, including:
+					</p>
+						<ul>
+							<li>
+							All six volumes of the collected <cite>Poems</cite> (London: Chatto and Windus, 1904). 
+						</li>
+							<li>
+							Swinburne's one finished novel, <cite><a href="http://www.purl.org/swinburnearchive/acs0000005-01.xml">Love's Cross-Currents</a>
+								</cite> (London: Chatto and Windus, 1905). 
+						</li>
+						<!--
+						<li>
+							A draft manuscript of “Rondel” [“These many years since we began to be”] from <cite>Poems and Ballads, First Series.</cite> 
+						</li>
+						-->
+							<li>
+							Facsimile page images for all the above texts. 
+						</li>
+							<li>
+							A new section of the project, <a href="study.jsp">Tools &amp; Tactics</a>, features a collection of digital encounters with the edited and encoded text corpus of the <cite>Swinburne Project</cite>: visualizations, image and text analysis tools, and creative works.
+						</li>
+							<li>
+							An <a href="http://www.purl.org/swinburnearchive/acs0000503-01.xml">Introduction</a> to Swinburne's life and work. 
+						</li>
+							<li>
+							An updated <a href="/swinburne/chronology/">Chronology</a>. 
+						</li>
+							<li>
+							A significantly expanded version of Terry Meyers' <a href="/swinburne/view#docId=swinburne/acs0000505-01.xml">“Supplementary Material”</a> to his <cite>Uncollected Letters of Algernon Charles Swinburne</cite>, 3 vols. (London: Pickering and Chatto, 2005). The revised material includes an <a href="/swinburne/view#docId=swinburne/acs0000504-01.xml">illustrated essay</a> on the controversy surrounding Swinburne's funeral.
+						</li>
+					
+						</ul>
+					</div>
+			
+				</div>
+				<div style="font-size:75%; margin-left:3em;width:120%;">
+					<strong>Supported Browsers</strong>
+					<br/>
+					<cite>The Swinburne Project</cite> uses current Web standards and technologies and requires a recent browser. Internet Explorer 8 or later and recent versions of Safari, Firefox, and Chrome are all supported.
 				</div>
 			</div>
-		</section>
-		<section class="adverts">
-			<div class="adverts">
-<div>
-	<h2><a href="/page/about">Newton &amp; Alchemy</a></h2>
-	<a href="project/about"><img alt="Index Chemicus Screenshot" title="Index Chemicus Screenshot" src="/image/advert/newtonAlchemy.png"/></a>
-	<p>It is important to see how chemical technology and medicine were connected to Newton's involvement to the "Great Work," just as it is important to see how his chymistry was related to his other intellectual and technical pursuits. <a href="project/about.do">Newton &amp; Alchemy</a></p>
-</div>
-<div>
-	<h2><a href="/page/lsa">Latent Semantic Analysis</a></h2>
-	<a href="/page/lsa"><img alt="Latent Semantic Analysis Screenshot" title="Latent Semantic Analysis Screenshot" src="/image/advert/lsa.png"/></a>
-	<p>Computational tools to aid analysis of the language and projects encompassed in Newton's alchemical manuscripts.  <a href="http://webapp1.dlib.indiana.edu/newton/lsa/index.php">Latent Semantic Analysis</a></p>
-</div>
-<div>
-	<h2><a href="/page/publication">Featured Presentation</a></h2>
-	<a href="/page/publication"><img alt="Newman - Perimeter Institute Presentation" title="Newman - Perimeter Institute Presentation" src="/image/advert/newman_PerimeterInstitute.png"/></a>
-	<p>William R. Newman presented a lecture titled <em>Why did Isaac Newton Believe in Alchemy?</em> at the The Perimeter Institute on October 2, 2010. <a href="project/publication.do">Project Presentations</a> 
-</p>
-</div>
-<div>
-	<h2><a href="html/Newton_optics-alchemy_Jacquart_paper.pdf">Alchemy and Optics</a></h2>
-	<a href="html/Newton_optics-alchemy_Jacquart_paper.pdf"><img alt="William R. Newman Article" title="William R. Newman Article" src="/image/advert/newman.doc.png"/></a>
-	<p>
-		<a href="http://www.adobe.com/products/acrobat/readermain.html"><img alt="Adobe PDF Logo" title="Click here to download Acrobat Reader" src="images/icons/pdf.32.png"/></a>This article provides the first evidence that Newton's radical discoveries in the realm of light and color owed a significant debt to his alchemical research. <a href="html/Newton_optics-alchemy_Jacquart_paper.pdf">Read today.</a></p>
-</div>
-<div>
-	<h2><a href="/page/mineral">Experiments in Mineral Acids</a></h2>
-	<a href="/page/mineral"><img alt="Image of 'spirit of salt' furnace and distillation apparatus." src="/image/advert/spiritOfSalt.png"/></a>
-	<p>Newton describes the production of the spirit of salt (hydrochloric acid) in 
-		<a href="mss/dipl/ALCH00085" title="Babson Don b.15, Bodleian library, Oxford University">Don b. 15, p.8v</a>, as follows: "Spirit of Salt. 
-		Common salt, beat fine in 1 part brick-dust or potters earth not over dryed &amp; pouder 5 parts : urge by a graduall fire out of a glass 
-		retort filld full into a large receiver till you feel the receiver cold &amp; one pound will yeild nine or 10 ounces."</p>
-</div>
-<div>
-	<h2><a href="reference/chemLab.do">Multimedia Lab</a></h2>
-	<img alt="A movie still showing the begining of growth." src="/image/advert/silicaGarden.png"/>
-	<p>In Newton's day, a silica garden was usually made by placing lumps of ferric chloride in a solution of potassium silicate.
-		Silica gardens encouraged the idea that minerals were vegetative. 
-		See videos demonstrating this process and five other reactions that shaped the thinking of early modern chymists on our Multimedia Lab page.</p>
-</div>
+			<div id="home-portrait">
+				<img src="/swinburne/images/swinburne/home_portrait.png" alt="Algernon Charles Swinburne, by Sir Robert Ponsonby Staples, chalk, 1900. Used with permission of the National Portrait Gallery, London." />
+				<div class="caption">
+					<span class="caption" style="display:block;
+    text-indent:-1em;
+    margin:0;
+    padding-left:1em;
+"> Algernon Charles Swinburne, by Sir Robert Ponsonby Staples, chalk, 1900. Used with permission of the <a href="http://www.npg.org.uk">National Portrait Gallery</a>, London. </span>
+				</div>
+				<div style="padding:3em 1em 1em 1em;">
+			<!-- Search NINES -->
+					<form method="POST" style="font-size-adjust:none;font-style:normal;font-variant:normal;font-weight:normal;line-height:1.231;color:#000000;" action="http://www.nines.org/collex/add_constraint">
+						<div style="background:url(http://www.nines.org/images/widget_stack_white.jpg) no-repeat scroll left top;height:56px;width:130px;font-size:12px;margin:0;padding:35px 0 0 72px;text-align:left;font-family:'Times New Roman',Times,serif;font-size-adjust:none;font-style:normal;font-variant:normal;font-weight:normal;line-height:1.231;color:#000000;background-color:white; border:1px solid black;">
+							<a href="http://nines.org" style="text-decoration:none; float:left; margin-top:-35px; height:30px; width:120px;"></a>
+							<input type="text" name="search_phrase" onclick="this.form.target='_blank';return true;" size="16" maxlength="255" value="" style="width:100px;-x-system-font:none;font-family:arial,helvetica,clean,sans-serif;font-size-adjust:none;font-stretch:normal;font-style:normal;font-variant:normal;font-weight:normal;line-height:normal;margin:0;margin-top:4px;margin-bottom:3px;padding:0;text-align:left;color:#000000;"/>
+							<input type="submit" value="Search NINES" style="width:100px;padding:1px;-x-system-font:none;font-family:arial,helvetica,clean,sans-serif;font-size:99%;font-size-adjust:none;font-stretch:normal;font-style:normal;font-variant:normal;font-weight:normal;line-height:normal;margin:0;text-align:left;color:#000000;"/>
+						</div>
+					</form>
+			<!-- Search NINES -->
+				</div>
 			</div>
-		</section>
+		</div>
 	</body>
 </html>

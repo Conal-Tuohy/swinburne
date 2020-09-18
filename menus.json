@@ -1,29 +1,9 @@
 {
 	"Home":"/",
-	"Browse Manuscripts":"/search/",
-	"Online Tools":{
-		"Bibliography":"/bibliography",
-		"Alchemical Glossary":"/page/glossary",
-		"Index Chemicus":"/page/index-chemicus",
-		"Latent Semantic Analysis":"/newton/lsa/index.php",
-		"Newton Font":"/page/font",
-		"Symbol Guide":"/page/symbols"
-	},
-	"Educational Resources":{
-		"Chymical Products":"/page/chymical-products",
-		"Experiments in Mineral Acids":"/page/mineral",
-		"Multimedia Lab":"/page/chem-lab",
-		"Related Websites":"/page/related"
-	},
-	"Project Information":{
-		"Articles and Presentations":"/page/publication",
-		"Chymistry in the News":"/page/news",
-		"Grant Proposal":"/page/grant",
-		"Newton and Alchemy":"/page/about",
-		"Technical Implementation":"/page/tech",
-		"Use & Copyright":"/page/copyright"
-	},
-	"Editorial Practices":"/page/editorial-practices",
-	"Project Team":"/page/personnel",
-	"Site Index":"/site-index"
+	"Search and Browse":"/search/",
+	"Miscellanies":{
+		"Project Information":"/text/acs0000508-01/",
+		"An Introduction to Algernon Charles Swinburne":"/text/acs0000503-01/",
+		"TODO: add remaining items to menus.json":""
+	}
 }
