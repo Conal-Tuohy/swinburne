@@ -10,7 +10,7 @@
 		
 	<xsl:template match="/*">
 
-		<TEI>
+		<TEI xml:id="authority">
 			<teiHeader>
 				<fileDesc>
 					<titleStmt>
