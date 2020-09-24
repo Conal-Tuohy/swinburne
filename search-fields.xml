@@ -110,5 +110,51 @@
 		label="Rendition id"
 		xpath="distinct-values(for $rendition in //*/@rendition return tokenize($rendition))"
 		type="facet"/>
+	<!-- This field defines an "external target" facet which records @target URLs which are not local bare-name pointers or references to resources on some other website -->
+	<field
+		name="external-target"
+		label="External @target"
+		xpath="
+			distinct-values(
+				for $target in //text//*/@target return tokenize($target)
+			)
+				[not(
+					starts-with(., '#') or
+					starts-with(., 'http:') or
+					starts-with(., 'https:') or
+					starts-with(., 'collection:') or
+					starts-with(., 'document:')
+				)]
+		"
+		type="facet"/>
+	<!-- external @corresp URLs -->
+	<field
+		name="external-corresp"
+		label="External @corresp"
+		xpath="
+			distinct-values(
+				for $corresp in //text//*/@corresp return tokenize($corresp)
+			)
+				[not(
+					starts-with(., '#') or
+					starts-with(., 'http:') or
+					starts-with(., 'https:') or
+					starts-with(., 'collection:') or
+					starts-with(., 'document:')
+				)]
+		"
+		type="facet"/>	
+	<!-- usage of our declared reference systems -->
+	<field
+		name="system-ref"
+		label="refsDecl-based references"
+		xpath="
+			let
+				$patterns:= /TEI/teiHeader/encodingDesc/refsDecl/cRefPattern/@matchPattern,
+				$references:= distinct-values(for $target in //text//*/@target return tokenize($target))
+			return 
+				$references[some $pattern in $patterns satisfies matches(., $pattern)]
+		"
+		type="facet"/>	
 
 </fields>
