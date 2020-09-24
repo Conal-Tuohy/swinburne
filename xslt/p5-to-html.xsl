@@ -193,6 +193,8 @@
 		<xsl:value-of select="."/><xsl:if test="not(position()=last())">, </xsl:if>
 	</xsl:template>
 	
+	<!-- TODO handle l[@n] so that if @n is divisible by 10, that it should be displayed floating off to the right of the line -->
+	
 	<!-- https://www.tei-c.org/release/doc/tei-p5-doc/en/html/ST.html#STBTC -->
 	<!-- TEI "phrase-level", model.global.edit, "gLike", and "lLike" elements are mapped to html:span -->
 	<!-- Also tei:label since it is only used in the chymistry corpus with phrase content -->
@@ -251,7 +253,19 @@
 		"/>
 		<xsl:for-each select="@rend"><xsl:attribute name="style" select="."/></xsl:for-each>
 		<xsl:for-each select="@xml:lang"><xsl:attribute name="lang" select="."/></xsl:for-each>
-		<xsl:for-each select="@target"><xsl:attribute name="href" select="."/></xsl:for-each>
+		<xsl:for-each select="@target">
+			<xsl:attribute name="href" select="
+				let 
+					$reference := .,
+					$expansions:= /TEI/teiHeader/encodingDesc/refsDecl/cRefPattern,
+					$expansion := head($expansions[matches($reference, @matchPattern)])
+				return 
+					if ($expansion) then
+						replace($reference, $expansion/@matchPattern, $expansion/@replacementPattern)
+					else
+						$reference
+			"/>
+		</xsl:for-each>
 		<xsl:if test="@hand">
 			<xsl:variable name="hand" select="key('hand-note-by-reference', @hand)"/>
 			<xsl:attribute name="title" select="concat('Hand: ', $hand/@scribe)"/>
