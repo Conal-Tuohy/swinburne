@@ -7,7 +7,30 @@
 	
 	<xsl:mode on-no-match="shallow-copy"/>
 	
-	<!-- TODO replace rendition "parens" with "parens-before parens-after" -->
+	<!-- modify @rendition values -->
+	<!-- replace rendition "parens" with "parens-before parens-after" -->
+	<!--
+	higher order functions not available in XProc-Z because of out of date Saxon jar
+	<xsl:template match="@rendition">
+		<xsl:attribute name="rendition" select="
+			tokenize(.) => 
+			for-each(
+				(: replace rendition 'parens' with 'parens-before' and 'parens-after' :)
+				function($rendition) {
+					if ($rendition = 'parens') then 
+						('#parens-before #parens-after') 
+					else 
+						$rendition
+				}
+			) => 
+			string-join(' ')
+		"/>
+	</xsl:template>
+	-->
+	<!-- simple string replace will do -->
+	<xsl:template match="@rendition[contains-token(., '#parens')]">
+		<xsl:attribute name="rendition" select="replace(., '#parens', '#parens-before #parens-after')"/>
+	</xsl:template>
 	
 	<!-- insert a reference system declaration for "collection" references -->
 	<xsl:template match="encodingDesc[not(refsDecl)]">
