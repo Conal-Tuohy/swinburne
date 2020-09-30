@@ -147,14 +147,9 @@
 	<!-- usage of our declared reference systems -->
 	<field
 		name="system-ref"
-		label="refsDecl-based references"
+		label="prefixDef-based references"
 		xpath="
-			let
-				$patterns:= /TEI/teiHeader/encodingDesc/refsDecl/cRefPattern/@matchPattern,
-				$references:= distinct-values(for $target in //text//*/@target return tokenize($target))
-			return 
-				$references[some $pattern in $patterns satisfies matches(., $pattern)]
+			distinct-values(//text//*/@target[substring-before(., ':') = /TEI/teiHeader/encodingDesc/listPrefixDef/prefixDef/@ident])
 		"
 		type="facet"/>	
-
 </fields>
