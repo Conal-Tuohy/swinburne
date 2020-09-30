@@ -33,17 +33,17 @@
 	</xsl:template>
 	
 	<!-- insert a reference system declaration for "collection" references -->
-	<xsl:template match="encodingDesc[not(refsDecl)]">
+	<xsl:template match="encodingDesc[not(listPrefixDef)]">
 		<xsl:copy>
 			<xsl:copy-of select="@*"/>
-			<refsDecl>
+			<listPrefixDef>
 				<xsl:call-template name="insert-reference-system-definitions"/>
-			</refsDecl>
+			</listPrefixDef>
 			<xsl:apply-templates/>
 		</xsl:copy>
 	</xsl:template>
 	
-	<xsl:template match="refsDecl">
+	<xsl:template match="listPrefixDef">
 		<xsl:copy>
 			<xsl:copy-of select="@*"/>
 			<xsl:call-template name="insert-reference-system-definitions"/>
@@ -53,9 +53,9 @@
 	
 	<xsl:template name="insert-reference-system-definitions">
 		<xsl:comment>The 'collection' reference system identifies a set of texts by the title of the containing collection. These references expand to the URL of a search result in the Swinburne website.</xsl:comment>
-		<cRefPattern matchPattern="^collection:(.*)" replacementPattern="/search/?collection=$1"/>
+		<prefixDef ident="collection" matchPattern="(.+)" replacementPattern="/search/?collection=$1"/>
 		<xsl:comment>The 'document' reference system identifies a text by id. These references expand to the URL of the text's web page in the Swinburne website. Any URL fragment identifier is preserved.</xsl:comment>
-		<cRefPattern matchPattern="^document:([^#]*)(.*)" replacementPattern="/text/$1/$2"/>
+		<prefixDef ident="document" matchPattern="([^#]+)(.*)" replacementPattern="/text/$1/$2"/>
 	</xsl:template>
 	
 	<!-- transform legacy URI references to use our declared reference systems "document:" and "collection:" -->

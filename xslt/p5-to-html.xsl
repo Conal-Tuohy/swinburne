@@ -256,13 +256,22 @@
 		<xsl:for-each select="@target">
 			<xsl:attribute name="href" select="
 				let 
-					$reference := .,
-					$expansions:= /TEI/teiHeader/encodingDesc/refsDecl/cRefPattern,
-					$expansion := head($expansions[matches($reference, @matchPattern)])
+					(: the reference to be expanded (if possible) :)
+					$reference := ., 
+					(: the declared reference systems which might be used to expand the reference :)
+					$expansions:= /TEI/teiHeader/encodingDesc/listPrefixDef/prefixDef,
+					(: the expansion to use is the first one whose @ident matches the prefix used in the reference :)
+					$expansion := head($expansions[starts-with($reference, concat(@ident, ':'))])
 				return 
 					if ($expansion) then
-						replace($reference, $expansion/@matchPattern, $expansion/@replacementPattern)
+						(: use the expansion's regex to expand and replace the reference :)
+						replace(
+							substring-after($reference, ':'), 
+							$expansion/@matchPattern, 
+							$expansion/@replacementPattern
+						)
 					else
+						(: no expansion matches the reference's prefix; the reference is already, by assumption, a usable URI :)
 						$reference
 			"/>
 		</xsl:for-each>
