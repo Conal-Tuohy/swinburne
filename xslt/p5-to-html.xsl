@@ -193,7 +193,13 @@
 		<xsl:value-of select="."/><xsl:if test="not(position()=last())">, </xsl:if>
 	</xsl:template>
 	
-	<!-- TODO handle l[@n] so that if @n is divisible by 10, that it should be displayed floating off to the right of the line -->
+	<!-- handle line numbers: l/@n (if @n is divisible by 10) should be displayed floating off to the right of the line -->
+	<xsl:template match="l" mode="create-attributes">
+		<xsl:if test="number(@n) mod 10 = 0">
+			<xsl:attribute name="data-line" select="@n"/>
+		</xsl:if>
+		<xsl:next-match/>
+	</xsl:template>
 	
 	<!-- https://www.tei-c.org/release/doc/tei-p5-doc/en/html/ST.html#STBTC -->
 	<!-- TEI "phrase-level", model.global.edit, "gLike", and "lLike" elements are mapped to html:span -->
@@ -225,6 +231,9 @@
 			<xsl:apply-templates mode="create-content" select="."/>
 		</xsl:element>
 	</xsl:template>
+	
+	<!-- TODO how to deal with tei:join? -->
+	<xsl:template match="join"/>
 	
 	<!-- non-phrase-level TEI elements (plus author and title within the item description) are mapped to html:div -->
 	<xsl:template match="* | fileDesc/sourceDesc/msDesc/msContents/msItem/author | fileDesc/sourceDesc/msDesc/msContents/msItem/title">

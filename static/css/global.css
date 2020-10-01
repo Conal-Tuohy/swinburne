@@ -39,7 +39,7 @@ div.row div.twelvecol
 {
 	margin-left: auto;
 	margin-right: auto;
-	width: 70rem;
+	max-width: 70rem;
 }
 section.content {
 	background-color: white;

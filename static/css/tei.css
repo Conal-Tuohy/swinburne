@@ -169,8 +169,17 @@ details div.expansion {
 }
 .tei-l {
 	display: block;
+	float: left;
+	clear: left;
+	width: 100%;
 }
-
+.tei-l::after {
+	display: block;
+	float: right;
+	text-align: right;
+	content: attr(data-line);
+	color: #999999;
+}
 /* styles copied from legacy site */
 /* ***** Structural elements ***** */
 
