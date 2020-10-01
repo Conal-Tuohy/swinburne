@@ -138,7 +138,7 @@
 		</p:for-each>
 		
 		<!-- list the files in the acsproj data directory -->
-		<p:directory-list name="list-source-files" include-filter="acs.+\.xml$">
+		<p:directory-list name="list-source-files" include-filter="acs.+\.xml$|swinburneGlossary.xml">
 			<p:with-option name="path" select="$acsproj-data"/>
 		</p:directory-list>
 		
@@ -163,7 +163,10 @@
 							• File them in "p5/component" folder						
 						• "combo" files, which are other .xml files containing tei:index/@corresp, which contain transcriptions to be transcluded into individual TEI texts
 							• File them in "p5/combo" folder
-							• Generate XInclude template files in "p5" folder for each tei:index/@corresp, containing xinclude references to the corresponding combo section and metadata record
+							• Generate XInclude template files in "p5" folder for each tei:index/@corresp, containing xinclude references to:
+								the corresponding combo section 
+								the metadata record
+								the div[@xml:id='notes'] in the metadata file: <div type="notes" resp="#jawalsh"> </div>
 						• other regular TEI files
 							• Insert xinclude for corpus-level metadata (personography, bibliography, gazetteer)
 							• File them in "p5" folder

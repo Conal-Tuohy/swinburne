@@ -82,6 +82,9 @@ The combo file contains a number of "components" (div and text elements) which a
 					<xi:fallback><xsl:comment>DEBUG: No notes</xsl:comment></xi:fallback>
 				</xi:include>
 			</div>
+			<!-- TODO also include the editorial notes and commentary of John's here -->
+			<!-- NEED TO CHECK this xinclude -->
+			<xi:include href="{$resulting-metadata-file}" xpointer="element(commentary)"/>
 		</back>
 	</xsl:template>
 	
