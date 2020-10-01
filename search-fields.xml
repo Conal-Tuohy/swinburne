@@ -107,9 +107,17 @@
 	-->
 	<field
 		name="rendition"
-		label="Rendition id"
-		xpath="distinct-values(for $rendition in //*/@rendition return tokenize($rendition))"
+		label="Rendition id used but not declared"
+		xpath="
+			for $used-rendition in distinct-values(for $rendition in //*/@rendition return tokenize($rendition))
+			return 
+				if (//rendition/@xml:id = substring-after($used-rendition, '#')) then
+					()
+				else
+					$used-rendition
+			"
 		type="facet"/>
+		
 	<!-- This field defines an "external target" facet which records @target URLs which are not local bare-name pointers or references to resources on some other website -->
 	<field
 		name="external-target"
