@@ -317,6 +317,7 @@
 			<xsl:next-match/>
 		</xsl:if>
 	</xsl:template>
+	<xsl:template match="div[not(*)]"/>
 	<xsl:template match="div" mode="create-content">
 		<xsl:if test="@n">
 			<header><xsl:value-of select="@n"/></header>

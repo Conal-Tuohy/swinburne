@@ -166,6 +166,7 @@ details div.expansion {
 .tei-lg {
 	margin: 1em;
 	line-height: 1.5;
+	overflow: auto; /* ensures the element expands to contain child elements, even if they are floated */
 }
 .tei-l {
 	display: block;
