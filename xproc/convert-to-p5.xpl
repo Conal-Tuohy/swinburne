@@ -241,6 +241,7 @@
 								</p:xslt>
 								<chymistry:assign-schema schema="../schema/swinburne.rng"/>
 								<chymistry:insert-authority-xinclude/>
+								<chymistry:insert-glossary-xinclude/>
 								<p:store name="save-combo-part" indent="true">
 									<p:with-option name="href" select="concat('../p5/', $component-id, '.xml')"/>
 								</p:store>
@@ -272,6 +273,15 @@
 							</p:viewport>
 							<chymistry:assign-schema schema="../schema/swinburne.rng"/>
 							<chymistry:insert-authority-xinclude/>
+							<!-- xinclude the glossary into every text EXCEPT the glossary itself -->
+							<p:choose>
+								<p:when test="$file-name='swinburneGlossary.xml'">
+									<p:identity/><!-- don't recursively include the glossary itself -->
+								</p:when>
+								<p:otherwise>
+									<chymistry:insert-glossary-xinclude/>
+								</p:otherwise>
+							</p:choose>
 							<p:store name="save-ordinary-text">
 								<p:with-option name="href" select="concat('../p5/', $file-uri)"/>
 							</p:store>
@@ -320,6 +330,21 @@
 			</p:input>
 		</p:xslt>
 	</p:declare-step>
+	
+	<p:declare-step type="chymistry:insert-glossary-xinclude">
+		<p:input port="source"/>
+		<p:output port="result"/>
+		<p:insert match="/tei:TEI/tei:teiHeader" position="after">
+			<p:input port="insertion">
+				<p:inline xmlns="http://www.tei-c.org/ns/1.0" exclude-inline-prefixes="#all">
+					<standOff>
+						<xi:include href="swinburneGlossary.xml" xpointer="xmlns(tei=http://www.tei-c.org/ns/1.0) xpath(tei:TEI/tei:text/tei:body/tei:div/tei:entry)"/>
+					</standOff>
+				</p:inline>
+			</p:input>
+		</p:insert>
+	</p:declare-step>
+
 	
 	<p:declare-step type="chymistry:insert-authority-xinclude">
 		<p:input port="source"/>
