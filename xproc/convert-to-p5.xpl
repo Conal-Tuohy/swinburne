@@ -166,7 +166,7 @@
 							• Generate XInclude template files in "p5" folder for each tei:index/@corresp, containing xinclude references to:
 								the corresponding combo section 
 								the metadata record
-								the div[@xml:id='notes'] in the metadata file: <div type="notes" resp="#jawalsh"> </div>
+								the div[@xml:id='commentary'] (if any) in the metadata file:
 						• other regular TEI files
 							• Insert xinclude for corpus-level metadata (personography, bibliography, gazetteer)
 							• File them in "p5" folder
