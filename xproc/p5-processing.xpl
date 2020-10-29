@@ -572,13 +572,39 @@
 	<p:declare-step name="p5-as-html" type="chymistry:p5-as-html" xmlns:tei="http://www.tei-c.org/ns/1.0">
 		<p:input port="source"/>
 		<p:output port="result"/>
+		<p:input port="parameters" kind="parameter" primary="true"/>
 		<p:option name="text" required="true"/>
 		<p:option name="base-uri" required="true"/>
+		<p:parameters name="configuration">
+			<p:input port="parameters">
+				<p:pipe step="p5-as-html" port="parameters"/>
+			</p:input>
+		</p:parameters>
+		<p:store href="/tmp/configuration.xml">
+			<p:input port="source">
+				<p:pipe step="configuration" port="result"/>
+			</p:input>
+		</p:store>
+		<!--
+		<cx:message>
+			<p:with-option name="message" select="string-join(for $param in //c:param return concat($param/@name, '=', $param/@value), codepoints-to-string(10))"/>
+			<p:input port="source">
+				<p:pipe step="configuration" port="result"/>
+			</p:input>
+		</cx:message>
+		<cx:message>
+			<p:with-option name="message" select="concat('google api key=', /c:param-set/c:param[@name='google-api-key']/@value)"/>
+			<p:input port="source">
+				<p:pipe step="configuration" port="result"/>
+			</p:input>
+		</cx:message>-->
 		<p:load name="text">
 			<p:with-option name="href" select="concat('../p5/result/', $text, '.xml')"/>
 		</p:load>
 		<p:xslt name="text-as-html">
-			<p:with-param name="view" select=" 'normalized' "/><!-- TODO get rid of view param altogether -->
+			<p:with-param name="google-api-key" select="/c:param-set/c:param[@name='google-api-key']/@value">
+				<p:pipe step="configuration" port="result"/>
+			</p:with-param>
 			<p:input port="stylesheet">
 				<p:document href="../xslt/p5-to-html.xsl"/>
 			</p:input>

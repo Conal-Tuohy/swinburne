@@ -7,6 +7,7 @@
 	xpath-default-namespace="http://www.tei-c.org/ns/1.0">
 	<!-- transform a TEI document into an HTML page-->
 	<!--<xsl:import href="render-metadata.xsl"/>-->
+	<xsl:param name="google-api-key"/>
 	
 	<xsl:param name="view"/><!-- 'diplomatic' or 'normalized' or 'introduction' -->
 	<xsl:key name="char-by-ref" match="char[@xml:id]" use="concat('#', @xml:id)"/>
@@ -667,4 +668,23 @@
 		<xsl:attribute name="title" select="reg"/>
 	</xsl:template>
 	<xsl:template match="name/reg"/>
+	
+	<!-- maps -->
+	<xsl:template match="figure[@type = 'map']">
+		<xsl:param name="latitude" select="substring-before(normalize-space(.//geo), ' ')"/>
+		<xsl:param name="longitude" select="substring-after(normalize-space(.//geo), ' ')"/>
+		<!--<xsl:param name="google-api-key" select="'AIzaSyC3B5gD68KIlH_n1WboUaDh3qW05TpEoFw'"/>-->
+		<div style="margin-left:auto;margin-right:auto;width:430px;margin-top:1em;">
+			<iframe 
+				sandbox="allow-scripts allow-same-origin allow-popups" 
+				style="border:1px solid black;" 
+				width="425" 
+				height="350" 
+				frameborder="0"
+				scrolling="no" 
+				marginheight="0" 
+				marginwidth="0"
+				src="https://www.google.com/maps/embed/v1/view?key={$google-api-key}&amp;center={$latitude},{$longitude}&amp;zoom=18&amp;maptype=satellite"/>
+		</div>
+	</xsl:template> 	
 </xsl:stylesheet>
