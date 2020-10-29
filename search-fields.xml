@@ -49,7 +49,7 @@
 	<field
 		name="date"
 		label="Date"
-		xpath="/TEI/teiHeader/fileDesc/sourceDesc/biblStruct/relatedItem/biblStruct[@n='original_collection']/monogr/imprint/date[@xml:id='sort_date']/@when"
+		xpath="/TEI/teiHeader/fileDesc/sourceDesc/biblStruct//date[@xml:id='sort_date']/@when"
 		type="facet"/>
 		
 	<!-- 
