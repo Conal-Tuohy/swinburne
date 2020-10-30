@@ -16,7 +16,7 @@
 	<xsl:variable name="request" select="/*/c:param-set"/>
 	
 	<!-- the specification of the searchable fields and facets; previously used to convert the above request parameters into a Solr search -->
-	<xsl:variable name="field-definitions" select="/*/fields/field[@label]"/>
+	<xsl:variable name="field-definitions" select="/*/document/field[@label]"/>
 	<xsl:variable name="facet-definitions" select="$field-definitions[@type='facet']"/>
 	<xsl:variable name="search-field-definitions" select="$field-definitions[not(@type=('facet', 'sort'))]"/>
 

@@ -19,7 +19,8 @@
 	The XPath version supported is 3.1.
 -->
 
-<fields>
+<!-- Index all documents except where their availability status is "restricted" -->
+<document exclude-when="/TEI/teiHeader/fileDesc/publicationStmt/availability/@status='restricted'">
 	<!--
 	This field defines an "id" field which must identify the text uniquely and persistently. It is used by Solr as a unique identifier.
 	-->
@@ -160,4 +161,4 @@
 			distinct-values(//text//*/@target[substring-before(., ':') = /TEI/teiHeader/encodingDesc/listPrefixDef/prefixDef/@ident])
 		"
 		type="facet"/>	
-</fields>
+</document>
