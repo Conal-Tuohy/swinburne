@@ -8,7 +8,9 @@ ul {
 	margin: 0;
 }
 body {
-	font-family: "Newton Sans";
+	font-family: charter,Georgia,Cambria,"Times New Roman",Times,serif;
+	font-size: 14pt;
+	line-height: 1.3;
 	background-color: #F7F6F2;
 	margin: 0;
 }
@@ -27,6 +29,20 @@ a:hover {
 div.row div.twelvecol {
 	float: none !important;
 }
+header.page-header {
+	background-color:black;
+	color:white;
+}
+
+header.page-header a {
+	color:white;
+}
+
+section.project-site {
+	margin: 1em 0 0 2em;
+}
+
+
 /* These are the components which are horizontally centered in the page */
 header.page-header section div.masthead,
 nav#main-nav ul.primary,
@@ -81,15 +97,24 @@ a.masthead-link {
 	align-self: start;
 	justify-self: start;
 }
+
+
 form#quick-search {
 	flex: auto;
 	display: flex;
 	justify-content: flex-end;
 	align-items: center;
-	margin-bottom: 0.4em;
+	float:right;
+	margin: 0 2em 0 0; 
 }
+
 form#quick-search a {
 	margin-left: 0.4em;
+	color: white;
+}
+
+form#quick-search button {
+	margin: 0 0 0 .5em;
 }
 details.keyboard summary {
 	margin-right: 0.4em;
@@ -122,6 +147,7 @@ details.keyboard div section ul {
 input {	
 	font-family: "Newton Sans";
 }
+
 button.key {
 	padding: 0;
 	margin: 0.1em;
@@ -330,4 +356,8 @@ ul.site-index-menu li {
 ul.site-index-menu a {
 	text-decoration: none;
 	color: #78130B;
+}
+
+div#content {
+	margin: 3em 5em 3em 5em;
 }
