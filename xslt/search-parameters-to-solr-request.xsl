@@ -10,7 +10,7 @@
 	<xsl:param name="solr-base-uri"/>
 	<xsl:param name="default-results-limit" required="true"/>	
 	
-	<xsl:variable name="fields-definition" select="/*/fields"/>
+	<xsl:variable name="fields-definition" select="/*/document"/>
 	
 	<!-- Transform the user's HTTP request into an outgoing HTTP request to Solr using Solr's JSON request API 
 	https://lucene.apache.org/solr/guide/7_6/json-request-api.html -->
