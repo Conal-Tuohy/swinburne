@@ -181,6 +181,7 @@
 					<p:pipe step="configuration" port="result"/>
 				</p:with-option>
 			</chymistry:reindex>
+			<chymistry:add-site-navigation/>
 		</p:when>
 		<p:when test="$relative-uri = 'bibliography' ">
 			<chymistry:bibliography-as-html/>

@@ -160,6 +160,42 @@
 			</p:catch>
 		</p:try>
 		<p:wrap-sequence wrapper="solr-index-responses"/>
+		<p:xslt name="format-schema-update-result">
+			<p:input port="parameters"><p:empty/></p:input>
+			<p:input port="stylesheet">
+				<p:inline>
+					<xsl:stylesheet version="3.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+						xmlns:c="http://www.w3.org/ns/xproc-step" 
+						xmlns="http://www.w3.org/1999/xhtml"
+						expand-text="yes">
+						<xsl:template match="/">
+							<html>
+								<head><title>Solr Reindex</title></head>
+								<body>
+									<h1>Solr Reindex</h1>
+									<xsl:apply-templates/>
+								</body>
+							</html>
+						</xsl:template>
+						<xsl:template match="c:errors">
+							<p>Solr indexing failed.</p>
+							<table>
+								<thead>
+									<tr><th>Error message</th><th>Error code</th><th>File</th><th>Line</th><th>Column</th></tr>
+								</thead>
+								<tbody>
+									<xsl:for-each select="c:error">
+										<tr>
+											<td>{.}</td><td>{@code}</td><td>{@href}</td><td>{@line}</td><td>{@column}</td>
+										</tr>
+									</xsl:for-each>
+								</tbody>
+							</table>
+						</xsl:template>
+					</xsl:stylesheet>
+				</p:inline>
+			</p:input>
+		</p:xslt>
 		<z:make-http-response/>
 	</p:declare-step>
 	
