@@ -361,3 +361,19 @@ ul.site-index-menu a {
 div#content {
 	margin: 3em 5em 3em 5em;
 }
+
+
+/* Table of Contents */
+
+nav.toc {
+	/* TODO lay this out to the left of the main text */
+}
+nav.toc ul {
+	padding-left: 2em;
+}
+nav.toc li {
+	list-style-type: none;
+}
+nav.toc a.current { /* the item in the ToC which represents the currently displayed text */
+	font-weight: bold;
+}

@@ -18,6 +18,12 @@ The combo file contains a number of "components" (div and text elements) which a
 					<xi:include href="{$resulting-metadata-file}" xpointer="xmlns(tei=http://www.tei-c.org/ns/1.0) xpath(/tei:TEI/tei:teiHeader/tei:fileDesc/*)">
 						<xi:fallback>inclusion of fileDesc from {$resulting-metadata-file} failed</xi:fallback>
 					</xi:include>
+					<!-- Copy the nested biblStruct elements from combo file which define the volume's complete table of contents -->
+					<!-- This metadata situates this component file logically within the volume to which it belongs -->
+					<xi:include href="combo/{$resulting-file-uri}" 
+						xpointer="xmlns(tei=http://www.tei-c.org/ns/1.0) xpath(/tei:TEI/tei:teiHeader/tei:fileDesc/tei:sourceDesc[@n='table-of-contents'])">
+						<xi:fallback><xsl:comment>inclusion of ToC metadata from combo file combo/{$resulting-file-uri} failed</xsl:comment></xi:fallback>
+					</xi:include>
 					<sourceDesc>
 						<!-- Copy the relevant biblStruct from the metadata file, and also insert a "relatedItem" link to another biblStruct whose @n is 'original_collection' (if any), unless that's the same biblStruct -->
 						<biblStruct xml:id="{$component-id}-bibl" default="true">

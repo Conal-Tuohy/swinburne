@@ -1,54 +1,86 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="3.0" 
-	xmlns="http://www.tei-c.org/ns/1.0"
-	xpath-default-namespace="http://www.tei-c.org/ns/1.0">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="3.0" xmlns="http://www.tei-c.org/ns/1.0" xpath-default-namespace="http://www.tei-c.org/ns/1.0">
 	
 	<xsl:mode on-no-match="shallow-copy"/>
-	<xsl:mode name="normalize-metadata" on-no-match="shallow-copy"/>
+	<xsl:mode name="generate-bibl-struct" on-no-match="shallow-skip"/>
+	<xsl:mode name="label" on-no-match="text-only-copy"/>
 	
 	<!-- this index is a function which takes an index/@corresp, and returns a list of any index elements which are immediately subordinate to it -->
 	<!-- e.g. applying the key function to a group/text/index/@corresp will return group/text/div/index elements -->
+	<!--
 	<xsl:key name="index-elements-by-logical-container-index-element-corresp"
 			match="index"
-			use="(ancestor::index/@corresp)[1]"/>
+			use="(ancestor::*/index/@corresp)[1]"/>
+	-->
 			
-	<!-- populate the sourceDesc with biblStruct elements which reflect the hierarchy of the source document which was previously expressed with index elements -->
-	<xsl:template match="sourceDesc">
-		<xsl:copy>
-			<xsl:copy-of select="@*"/>
-			<!-- copy existing bibliographic metadata --> 
-			<xsl:apply-templates/>
-			<!-- include the metadata which is implicitly related by the //index/@corresp attributes -->
-			<xsl:for-each select="//index[@corresp]">
-				<!-- Conventionally, the @corresp attribute identifies an external metadata file -->
-				<xsl:variable name="metadata-document" select="document(@corresp)"/>
-				<!-- Conventionally, the biblStruct within the metadata file which corresponds to this index has an @xml:id that matches the metadata file name with -md.xml replaced with -bibl -->
-				<xsl:variable name="metadata-record-id" select="substring-before(@corresp, '-md.xml') || '-bibl' "/>
-				<!-- the metadata record is the biblStruct in that file which has that matching id -->
-				<xsl:variable name="metadata-record" select="$metadata-document//biblStruct[@xml:id = $metadata-record-id]"/>
-				<!-- TODO what about the OTHER biblStruct elements in those files? -->
-				<!-- the <index> element's parent is the structural element (div, text, etc) which the metadata describes -->
-				<xsl:variable name="structural-element" select=".."/>
-				<xsl:variable name="contained-structural-elements" select="key('index-elements-by-logical-container-index-element-corresp', @corresp)"/>
-				<!-- transform the biblStruct -->
-				<xsl:for-each select="$metadata-record">
-					<xsl:copy>
-						<xsl:copy-of select="@*"/>
-						<xsl:apply-templates mode="normalize-metadata"/>
-						<!-- insert any "contained" items -->
-						<xsl:for-each select="$contained-structural-elements">
-							<xsl:variable name="contained-metadata-record-id" select="substring-before(@corresp, '-md.xml') || '-bibl' "/>
-							<relatedItem target="#{$contained-metadata-record-id}"/>
-						</xsl:for-each>
-					</xsl:copy>
-				</xsl:for-each>
-			</xsl:for-each>
-		</xsl:copy>
+	<!-- create a sourceDesc populated with biblStruct elements which reflect the hierarchy of the source document which was previously expressed with index elements -->
+	<xsl:template match="sourceDesc[1]">
+		<sourceDesc n="table-of-contents">
+			<biblStruct>
+				<ref target="document:{/TEI/@xml:id}">
+					<xsl:value-of select="/TEI/teiHeader/fileDesc/titleStmt/title"/>
+				</ref>
+				<xsl:apply-templates mode="generate-bibl-struct" select="/TEI/text"/>
+			</biblStruct>
+		</sourceDesc>
+		<xsl:copy-of select="."/>
 	</xsl:template>
 	
-	<!-- when including the metadata records from -md.xml files, change the way that "sort" dates are flagged; use @type rather than @xml:id -->
-	<xsl:template mode="normalize-metadata" match="date/@xml:id[.='sort_date']">
-		<xsl:attribute name="type" select="."/>
+	<xsl:template match="*[index]" mode="generate-bibl-struct">
+		<!-- Found a section tagged in the index; this should generate a biblStruct containing a reference to the section, 
+		and nested biblStruct elements containing references to nested sections -->
+		<xsl:variable name="document-id" select="head(ancestor-or-self::*[index/@indexName='text'])/@xml:id"/>
+		<xsl:variable name="section-id" select="
+			if (index/@indexName='text') then
+				''
+			else
+				concat('#', @xml:id)
+		"/>
+		<relatedItem type="component">
+			<biblStruct>
+				<ref target="document:{$document-id}{$section-id}">
+					<xsl:call-template name="get-label"/>
+				</ref>
+				<xsl:apply-templates mode="generate-bibl-struct"/>
+			</biblStruct>
+		</relatedItem>
 	</xsl:template>
 	
+	<xsl:template name="get-label">
+		<xsl:param name="label">
+			<xsl:choose>
+				<xsl:when test="@n">
+					<xsl:value-of select="@n"/>
+				</xsl:when>
+				<xsl:when test="head">
+					<xsl:apply-templates select="head[1]" mode="label"/>
+				</xsl:when>
+				<xsl:when test="front//titlePage/docTitle">
+					<xsl:choose>
+						<xsl:when test="front//titlePage/docTitle/titlePart[@type = 'main']">
+							<xsl:apply-templates select="front//titlePage/docTitle/titlePart[@type = 'main']" mode="label"/>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:apply-templates select="front//titlePage/docTitle" mode="label"/>
+						</xsl:otherwise>
+					</xsl:choose>
+				</xsl:when>
+				<xsl:when test="front//head">
+					<xsl:apply-templates select="front//head[1]" mode="label"/>
+				</xsl:when>
+				<xsl:when test="body/head">
+					<xsl:apply-templates select="body/head[1]" mode="label"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="'[dummy]'"/>
+					<xsl:message>Missing title for work.</xsl:message>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:param>
+		<xsl:value-of select="normalize-space($label)"/>
+	</xsl:template>
+	
+	<xsl:template mode="label" match="lb">
+		<xsl:sequence select="codepoints-to-string(9) (: tab :)"/>
+	</xsl:template>
 </xsl:stylesheet>

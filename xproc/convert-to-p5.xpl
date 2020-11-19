@@ -221,6 +221,7 @@
 							<cx:message>
 								<p:with-option name="message" select="concat('Ingesting combo file ', $input-file)"/>
 							</cx:message>
+							<chymistry:extract-hierarchy/>
 							<chymistry:prepare-tei-file-for-subfolder name="normalized-combo-file"/>
 							<!-- Generate Xinclude template file(s) -->
 							<p:for-each name="combo-section">
@@ -389,6 +390,23 @@
 				</p:inline>
 			</p:input>
 		</p:insert>
+	</p:declare-step>
+	
+	<p:declare-step name="extract-hierarchy" type="chymistry:extract-hierarchy">
+		<p:input port="source"/>
+		<p:output port="result"/>
+		<p:documentation>
+			Bring the hierarchical structure, already encoded in the index[@indexName='nav'] elements,
+			into the teiHeader of the TEI documents which contain the volumes, so that when the small 
+			text-level documents are generated, they can have a copy of the full volume hierarchy, for 
+			display as a table of contents.
+		</p:documentation>
+		<p:xslt>
+			<p:input port="parameters"><p:empty/></p:input>
+			<p:input port="stylesheet">
+				<p:document href="../xslt/convert-to-p5/generate-bibl-struct-hierarchy.xsl"/>
+			</p:input>
+		</p:xslt>
 	</p:declare-step>
 	
 </p:library>

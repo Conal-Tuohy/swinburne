@@ -63,6 +63,8 @@
 					<cite><xsl:value-of select="$title"/></cite>
 					<!-- render the document metadata details -->
 					<xsl:apply-templates select="tei:teiHeader"/>
+					<!-- render the table of contents biblStructs -->
+					<xsl:apply-templates mode="toc" select="/TEI/teiHeader/fileDesc/sourceDesc[@n='table-of-contents']"/>
 					<!-- render the relevant part of the text itself -->
 					<!-- NB the "searchable-content" class will cause it to be indexed -->
 					<div class="searchable-content">
@@ -78,6 +80,43 @@
 				</div>
 			</body>
 		</html>
+	</xsl:template>
+	
+	<xsl:template mode="toc" match="sourceDesc[biblStruct]">
+		<nav class="toc">
+			<xsl:apply-templates select="biblStruct" mode="toc"/>
+		</nav>
+	</xsl:template>
+	<xsl:template mode="toc" match="biblStruct[relatedItem/biblStruct]">
+		<details>
+			<xsl:if test="
+				some $component-reference in 
+					.//biblStruct/ref/@target 
+				satisfies 
+					$component-reference => substring-after('document:') = /TEI/@xml:id
+			">
+				<xsl:attribute name="open">open</xsl:attribute>
+			</xsl:if>
+			<summary><xsl:apply-templates mode="toc" select="ref"/></summary>
+			<ul>
+				<xsl:for-each select="relatedItem">
+					<li>
+						<xsl:apply-templates select="biblStruct" mode="toc"/>
+					</li>
+				</xsl:for-each>
+			</ul>
+		</details>
+	</xsl:template>
+	<xsl:template mode="toc" match="biblStruct[not(relatedItem/biblStruct)]"><!-- leaf node -->
+		<xsl:apply-templates mode="toc"/>
+	</xsl:template>
+	<xsl:template mode="toc" match="ref">
+		<a href="{chymistry:expand-reference(@target)}">
+			<xsl:if test="substring-after(@target, 'document:') = /TEI/@xml:id">
+				<xsl:attribute name="class">current</xsl:attribute>
+			</xsl:if>
+			<xsl:apply-templates mode="toc"/>
+		</a>
 	</xsl:template>
 	
 	<xsl:variable name="introduction" select="/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msContents/msItem/note[@type='introduction']"/>
@@ -264,26 +303,7 @@
 		<xsl:for-each select="@rend"><xsl:attribute name="style" select="."/></xsl:for-each>
 		<xsl:for-each select="@xml:lang"><xsl:attribute name="lang" select="."/></xsl:for-each>
 		<xsl:for-each select="@target">
-			<xsl:attribute name="href" select="
-				let 
-					(: the reference to be expanded (if possible) :)
-					$reference := ., 
-					(: the declared reference systems which might be used to expand the reference :)
-					$expansions:= /TEI/teiHeader/encodingDesc/listPrefixDef/prefixDef,
-					(: the expansion to use is the first one whose @ident matches the prefix used in the reference :)
-					$expansion := head($expansions[starts-with($reference, concat(@ident, ':'))])
-				return 
-					if ($expansion) then
-						(: use the expansion's regex to expand and replace the reference :)
-						replace(
-							substring-after($reference, ':'), 
-							$expansion/@matchPattern, 
-							$expansion/@replacementPattern
-						)
-					else
-						(: no expansion matches the reference's prefix; the reference is already, by assumption, a usable URI :)
-						$reference
-			"/>
+			<xsl:attribute name="href" select="chymistry:expand-reference(.)"/>
 		</xsl:for-each>
 		<xsl:if test="@hand">
 			<xsl:variable name="hand" select="key('hand-note-by-reference', @hand)"/>
@@ -291,6 +311,28 @@
 		</xsl:if>
 		<xsl:copy-of select="chymistry:mint-id(.)"/>
 	</xsl:template>
+	
+	<!-- the declared reference systems which might be used to expand URI references -->
+	<xsl:variable name="expansions" select="/TEI/teiHeader/encodingDesc/listPrefixDef/prefixDef"/>
+	<xsl:function name="chymistry:expand-reference">
+		<xsl:param name="reference"/>
+		<xsl:sequence select="
+			let 
+				(: the expansion to use is the first one whose @ident matches the prefix used in the reference :)
+				$expansion := head($expansions[starts-with($reference, concat(@ident, ':'))])
+			return 
+				if ($expansion) then
+					(: use the expansion's regex to expand and replace the reference :)
+					replace(
+						substring-after($reference, ':'), 
+						$expansion/@matchPattern, 
+						$expansion/@replacementPattern
+					)
+				else
+					(: no expansion matches the reference's prefix; the reference is already, by assumption, a usable URI :)
+					$reference           
+		"/>
+	</xsl:function>
 	
 	<xsl:key name="hand-note-by-reference" match="handNote" use="concat('#', @xml:id)"/>
 	
