@@ -38,9 +38,16 @@
 		"/>
 		<relatedItem type="component">
 			<biblStruct>
-				<ref target="document:{$document-id}{$section-id}">
-					<xsl:call-template name="get-label"/>
-				</ref>
+				<xsl:choose>
+					<xsl:when test="index/@indexName='meta'">
+						<title><xsl:call-template name="get-label"/></title>
+					</xsl:when>
+					<xsl:otherwise>
+						<ref target="document:{$document-id}{$section-id}">
+							<xsl:call-template name="get-label"/>
+						</ref>
+					</xsl:otherwise>
+				</xsl:choose>
 				<xsl:apply-templates mode="generate-bibl-struct"/>
 			</biblStruct>
 		</relatedItem>

@@ -110,6 +110,9 @@
 	<xsl:template mode="toc" match="biblStruct[not(relatedItem/biblStruct)]"><!-- leaf node -->
 		<xsl:apply-templates mode="toc"/>
 	</xsl:template>
+	<xsl:template mode="toc" match="title">
+		<cite><xsl:apply-templates mode="toc"/></cite>
+	</xsl:template>
 	<xsl:template mode="toc" match="ref">
 		<a href="{chymistry:expand-reference(@target)}">
 			<xsl:if test="substring-after(@target, 'document:') = /TEI/@xml:id">
