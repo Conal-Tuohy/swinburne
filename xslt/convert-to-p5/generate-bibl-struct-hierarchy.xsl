@@ -17,9 +17,8 @@
 	<xsl:template match="sourceDesc[1]">
 		<sourceDesc n="table-of-contents">
 			<biblStruct>
-				<ref target="document:{/TEI/@xml:id}">
-					<xsl:value-of select="/TEI/teiHeader/fileDesc/titleStmt/title"/>
-				</ref>
+				<!--<ref target="document:{/TEI/@xml:id}">-->
+				<title><xsl:value-of select="/TEI/teiHeader/fileDesc/titleStmt/title"/></title>
 				<xsl:apply-templates mode="generate-bibl-struct" select="/TEI/text"/>
 			</biblStruct>
 		</sourceDesc>

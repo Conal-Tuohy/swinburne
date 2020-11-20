@@ -88,16 +88,28 @@
 		</nav>
 	</xsl:template>
 	<xsl:template mode="toc" match="biblStruct[relatedItem/biblStruct]">
+		<!-- 
+		The biblStruct represents a node in a hierarchy of bibliographic items in a volume
+		(i.e. a table of contents). 
+		Here we render the biblStruct as an HTML details element, containing renderings
+		of any biblStructs within this biblStruct.
+		-->
 		<details>
+			<!-- 
+			The HTML details element should be open (expanded) when this node in the 
+			table of contents hierarchy contains the biblStruct which refers to the current
+			document. This ensures that the current document is visible by default when
+			the web page loads.
+			-->
 			<xsl:if test="
 				some $component-reference in 
-					.//biblStruct/ref/@target 
+					.//biblStruct/ref/@target
 				satisfies 
 					$component-reference => substring-after('document:') = /TEI/@xml:id
 			">
 				<xsl:attribute name="open">open</xsl:attribute>
 			</xsl:if>
-			<summary><xsl:apply-templates mode="toc" select="ref"/></summary>
+			<summary><xsl:apply-templates mode="toc" select="ref|title"/></summary>
 			<ul>
 				<xsl:for-each select="relatedItem">
 					<li>
@@ -111,7 +123,12 @@
 		<xsl:apply-templates mode="toc"/>
 	</xsl:template>
 	<xsl:template mode="toc" match="title">
-		<cite><xsl:apply-templates mode="toc"/></cite>
+		<cite>
+			<xsl:if test="parent::biblStruct/descendant::ref[substring-after(@target, 'document:') = /TEI/@xml:id]">
+				<xsl:attribute name="class">current</xsl:attribute>
+			</xsl:if>
+			<xsl:apply-templates mode="toc"/>
+		</cite>
 	</xsl:template>
 	<xsl:template mode="toc" match="ref">
 		<a href="{chymistry:expand-reference(@target)}">

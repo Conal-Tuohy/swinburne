@@ -374,6 +374,6 @@ nav.toc ul {
 nav.toc li {
 	list-style-type: none;
 }
-nav.toc a.current { /* the item in the ToC which represents the currently displayed text */
+nav.toc .current { /* item in the ToC which represent the currently displayed text or one of its ancestors */
 	font-weight: bold;
 }
