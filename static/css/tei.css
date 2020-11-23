@@ -1242,12 +1242,12 @@ ul.tei-listBibl li cite
 }
 
 
-/* bibliographic popups */
-details.tei-bibl {
+/* bibliographic, glossary, etc. popups */
+details.popup {
 	display: inline;
 	text-indent: 0;
 }
-details.tei-bibl summary {
+details.popup summary {
 	display: inline-block;
 }
 details.tei-bibl summary::before {
@@ -1259,7 +1259,21 @@ details.tei-bibl summary::before {
 details.tei-bibl[open] summary::before{
 	content: "✖";
 }
-details.tei-bibl div.citation-popup {
+details.tei-bibl summary::before {
+	display: inline-block;
+	content: "📖";
+	margin-right: 0.25em;
+	width: 1em;
+}
+details.tei-term[open] summary::after{
+	display: inline-block;
+	content: "❎";
+	margin-left: 0.25em;
+}
+details.tei-term summary {
+	text-decoration: underline;
+}
+details.popup div.expansion {
 	position: absolute;
 	background-color: white;
 	padding: 1em;

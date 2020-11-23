@@ -56,6 +56,8 @@
 		<prefixDef ident="collection" matchPattern="(.+)" replacementPattern="/search/?collection=$1"/>
 		<xsl:comment>The 'document' reference system identifies a text by id. These references expand to the URL of the text's web page in the Swinburne website. Any URL fragment identifier is preserved.</xsl:comment>
 		<prefixDef ident="document" matchPattern="([^#]+)(.*)" replacementPattern="/text/$1/$2"/>
+		<xsl:comment>The 'glossary' reference system identifies a term by id. These references expand to a reference to a TEI/standoff/entry.</xsl:comment>
+		<prefixDef ident="glossary" matchPattern="(.*)" replacementPattern="#$1"/>
 	</xsl:template>
 	
 	<!-- transform legacy URI references to use our declared reference systems "document:" and "collection:" -->
@@ -150,6 +152,19 @@
 				<xsl:copy-of select="following-sibling::node()[1]/self::text()"/><!-- copy any trailing white space -->
 			</xsl:for-each>
 		</xsl:copy>
+	</xsl:template>
+	
+	<!-- This is the markup idiom we are looking for:
+	<seg><w>cenotaph</w><ptr target="document:swinburneGlossary#cenotaph" type="gloss"/></seg>
+	-->
+	<xsl:template match="
+		seg
+			[count(*)=2] (: two child elements :)
+			[*[1]/self::w] (: first child is a word :)
+			[*[2]/self::ptr[@type='gloss']/@target[starts-with(., 'swinburneGlossary.xml#')]] (: second child is a 'gloss' reference to an item in the glossary :)
+	">
+		<!-- re-encode glossary entry -->
+		<term corresp="glossary:{substring-after(ptr/@target, 'swinburneGlossary.xml#')}"><xsl:apply-templates select="w/node()"/></term>
 	</xsl:template>
 	
 	<!-- use the default namespace rather than a prefix for TEI -->

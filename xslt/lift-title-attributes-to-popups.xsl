@@ -9,13 +9,24 @@
 			<xsl:apply-templates/>
 		</xsl:copy>
 	</xsl:template>
-	<!-- replace a bibliographic reference hyperlink with a details/summary combination-->
+	<!-- replace a bibliographic reference hyperlink or glossary term with a details/summary combination-->
 	<xsl:template match="a[@class='tei-bibl'][@title]">
 		<xsl:element name="details">
-			<xsl:copy-of select="@class"/>
+			<xsl:attribute name="class" select="string-join((@class, 'popup'), ' ')"/>
 			<xsl:element name="summary"></xsl:element>
-			<xsl:sequence select="parse-xml-fragment(@title)"/>
+			<div class="expansion">
+				<xsl:sequence select="parse-xml-fragment(@title)"/>
+			</div>
 		</xsl:element>
 		<xsl:apply-templates/>
 	</xsl:template>
+	<xsl:template match="span[@class='tei-term'][@title]">
+		<xsl:element name="details">
+			<xsl:attribute name="class" select="string-join((@class, 'popup'), ' ')"/>
+			<xsl:element name="summary"><xsl:apply-templates/></xsl:element>
+			<div class="expansion">
+				<xsl:sequence select="parse-xml-fragment(@title)"/>
+			</div>
+		</xsl:element>
+	</xsl:template>	
 </xsl:stylesheet>

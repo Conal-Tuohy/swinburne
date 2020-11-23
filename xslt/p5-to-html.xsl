@@ -546,6 +546,19 @@
 		</xsl:element>
 	</xsl:template>
 	
+	<!-- glossed terms -->
+	<!-- render the appropriate gloss for this term, and store the result in the @title attribute -->
+	<xsl:key name="entry-by-id" match="/TEI/standOff/entry" use="@xml:id"/>
+	<xsl:template match="term[@corresp]" mode="create-attributes">
+		<xsl:variable name="gloss">
+			<div class="entry">
+				<xsl:apply-templates select="key('entry-by-id', substring-after(@corresp, 'glossary:'))/node()"/>
+			</div>
+		</xsl:variable>
+		<xsl:attribute name="title" select="	serialize($gloss)"/>
+		<xsl:next-match/>
+	</xsl:template>
+	
 	<!-- bibliographic citations -->
 	<xsl:key name="citation-by-id" match="/TEI/teiHeader/fileDesc/sourceDesc/listBibl/biblStruct[@xml:id]" use="@xml:id"/>
 	<xsl:template match="bibl[@corresp]">
