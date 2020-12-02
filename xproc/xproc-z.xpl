@@ -332,30 +332,7 @@
 				<p:document href="../xslt/add-site-navigation.xsl"/>
 			</p:input>
 		</p:xslt>
-		<chymistry:add-institutional-branding/>
 	</p:declare-step>	
-	
-	<p:declare-step type="chymistry:add-institutional-branding" name="add-institutional-branding">
-		<p:input port="source"/>
-		<p:output port="result"/>
-		<chymistry:insert-remote-html 
-			href="https://assets.iu.edu/brand/3.x/header-iub.html"
-			match="html:body/html:header[tokenize(@class)='page-header']" 
-			position="first-child"
-		/>
-		<chymistry:insert-remote-html 
-			href="https://assets.iu.edu/brand/3.x/footer.html"
-			match="html:body/html:footer[tokenize(@class)='page-footer']" 
-			position="last-child"
-		/>
-		<p:insert match="html:head" position="first-child">
-			<p:input port="insertion">
-				<p:inline xmlns="http://www.w3.org/1999/xhtml" exclude-inline-prefixes="chymistry">
-					<link href="https://assets.iu.edu/brand/3.x/brand.css" rel="stylesheet" type="text/css"/>
-				</p:inline>
-			</p:input>
-		</p:insert>
-	</p:declare-step>
 	
 	<p:declare-step type="chymistry:insert-remote-html" name="insert-remote-html">
 		<!-- Retrieve a snippet of HTML from a remote location and insert it into a particular place in the source HTML -->

@@ -81,7 +81,7 @@
 		<p:input port="source"/>
 		<p:output port="result"/>
 		<p:option name="solr-base-uri" required="true"/>
-		<p:variable name="default-results-limit" select="20"/>
+		<p:variable name="default-results-limit" select="50"/>
 		<p:choose>
 			<p:when test="/c:request/@method='GET'">
 				<p:www-form-urldecode name="field-values">

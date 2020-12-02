@@ -16,37 +16,39 @@
 				<p:inline>
 					<c:response status="200">
 						<c:body content-type="application/xhtml+xml">
-							<html xmlns="http://www.w3.org/1999/xhtml">
+							<html xmlns="http://www.w3.org/1999/xhtml" class="h-100">
 								<head>
-									<title>Administration</title>
-									<style type="text/css">
+								<title>Administration</title>
+									<!-- <style type="text/css">
 										div.content  {display: flex; gap: 1em;}
 										div.content button {width: 100%; margin-top: 0.5em;}
 										button.obsolete { color: grey }
 									</style>
+									-->
 								</head>
-								<body>
-									<section class="content">
-										<div class="content">
-											<div>
+								<body  class="d-flex flex-column h-100">
+								<main role="main" class="flex-shrink-0">
+								<div class="container">
+								<div class="row">
+										<div class="col">
 												<h1>Administration</h1>
 												<form method="post" action="p5/">
-													<button title="Make normalized copy of source data files">Ingest source TEI and XTM from <code>acsproj/data</code> to <code>p5/</code></button>
+													<button class="btn btn-outline-primary my-1" title="Make normalized copy of source data files">Ingest source TEI and XTM from <code>acsproj/data</code> to <code>p5/</code></button>
 												</form>
 												<form method="post" action="xinclude/">
-													<button>Perform xincludes on files in <code>p5/</code> and save to <code>p5/result/</code></button>
+													<button class="btn btn-outline-primary my-1">Perform xincludes on files in <code>p5/</code> and save to <code>p5/result/</code></button>
 												</form>
 												<form method="post" action="admin/purge">
-													<button title="Remove all documents from the Solr index">Purge Solr index</button>
+													<button class="btn btn-outline-primary my-1" title="Remove all documents from the Solr index">Purge Solr index</button>
 												</form>
 												<form method="post" action="reindex/">
-													<button>Rebuild Solr index from normalized data files</button>
+													<button class="btn btn-outline-primary my-1">Rebuild Solr index from normalized data files</button>
 												</form>
 												<form method="post" action="update-schema/">
-													<button>Update Solr schema from <em>search-fields.xml</em></button>
+													<button class="btn btn-outline-primary my-1">Update Solr schema from <em>search-fields.xml</em></button>
 												</form>
 											</div>
-											<div>
+											<div class="col">
 												<h1>Analysis and visualization</h1>
 												<p><a href="../p5/">View texts</a></p>
 												<h2>Corpus-level summaries</h2>
@@ -57,7 +59,8 @@
 												<p><a href="/analysis/sample-xml-text">Sample XML text</a></p>
 											</div>
 										</div>
-									</section>
+									</div>
+									</main>
 								</body>
 							</html>
 						</c:body>

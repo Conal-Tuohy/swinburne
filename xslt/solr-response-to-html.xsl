@@ -38,14 +38,15 @@
 	<xsl:variable name="search-base-url" select=" '/search/' "/>
 	
 	<xsl:template match="/">
-		<html>
+		<html class="h-100">
 			<head>
 				<title>Search</title>
-				<link rel="stylesheet" href="/css/search.css" type="text/css"/>
+				
 				<link rel="stylesheet" href="/css/tei.css" type="text/css"/>
 			</head>
-			<body>
-				<section class="content">
+			<body class="d-flex flex-column h-100">
+				<main role="main" class="flex-shrink-0">
+					<div class="container">
 					<div class="search">
 						<!-- the main search button submits all the current facet values as URL parameters; if the user
 						clicks a facet button instead, then a different set of facet values are posted -->
@@ -72,19 +73,20 @@
 								'?'
 							)
 						}">
-							<div class="fields">
+							<div class="fields mt-5">
 								<h1>Search</h1>
 								<xsl:call-template name="render-search-fields"/>
 							</div>
 							<div class="facets">
 								<xsl:call-template name="render-facets"/>
 							</div>
-							<div class="results">
+							<div class="results mt-5">
 								<xsl:call-template name="render-results"/>
 							</div>
 						</form>
 					</div>
-				</section>
+					</div>
+				</main>
 			</body>
 		</html>
 	</xsl:template>
@@ -118,11 +120,13 @@
 		"/>
 		<xsl:if test="$last-page &gt; 1">
 			<!-- there are multiple pages of results -->
-			<nav class="pagination">
-				<span>Page: </span>
+			<nav aria-label="Page navigation">
+				<ul class="pagination justify-content-center text-sansserif">
 				<xsl:if test="$current-page &gt; 1">
+					
 					<xsl:for-each select="1 to $current-page - 1">
-						<a class="page" href="{
+						<li class="page-item">
+						<a class="page-link" href="{
 							string-join(
 								(
 									concat($search-base-url, '?page=', .),
@@ -130,15 +134,15 @@
 								),
 								'&amp;'
 							)
-						}"><xsl:value-of select="."/></a>
-						<xsl:text> </xsl:text>
+						}"><xsl:value-of select="."/></a></li>
 					</xsl:for-each>
+					
 				</xsl:if>
-				<span class="page"><xsl:value-of select="$current-page"/></span>
+				<li class="page-item active" aria-current="page"><a class="page-link" href="#"><xsl:value-of select="$current-page"/><span class="sr-only">(current)</span></a></li>
 				<xsl:if test="$current-page &lt; $last-page">
 					<xsl:for-each select="$current-page + 1 to $last-page">
-						<xsl:text> </xsl:text>
-						<a class="page" href="{
+						<li class="page-item">
+						<a class="page-link" href="{
 							string-join(
 								(
 									concat($search-base-url, '?page=', .),
@@ -146,9 +150,10 @@
 								),
 								'&amp;'
 							)
-						}"><xsl:value-of select="."/></a>
+						}"><xsl:value-of select="."/></a></li>
 					</xsl:for-each>
-				</xsl:if>			
+				</xsl:if>
+	</ul>			
 			</nav>
 		</xsl:if>
 	</xsl:template>
@@ -157,18 +162,18 @@
 		<xsl:variable name="highlighting" select="$response/f:map/f:map[@key='highlighting']/f:map"/>
 		<h2><xsl:value-of select="$response/f:map/f:map[@key='response']/f:number[@key='numFound']"/> results</h2>
 		<xsl:call-template name="render-pagination-links"/>
-		<ul class="results">
+		<ul class="list-group-flush">
 			<xsl:for-each select="$response/f:map/f:map[@key='response']/f:array[@key='docs']/f:map">
 				<xsl:variable name="id" select="f:string[@key='id']"/>
 				<xsl:variable name="title" select="*[@key='title']"/>
-				<li class="result">
+				<li class="result list-group-item">
 					<a href="/text/{$id}/"><cite><xsl:value-of select="$title"/></cite></a>
 					<!-- The Solr record contains a summary of the metadata pre-rendered as an HTML summary widget -->
 					<xsl:sequence select="f:string[@key='metadata-summary'] => parse-xml()"/>
 					<!-- list the snippets of matching text which were found in this particular view -->
-					<ul class="matching-snippets">
+					<ul class="matching-snippets list-group">
 						<xsl:for-each select="$highlighting[@key=$id]/f:array/f:string">
-							<li class="matching-snippet">
+							<li class="matching-snippet list-group-item">
 								<a href="/text/{$id}/?highlight={$request/c:param[@name='text']/@value}#hit{position()}">
 									<!-- Within each snippet, Solr marks up individual matching words with escaped(!) <em> tags -->
 									<xsl:variable name="match-escaped-em-elements">(&lt;em&gt;[^&lt;]+&lt;/em&gt;)</xsl:variable>
@@ -202,8 +207,10 @@
 		<xsl:param name="name"/>
 		<xsl:param name="label"/>
 		<xsl:variable name="field-value-sought" select="$request/c:param[@name=$name]/@value"/>
+		<div class="form-group">
 		<label for="{$name}"><xsl:value-of select="$label"/></label>
-		<input type="text" id="{$name}" name="{$name}" value="{$field-value-sought}"/>
+		<input type="text" class="form-control" id="{$name}" name="{$name}" value="{$field-value-sought}"/>
+		</div>
 	</xsl:template>
 	
 	<xsl:template name="render-search-fields">
@@ -257,7 +264,7 @@
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:for-each>
-		<button>search</button>
+		<button class="btn btn-primary">search</button>
 	</xsl:template>
 	
 	<xsl:template name="render-facets">

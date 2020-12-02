@@ -16,14 +16,20 @@
 			<xsl:copy-of select="@*"/>
 			<xsl:apply-templates select="*"/>
 			<meta charset="utf-8" />
-			<link rel="stylesheet" type="text/css" href="/css/global.css"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+			<meta name="description" content="The Algernon Charles Swinburne Project: A Scholarly Edition"/>
+			<meta name="author" content="John A. Walsh"/>
+			<xsl:comment>Customized Bootstrap core CSS</xsl:comment>
+			<link href="/css/swinburne-bs.css" rel="stylesheet"/>
+			<xsl:comment>Local CSS</xsl:comment>
+			<link href="/css/swinburne-local.css" rel="stylesheet"/>
 		</xsl:copy>
 	</xsl:template>
 	
 	<!-- add a global suffix to every page title -->
 	<xsl:template match="title">
 		<xsl:copy>
-			<xsl:value-of select="concat(., ': The Algernon Charles Swinburne Project')"/>
+			<xsl:value-of select="concat('The Algernon Charles Swinburne Project: ',.)"/>
 		</xsl:copy>
 	</xsl:template>
 	
@@ -32,23 +38,20 @@
 		<xsl:copy>
 			<xsl:copy-of select="@*"/>
 			<!-- masthead -->
-			<header class="page-header">
-				<section class="project-site">
-					<a href="/" title="Home"><img src="/image/banner_portrait.png" alt="Portrait of Algernon Charles Swinburne" /></a>
-					<a href="/" title="Home"><img src="/image/banner_title.png" alt="Algernon Charles Swinburne" /></a>
-					<xsl:if test="not(//form[@id='advanced-search'])">
-						<form id="quick-search" action="/search/" method="GET">
-							<input type="text" name="text" placeholder="search texts"/>
-							<button type="submit">Search</button>
-							<a href="/search/">Advanced search</a>
-						</form>
-					</xsl:if>
-				</section>
-			</header>
+			<header>
+				
+			
 			<!-- menus read from menus.json -->
-			<nav id="main-nav">
+			<nav id="main-nav" class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+				<a class="navbar-brand" href="/">ACS</a>
+				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse" id="navbarCollapse">
 				<xsl:apply-templates select="$menus" mode="main-menu"/>
+				</div>
 			</nav>
+			</header>
 			<!-- contextual sidebar of the menu to which this page belongs, if any -->
 			<xsl:variable name="sub-menu">
 				<xsl:call-template name="sub-menu"/>
@@ -68,8 +71,10 @@
 			</xsl:choose>
 			<!-- footer -->
 			<xsl:call-template name="footer"/>
-			<!-- global Javascript -->
-			<script src="/js/global.js"></script>
+			<!--  Javascript -->
+			
+			<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+			<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
 		</xsl:copy>
 	</xsl:template>
 	
@@ -81,10 +86,10 @@
 				<header><xsl:value-of select="$sub-menu/@key"/></header>
 				<ul>
 					<xsl:for-each select="$sub-menu/fn:string">
-						<li><a href="{.}"><xsl:if test=". = $current-uri">
+						<a class="dropdown-item" href="{.}"><!-- <xsl:if test=". = $current-uri">
 							<xsl:attribute name="class">current</xsl:attribute>
-						</xsl:if>
-						<xsl:value-of select="@key"/></a></li>
+						</xsl:if>-->
+						<xsl:value-of select="@key"/></a>
 					</xsl:for-each>
 				</ul>
 			</nav>
@@ -92,73 +97,32 @@
 	</xsl:template>
 	
 	<xsl:template match="fn:map" mode="main-menu">
-		<ul class="primary">
+		<ul class="navbar-nav mr-auto">
 			<xsl:apply-templates mode="main-menu"/>
 		</ul>
 	</xsl:template>
 	<xsl:template match="fn:string" mode="main-menu">
-		<li><a href="{.}"><xsl:value-of select="@key"/></a></li>
+		<li class="nav-item"><a class="nav-link" href="{.}"><xsl:value-of select="@key"/></a></li>
+	</xsl:template>
+	<xsl:template match="fn:map[ancestor::fn:map]/fn:string" mode="main-menu">
+		<a class="dropdown-item" href="{.}"><xsl:value-of select="@key"/></a>
 	</xsl:template>
 	<xsl:template match="fn:map/fn:map" mode="main-menu">
-		<li>
-			<details>
-				<summary><xsl:value-of select="@key"/></summary>
-				<ul class="secondary">
+		<li class="nav-item dropdown">
+			<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><xsl:value-of select="@key"/></a>
+			<div class="dropdown-menu" aria-labelledby="navbarDropdown">
 					<xsl:apply-templates mode="main-menu"/>
-				</ul>
-			</details>
+				</div>
+			
 		</li>
 	</xsl:template>
 	
 	<xsl:template name="footer">
-		<footer class="page-footer">
-			<div class="link-to-top">
-				<a href="#top"><img src="/image/icon_toTop.png" alt="To Top of Page" title="To Top of Page" /></a>
-			</div>
-			<div class="menus-and-links">
-				<div class="menus">
-					<!-- generate a menu listing the top level menu items which don't have child menu options -->
-					<div class="menu">
-						<ul>
-							<xsl:for-each select="$menus/fn:map/fn:string">
-								<li><a href="{.}"><xsl:if test=". = $current-uri">
-									<xsl:attribute name="class">current</xsl:attribute>
-								</xsl:if>
-								<xsl:value-of select="@key"/></a></li>
-							</xsl:for-each>					
-						</ul>
-					</div>
-					<!-- generate a menu for each of the remaining top-level menu items -->
-					<xsl:for-each select="$menus/fn:map/fn:map">
-						<div class="menu">
-							<header><xsl:value-of select="@key"/></header>
-							<ul>
-								<xsl:for-each select="fn:string">
-									<li><a href="{.}"><xsl:if test=". = $current-uri">
-										<xsl:attribute name="class">current</xsl:attribute>
-									</xsl:if>
-									<xsl:value-of select="@key"/></a></li>
-								</xsl:for-each>
-							</ul>
-						</div>
-					</xsl:for-each>
-				</div>
-				<div class="links">
-					<p>Comments: <a href="mailto:jawalsh@indiana.edu">jawalsh@indiana.edu</a></p>
-					<p>Published by the Digital Culture Lab, <a href="http://www.slis.indiana.edu">School of Library and Information Science</a>, 
-					<a href="http://www.iub.edu">Indiana University</a>. 
-					Copyright © 1997-2012 <a href="http://www.slis.indiana.edu/faculty/jawalsh/">John A. Walsh</a>.</p>
-					<p><a href="http://www.nines.org/about/scholarship/peer-review/">Peer Reviewed</a> by <a href="http://www.nines.org/">NINES</a>.</p>
-					<p><a rel="license" href="http://creativecommons.org/licenses/by/3.0/us/"><img
-						alt="Creative Commons License"
-						style="border-width:0;position:relative;top:3px;"
-						src="http://i.creativecommons.org/l/by/3.0/us/80x15.png" /></a>
-						<cite>The Algernon Charles Swinburne Project</cite> by <a
-						href="mailto:jawalsh@indiana.edu">John A. Walsh</a> is licensed under a <a
-						rel="license" href="http://creativecommons.org/licenses/by/3.0/us/">Creative
-						Commons Attribution 3.0 United States License</a>.
-					</p>
-				</div>
+		<footer class="footer mt-auto py-3 bg-dark text-light text-sansserif fs-70">
+			<div class="container ml-0">
+				Last Updated: 28 February 2021. <br />
+				
+				Copyright © 1997-2021  by <a class="text-light" href="mailto:jawalsh@indiana.edu">John A. Walsh</a>
 			</div>
 		</footer>
 	</xsl:template>

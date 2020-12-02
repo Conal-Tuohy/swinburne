@@ -19,7 +19,7 @@
 	<xsl:variable name="embedded-manifest-uri" select="/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/altIdentifier/idno[@type='iiif-manifest']"/>
 	
 	<xsl:template match="/tei:TEI">
-		<html>
+		<html class="h-100">
 			<head>
 				<title><xsl:value-of select="$title"/></title>
 				<link href="/css/tei.css" rel="stylesheet" type="text/css"/>
@@ -58,15 +58,21 @@
 					"/>
 				</style>
 			</head>
-			<body>
+			<body class="d-flex flex-column h-100">
 				<div class="tei">
+					<div class="row">
+						<div class="col">
 					<cite><xsl:value-of select="$title"/></cite>
 					<!-- render the document metadata details -->
 					<xsl:apply-templates select="tei:teiHeader"/>
-					<!-- render the table of contents biblStructs -->
+					<!-- render the table of contents biblStructs -->				</div>
+						</div>
+					<div class="row mt-5">
+						<div class="col">
 					<xsl:apply-templates mode="toc" select="/TEI/teiHeader/fileDesc/sourceDesc[@n='table-of-contents']"/>
 					<!-- render the relevant part of the text itself -->
-					<!-- NB the "searchable-content" class will cause it to be indexed -->
+					<!-- NB the "searchable-content" class will cause it to be indexed --></div>
+						<div class="col-7">
 					<div class="searchable-content">
 						<xsl:choose>
 							<xsl:when test="$view = 'introduction'">
@@ -77,15 +83,22 @@
 							</xsl:otherwise>
 						</xsl:choose>
 					</div>
+						</div>
+					</div>
 				</div>
 			</body>
 		</html>
 	</xsl:template>
 	
 	<xsl:template mode="toc" match="sourceDesc[biblStruct]">
-		<nav class="toc">
-			<xsl:apply-templates select="biblStruct" mode="toc"/>
-		</nav>
+		<p>
+			<a class="btn btn-primary" data-toggle="collapse" href="#toc" role="button" aria-expanded="false" aria-controls="toc">Contents</a>
+		</p>
+		<div class="collapse" id="toc">
+			<nav class="toc">
+				<xsl:apply-templates select="biblStruct" mode="toc"/>
+			</nav>
+		</div>
 	</xsl:template>
 	<xsl:template mode="toc" match="biblStruct[relatedItem/biblStruct]">
 		<!-- 
