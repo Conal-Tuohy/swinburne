@@ -115,8 +115,10 @@
 						<p:pipe step="field-definitions" port="result"/>
 					</p:input>
 				</p:wrap-sequence>
+				<p:store href="../debug/search-request-response-and-config.xml" indent="true"/>
 				<p:xslt name="render-solr-response">
 					<p:with-param name="default-results-limit" select="$default-results-limit"/>
+					<p:input port="source"><p:pipe step="request-and-response" port="result"/></p:input>
 					<p:input port="stylesheet"><p:document href="../xslt/solr-response-to-html.xsl"/></p:input>
 				</p:xslt>
 				<z:make-http-response content-type="text/html"/>
