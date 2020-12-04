@@ -115,7 +115,10 @@
 						<p:pipe step="field-definitions" port="result"/>
 					</p:input>
 				</p:wrap-sequence>
+				<!-- TODO keep this but control it by some kind of debugging configuration flag -->
+				<!--
 				<p:store href="../debug/search-request-response-and-config.xml" indent="true"/>
+				-->
 				<p:xslt name="render-solr-response">
 					<p:with-param name="default-results-limit" select="$default-results-limit"/>
 					<p:input port="source"><p:pipe step="request-and-response" port="result"/></p:input>
