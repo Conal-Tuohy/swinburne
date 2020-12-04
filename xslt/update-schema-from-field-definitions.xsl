@@ -6,6 +6,7 @@
 	<xsl:param name="solr-base-uri"/>
 	<xsl:template match="/">
 		<c:request method="post" href="{$solr-base-uri}schema">
+			<c:header name="accept" value="application/xml"/>
 			<c:body content-type="application/json">
 				<xsl:text>{</xsl:text>
 				<!-- update "text_general" field type to use a regex-based tokenizer, rather than the "Standard" tokenizer which eats alchemical symbols -->
@@ -88,7 +89,7 @@
 				</xsl:call-template>
 				
 				<!-- define Solr fields corresponding to the facets and search fields defined in the "search-fields.xml" file -->
-				<xsl:for-each select="/*/fields/field">
+				<xsl:for-each select="/*/document/field">
 					<xsl:call-template name="define-field">
 						<xsl:with-param name="name" select="@name"/>
 						<xsl:with-param name="type" select="@type"/>
