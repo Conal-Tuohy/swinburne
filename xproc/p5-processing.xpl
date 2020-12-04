@@ -38,7 +38,25 @@
 			</p:input>
 		</p:xslt>
 		<p:http-request name="update-schema-in-solr"/>
-		<z:make-http-response/>
+		<!-- debug the Solr schema API interaction -->
+		<!-- TODO keep this but control it by some kind of debugging configuration flag -->
+		<!--
+		<p:group name="debug-schema-update">
+			<p:wrap-sequence wrapper="current-schema-and-update-message-and-result">
+				<p:input port="source">
+					<p:pipe step="current-solr-schema" port="result"/>
+					<p:pipe step="prepare-schema-update-request" port="result"/>
+					<p:pipe step="update-schema-in-solr" port="result"/>
+				</p:input>
+			</p:wrap-sequence>
+			<p:store href="../debug/schema-update.xml"/>
+		</p:group>
+		-->
+		<z:make-http-response>
+			<p:input port="source">
+				<p:pipe step="update-schema-in-solr" port="result"/>
+			</p:input>
+		</z:make-http-response>
 	</p:declare-step>
 	
 <!-- for request URI "admin/purge", clear the Solr index -->
@@ -173,24 +191,29 @@
 								<head><title>Solr Reindex</title></head>
 								<body>
 									<h1>Solr Reindex</h1>
-									<xsl:apply-templates/>
+									<xsl:choose>
+										<xsl:when test="solr-index-responses/c:errors">
+											<p>Solr indexing failed.</p>
+											<table>
+												<thead>
+													<tr><th>Error message</th><th>Error code</th><th>File</th><th>Line</th><th>Column</th></tr>
+												</thead>
+												<tbody>
+													<xsl:for-each select="solr-index-responses/c:errors/c:error">
+														<tr>
+															<td>{.}</td><td>{@code}</td><td>{@href}</td><td>{@line}</td><td>{@column}</td>
+														</tr>
+													</xsl:for-each>
+												</tbody>
+											</table>
+										</xsl:when>
+										<xsl:otherwise>
+											<p>Solr indexing succeeded.</p>
+											<p>Indexed {count(//int[@name='status'][.='0'])} documents in {sum(//int[@name='QTime'])} ms.</p>
+										</xsl:otherwise>
+									</xsl:choose>
 								</body>
 							</html>
-						</xsl:template>
-						<xsl:template match="c:errors">
-							<p>Solr indexing failed.</p>
-							<table>
-								<thead>
-									<tr><th>Error message</th><th>Error code</th><th>File</th><th>Line</th><th>Column</th></tr>
-								</thead>
-								<tbody>
-									<xsl:for-each select="c:error">
-										<tr>
-											<td>{.}</td><td>{@code}</td><td>{@href}</td><td>{@line}</td><td>{@column}</td>
-										</tr>
-									</xsl:for-each>
-								</tbody>
-							</table>
 						</xsl:template>
 					</xsl:stylesheet>
 				</p:inline>
