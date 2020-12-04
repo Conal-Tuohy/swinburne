@@ -178,6 +178,10 @@
 					<p:delete match="@xml:base"/>
 					<!-- coerce the document into a regular form, fixing any corrigible errors, etc -->
 					<chymistry:regularize-tei name="fix-tei-errors"/>
+					<!-- ensure the document has an xml:id -->
+					<p:add-attribute match="/tei:TEI[not(@xml:id)]" attribute-name="xml:id">
+						<p:with-option name="attribute-value" select="substring-before($file-name, '.xml')"/>
+					</p:add-attribute>
 					<!-- for each each of the "combo" files generate a sequence of template files containing xinclude statements which select:
 						part of the combo file
 						the corresponding piece of metadata from the -md.xml metadata file
