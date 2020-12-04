@@ -24,13 +24,21 @@
 	<!--
 	This field defines an "id" field which must identify the text uniquely and persistently. It is used by Solr as a unique identifier.
 	-->
-	<field name="id" xpath="/TEI/@xml:id"/>
+	<field name="id" xpath="
+		if (/TEI/@xml:id) then 
+			/TEI/@xml:id 
+		else 
+			error(
+				QName('tag:conaltuohy.com,2020:swinburne', 'swinburne:missing-id'), 
+				concat('/TEI/@xml:id is missing from text with title ', /TEI/teiHeader/fileDesc/titleStmt/title)
+			)
+	"/>
 	<!-- 
 	This field defines a "title" field containing a composite value aggregated from various components of the msIdentifier.
 	-->
 	<field name="title"
 		label="Title"
-		xpath=" /TEI/teiHeader/fileDesc/titleStmt/title"
+		xpath="/TEI/teiHeader/fileDesc/titleStmt/title"
 	/>
 	<!--
 	This field defines a text field to contain the brief description of the text as given in the manuscript description.
@@ -86,22 +94,12 @@
 	<!-- 
 	This field, called "sort", is used as a sort key of last resort when displaying search results.
 	When two or more documents are equally relevant to a search (which is the case, for instance, with a blank search,
-	which returns all documents), then the documents will be sorted according to the settlement, region, collection, and idno.
+	which returns all documents), then the documents will be sorted by date.
 	The field is not intended to be used for searching; only for sorting.
 	-->
 	<field
 		name="sort"
-		xpath="
-			string-join(
-				(
-					/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/settlement,
-					/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier[country/@key='US']/region/@key,
-					/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/altIdentifier/idno[@type='collection'],
-					/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/idno
-				),
-				' '
-			)
-		"
+		xpath="/TEI/teiHeader/fileDesc/sourceDesc/biblStruct//date[@xml:id='sort_date']/@when"
 		type="sort"/>
 	<!-- 
 	This field defines a "rendition" facet which uses the identifier of the styles used in the text.
