@@ -68,22 +68,23 @@
 					<!-- render the table of contents biblStructs -->				</div>
 						</div>
 					<div class="row mt-5">
+						<div class="col-7">
+							<div class="searchable-content">
+								<xsl:choose>
+									<xsl:when test="$view = 'introduction'">
+										<xsl:apply-templates select="$introduction"/>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:apply-templates select="tei:text"/>
+									</xsl:otherwise>
+								</xsl:choose>
+							</div>
+						</div>
 						<div class="col">
 					<xsl:apply-templates mode="toc" select="/TEI/teiHeader/fileDesc/sourceDesc[@n='table-of-contents']"/>
 					<!-- render the relevant part of the text itself -->
 					<!-- NB the "searchable-content" class will cause it to be indexed --></div>
-						<div class="col-7">
-					<div class="searchable-content">
-						<xsl:choose>
-							<xsl:when test="$view = 'introduction'">
-								<xsl:apply-templates select="$introduction"/>
-							</xsl:when>
-							<xsl:otherwise>
-								<xsl:apply-templates select="tei:text"/>
-							</xsl:otherwise>
-						</xsl:choose>
-					</div>
-						</div>
+						
 					</div>
 				</div>
 			</body>
@@ -92,7 +93,7 @@
 	
 	<xsl:template mode="toc" match="sourceDesc[biblStruct]">
 		<p>
-			<a class="btn btn-primary" data-toggle="collapse" href="#toc" role="button" aria-expanded="false" aria-controls="toc">Contents</a>
+			<button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#toc" role="button" aria-expanded="false" aria-controls="toc">Contents</button>
 		</p>
 		<div class="collapse" id="toc">
 			<nav class="toc">

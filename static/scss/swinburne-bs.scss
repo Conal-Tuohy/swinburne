@@ -1,29 +1,10 @@
 // Custom.scss
 
-// My overrides *before* @import
+include all of Bootstrap
 
-//$body-bg: #f9f9f2;
-$font-family-base:  Georgia,"Times New Roman",Times,serif;
-/* theme colors */
-$primary: #75070c;
-//$secondary: $gray-600 !default; 
-//$success: #ffdca0;
-//$info: $cyan !default;
-//$warning: $yellow !default;
-//$danger: $red !default;
-$light: #fff3df;
-$dark: #211500;
-$code-color: blue;
-
-
-// Option A: Include all of Bootstrap
-
-@import "../../../bootstrap/node_modules/bootstrap/scss/bootstrap";
+@import "../../../bootstrap5/node_modules/bootstrap/scss/bootstrap";
 
 // My utilities
-.text-sansserif {
-	font-family: $font-family-sans-serif
-}
 
 .fs-90 {
 	font-size: 90%;
@@ -36,4 +17,3 @@ $code-color: blue;
 .fs-70 {
 	font-size: 70%;
 }
-

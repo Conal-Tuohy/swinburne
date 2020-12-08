@@ -43,13 +43,15 @@
 			
 			<!-- menus read from menus.json -->
 			<nav id="main-nav" class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+				<div class="container-fluid">
 				<a class="navbar-brand" href="/">ACS</a>
-				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
 					<span class="navbar-toggler-icon"></span>
 				</button>
 				<div class="collapse navbar-collapse" id="navbarCollapse">
 				<xsl:apply-templates select="$menus" mode="main-menu"/>
 				</div>
+			</div>
 			</nav>
 			</header>
 			<!-- contextual sidebar of the menu to which this page belongs, if any -->
@@ -73,8 +75,8 @@
 			<xsl:call-template name="footer"/>
 			<!--  Javascript -->
 			
-			<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-			<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+				<!-- <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script> -->
+			<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
 		</xsl:copy>
 	</xsl:template>
 	
@@ -109,7 +111,7 @@
 	</xsl:template>
 	<xsl:template match="fn:map/fn:map" mode="main-menu">
 		<li class="nav-item dropdown">
-			<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><xsl:value-of select="@key"/></a>
+			<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><xsl:value-of select="@key"/></a>
 			<div class="dropdown-menu" aria-labelledby="navbarDropdown">
 					<xsl:apply-templates mode="main-menu"/>
 				</div>

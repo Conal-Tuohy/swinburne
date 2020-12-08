@@ -207,7 +207,7 @@
 		<xsl:param name="name"/>
 		<xsl:param name="label"/>
 		<xsl:variable name="field-value-sought" select="$request/c:param[@name=$name]/@value"/>
-		<div class="form-group">
+		<div class="mb-3">
 		<label for="{$name}"><xsl:value-of select="$label"/></label>
 		<input type="text" class="form-control" id="{$name}" name="{$name}" value="{$field-value-sought}"/>
 		</div>
