@@ -68,7 +68,7 @@
 					<!-- render the table of contents biblStructs -->				</div>
 						</div>
 					<div class="row mt-5">
-						<div class="col-7">
+						<div class="col-8">
 							<div class="searchable-content">
 								<xsl:choose>
 									<xsl:when test="$view = 'introduction'">

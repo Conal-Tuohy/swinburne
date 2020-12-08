@@ -73,16 +73,23 @@
 								'?'
 							)
 						}">
-							<div class="fields mt-5">
-								<h1>Search</h1>
-								<xsl:call-template name="render-search-fields"/>
-							</div>
-							<div class="facets">
-								<xsl:call-template name="render-facets"/>
-							</div>
-							<div class="results mt-5">
-								<xsl:call-template name="render-results"/>
-							</div>
+								<div class="row">
+									<div class="col-8">
+										<div class="results mt-5 pe-5">
+											<xsl:call-template name="render-results"/>
+										</div>
+									</div>
+									<div class="col-4">
+										<div class="fields mt-5">
+											<h1>Search</h1>
+											<xsl:call-template name="render-search-fields"/>
+										</div>
+										<div class="facets mt-5">
+											<xsl:call-template name="render-facets"/>
+										</div>
+									</div>
+
+								</div>
 						</form>
 					</div>
 					</div>
@@ -274,7 +281,7 @@
 			<xsl:variable name="solr-facet-key" select="@key"/>
 			<xsl:variable name="facet" select="$facet-definitions[@name=$solr-facet-key]"/>
 			<xsl:if test="$solr-facet"><!-- facet returned some result; this means that Solr results match the facet -->
-				<div class="chart">
+				<div class="chart mt-5">
 					<h3><xsl:value-of select="$facet/@label"/></h3>
 					<xsl:variable name="selected-values" select="$request/c:param[@name=$solr-facet-key]/@value"/>
 					<xsl:variable name="buckets" select="$solr-facet/f:array[@key='buckets']/f:map[f:string[@key='val']/text()]"/>

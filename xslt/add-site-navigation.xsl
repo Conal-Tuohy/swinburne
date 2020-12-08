@@ -121,7 +121,7 @@
 	
 	<xsl:template name="footer">
 		<footer class="footer mt-auto py-3 bg-dark text-light text-sansserif fs-70">
-			<div class="container ml-0">
+			<div class="container-fluid ml-0">
 				Last Updated: 28 February 2021. <br />
 				
 				Copyright © 1997-2021  by <a class="text-light" href="mailto:jawalsh@indiana.edu">John A. Walsh</a>

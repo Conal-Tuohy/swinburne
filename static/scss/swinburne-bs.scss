@@ -1,6 +1,22 @@
 // Custom.scss
 
-include all of Bootstrap
+$primary: #75070c;
+/* 
+$success
+$info
+$warning
+$danger
+*/  
+$light: #fff3df;
+$dark: #211500;
+
+//typography
+
+$font-family-base: Georgia,"Times New Roman",Times,serif;
+$font-size-base:1.3rem;
+
+
+//include all of Bootstrap
 
 @import "../../../bootstrap5/node_modules/bootstrap/scss/bootstrap";
 
@@ -17,3 +33,8 @@ include all of Bootstrap
 .fs-70 {
 	font-size: 70%;
 }
+
+.text-sansserif {
+    font-family: $font-family-sans-serif;
+}
+
