@@ -8,7 +8,7 @@
 	<!-- transform a TEI document into an HTML page-->
 	<!--<xsl:import href="render-metadata.xsl"/>-->
 	<xsl:param name="google-api-key"/>
-	
+	<xsl:param name="quotation_format" select="'double'"/>
 	<xsl:param name="view"/><!-- 'diplomatic' or 'normalized' or 'introduction' -->
 	<xsl:key name="char-by-ref" match="char[@xml:id]" use="concat('#', @xml:id)"/>
 	
@@ -305,10 +305,80 @@
 			<xsl:apply-templates mode="create-content" select="."/>
 		</xsl:element>
 	</xsl:template>
-	
+
+	<!-- suppressed elements -->
+	<xsl:template match="pb"/>
+
+	<!-- elements that should generate quotation marks -->
+	<xsl:template match="q|soCalled|title[contains(@rendition,'#quotes')]|title[@level='a' and not(contains(@rendition,'#dq')) and not(contains(@rendition,'#sq')) and not(contains(@rendition,'#nq'))]|analytic/title[not(contains(@rendition,'#dq'))]|quote[not(parent::cit[contains(@rendition,'#block')]) and not(contains(@rendition,'#block'))]">
+			<xsl:element name="span">
+					<xsl:apply-templates mode="create-attributes" select="."/>
+			<xsl:call-template name="quotes">
+					<xsl:with-param name="contents">
+							<xsl:apply-templates mode="create-content" select="."/>
+					</xsl:with-param>
+			</xsl:call-template>
+		</xsl:element>
+	</xsl:template>
+
+	<!-- below for quotes that are not marked with quotation marks. -->
+	<xsl:template match="q[contains(@rendition,'#nq')]|quote[contains(@rendition,'#nq')]">
+			<span>
+					<xsl:apply-templates mode="create-attributes" select="."/>
+					<xsl:apply-templates mode="create-content" select="."/>
+			</span>
+	</xsl:template>
+
+	<xsl:template name="quotes">
+			<xsl:param name="contents">
+					<xsl:apply-templates/>
+			</xsl:param>
+			<xsl:variable name="level">
+					<xsl:value-of
+							select="count(ancestor::quote[contains(@rendition,'#inline')] |
+							ancestor::soCalled |
+							ancestor::q |
+							ancestor::title[contains(@rendition,'#quotes')] |
+							ancestor::title[@level='a' and not(contains(@rendition,'#nq'))] |
+							ancestor::analytic/title[not(contains(@rendition,'#nq'))] |
+							ancestor::quote[not(parent::cit[contains(@rendition,'#block')])])"
+					/>
+			</xsl:variable>
+			<xsl:choose>
+					<xsl:when test="$quotation_format = 'single'">
+							<xsl:choose>
+									<xsl:when test="$level mod 2">
+											<xsl:text>“</xsl:text>
+											<!--<xsl:copy-of select="$contents"/>--><xsl:apply-templates/>
+											<xsl:text>”</xsl:text>
+									</xsl:when>
+									<xsl:otherwise>
+											<xsl:text>‘</xsl:text>
+											<!--<xsl:copy-of select="$contents"/>--><xsl:apply-templates/>
+											<xsl:text>’</xsl:text>
+									</xsl:otherwise>
+							</xsl:choose>
+					</xsl:when>
+					<xsl:otherwise>
+			<xsl:choose>
+					<xsl:when test="$level mod 2">
+							<xsl:text>‘</xsl:text>
+							<!--<xsl:copy-of select="$contents"/>--><xsl:apply-templates/>
+							<xsl:text>’</xsl:text>
+					</xsl:when>
+					<xsl:otherwise>
+							<xsl:text>“</xsl:text>
+							<!--<xsl:copy-of select="$contents"/>--><xsl:apply-templates/>
+							<xsl:text>”</xsl:text>
+					</xsl:otherwise>
+			</xsl:choose>
+					</xsl:otherwise>
+			</xsl:choose>
+	</xsl:template>
+
 	<!-- TODO how to deal with tei:join? -->
 	<xsl:template match="join"/>
-	
+
 	<!-- non-phrase-level TEI elements (plus author and title within the item description) are mapped to html:div -->
 	<xsl:template match="* | fileDesc/sourceDesc/msDesc/msContents/msItem/author | fileDesc/sourceDesc/msDesc/msContents/msItem/title">
 		<xsl:element name="div">
