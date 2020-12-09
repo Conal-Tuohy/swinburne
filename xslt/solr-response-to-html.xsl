@@ -145,7 +145,7 @@
 					</xsl:for-each>
 					
 				</xsl:if>
-				<li class="page-item active" aria-current="page"><a class="page-link" href="#"><xsl:value-of select="$current-page"/><span class="sr-only">(current)</span></a></li>
+				<li class="page-item active" aria-current="page"><a class="page-link" href="#"><xsl:value-of select="$current-page"/><span class="visually-hidden">(current)</span></a></li>
 				<xsl:if test="$current-page &lt; $last-page">
 					<xsl:for-each select="$current-page + 1 to $last-page">
 						<li class="page-item">
