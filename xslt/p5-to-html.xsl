@@ -278,6 +278,7 @@
 	<!-- https://www.tei-c.org/release/doc/tei-p5-doc/en/html/ST.html#STBTC -->
 	<!-- TEI "phrase-level", model.global.edit, "gLike", and "lLike" elements are mapped to html:span -->
 	<!-- Also tei:label since it is only used in the chymistry corpus with phrase content -->
+	<!-- Also tei:q, tei:quote -->
 	<xsl:template priority="-0.1" match="
 		author | fw
 		|
@@ -299,12 +300,19 @@
 		l
 		|
 		label
+		|
+		q
+		|
+		quote
 	">
 		<xsl:element name="span">
 			<xsl:apply-templates mode="create-attributes" select="."/>
 			<xsl:apply-templates mode="create-content" select="."/>
 		</xsl:element>
 	</xsl:template>
+	
+	<!-- suppressed elements -->
+	<xsl:template match="pb"/>
 	
 	<!-- TODO how to deal with tei:join? -->
 	<xsl:template match="join"/>
