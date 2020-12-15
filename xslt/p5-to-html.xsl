@@ -9,7 +9,6 @@
 	<!--<xsl:import href="render-metadata.xsl"/>-->
 	<xsl:param name="google-api-key"/>
 	
-	<xsl:param name="view"/><!-- 'diplomatic' or 'normalized' or 'introduction' -->
 	<xsl:key name="char-by-ref" match="char[@xml:id]" use="concat('#', @xml:id)"/>
 	
 	<!-- TODO shouldn't the title be a string constructed from msIdentifer? -->
@@ -70,14 +69,7 @@
 					<div class="row mt-5">
 						<div class="col-8">
 							<div class="searchable-content">
-								<xsl:choose>
-									<xsl:when test="$view = 'introduction'">
-										<xsl:apply-templates select="$introduction"/>
-									</xsl:when>
-									<xsl:otherwise>
-										<xsl:apply-templates select="tei:text"/>
-									</xsl:otherwise>
-								</xsl:choose>
+								<xsl:apply-templates select="tei:text"/>
 							</div>
 						</div>
 						<div class="col">
@@ -396,19 +388,7 @@
 		<xsl:attribute name="title" select="concat('supplied; reason: ', @reason)"/>
 	</xsl:template>
 	
-	<!-- filter out <gap> in normalized view -->
-	<xsl:template match="gap">
-		<xsl:if test="$view = 'diplomatic' ">
-			<xsl:next-match/>
-		</xsl:if>
-	</xsl:template>
 	<xsl:template match="div[not(*)]"/>
-	<xsl:template match="div" mode="create-content">
-		<xsl:if test="@n">
-			<header><xsl:value-of select="@n"/></header>
-		</xsl:if>
-		<xsl:next-match/>
-	</xsl:template>
 	<xsl:template match="gap" mode="create-content">
 		<xsl:text>illeg.</xsl:text>
 	</xsl:template>
@@ -438,66 +418,34 @@
 			)
 		"/>
 	</xsl:template>
-	<xsl:template match="add">
-		<!-- When creating content of an <add> element with rend='caret', prepend an actual textual caret -->
-		<!-- The caret is inserted BEFORE the html:ins element which represents the tei:add, because the html:ins 
-		may by styled as superscript, and we don't want the caret itself superscripted -->
-		<xsl:if test="tokenize(@rend) = 'caret'">
-			<xsl:text>‸</xsl:text>
-		</xsl:if>
-		<xsl:choose>
-			<xsl:when test="$view = 'diplomatic' ">
-				<xsl:element name="ins">
-					<xsl:apply-templates mode="create-attributes" select="."/>
-					<xsl:apply-templates mode="create-content" select="."/>
-				</xsl:element>
-			</xsl:when>
-			<xsl:otherwise>
-				<xsl:apply-templates mode="create-content" select="."/>
-			</xsl:otherwise>
-		</xsl:choose>
-	</xsl:template>
-
-	<xsl:template match="del">
-		<xsl:if test="$view = 'diplomatic' ">
-			<xsl:element name="del">
-				<xsl:apply-templates mode="create-attributes" select="."/>
-				<xsl:apply-templates mode="create-content" select="."/>
-			</xsl:element>
-		</xsl:if>
-	</xsl:template>	
-	<!-- elements rendered only in diplomatic view -->
-	<xsl:template match="choice/orig | choice/sic | surplus" priority="1">
-		<xsl:if test="$view = 'diplomatic' ">
-			<xsl:next-match/>
-		</xsl:if>
-	</xsl:template>
-	<xsl:template match="choice/abbr" priority="1">
-		<xsl:if test="$view = 'diplomatic' ">
-			<xsl:element name="abbr">
-				<xsl:apply-templates/>
-			</xsl:element>
-		</xsl:if>
-	</xsl:template>
-	<xsl:template match="choice[expan]" mode="create-attributes">
-		<xsl:if test="$view = 'diplomatic' ">
-			<xsl:attribute name="title" select="expan"/>
-		</xsl:if>
-		<xsl:next-match/>
-	</xsl:template>
-	<xsl:template match="choice[corr]" mode="create-attributes">
-		<xsl:if test="$view = 'diplomatic' ">
-			<xsl:attribute name="title" select="concat('correct: ', corr)"/>
-		</xsl:if>
-		<xsl:next-match/>
-	</xsl:template>
 	
-	<!-- elements rendered only in normalized view -->
-	<xsl:template match="choice/reg | choice/corr | choice/expan" priority="1">
-		<xsl:if test="$view = 'normalized' ">
-			<xsl:next-match/>
-		</xsl:if>
+	<!-- capture the original version of regularized text in a data-orig attribute  -->
+	<!-- so that the text content is regularized for index, searching, and highlight, -->
+	<!-- but the original is still available so it can be swapped back in at the last minute -->
+	<xsl:template match="choice[orig]" mode="create-attributes" priority="999">
+		<xsl:attribute name="data-orig" select="orig"/>
+		<xsl:next-match/>
 	</xsl:template>
+	<!-- abbreviations -->
+	<!-- a choice containing abbr and expan => abbr with the expansion in the title attribute -->
+	<xsl:template match="choice[abbr][expan]">
+		<xsl:element name="abbr">
+			<xsl:apply-templates mode="create-attributes" select="."/>
+			<xsl:apply-templates mode="create-content" select="."/>
+		</xsl:element>
+	</xsl:template>
+	<!-- the expan element is rendered into the abbr's title attribute -->
+	<xsl:template match="choice[expan]" mode="create-attributes" priority="999">
+		<xsl:attribute name="title" select="expan"/>
+		<xsl:next-match/>
+	</xsl:template>
+	<!-- the expan element does not generate any text content -->
+	<xsl:template match="choice/expan"/>
+	
+	<xsl:template match="choice/sic"/>
+	
+	<!-- choice sub-elements which should be suppressed or captured only in attribute values -->
+	<xsl:template match="choice/orig | choice/sic | choice/expan" priority="1"/>
 	
 	<!-- quantified significant white space -->
 	<xsl:template match="space[@quantity castable as xs:integer]" mode="create-content">
