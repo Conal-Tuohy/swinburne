@@ -84,10 +84,8 @@
 	</xsl:template>
 	
 	<xsl:template mode="toc" match="sourceDesc[biblStruct]">
-		<p>
-			<button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#toc" role="button" aria-expanded="false" aria-controls="toc">Contents</button>
-		</p>
-		<div class="collapse" id="toc">
+		<h2>Contents</h2>
+		<div id="toc">
 			<nav class="toc">
 				<xsl:apply-templates select="biblStruct" mode="toc"/>
 			</nav>
