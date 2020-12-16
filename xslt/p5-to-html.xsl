@@ -59,6 +59,7 @@
 			</head>
 			<body class="d-flex flex-column h-100">
 				<div class="tei">
+					<div class="container">
 					<div class="row">
 						<div class="col">
 					<cite><xsl:value-of select="$title"/></cite>
@@ -66,18 +67,19 @@
 					<xsl:apply-templates select="tei:teiHeader"/>
 					<!-- render the table of contents biblStructs -->				</div>
 						</div>
-					<div class="row mt-5">
-						<div class="col-8">
+					<div class="row">
+						<div class="col-sm-9">
 							<div class="searchable-content">
 								<xsl:apply-templates select="tei:text"/>
 							</div>
 						</div>
-						<div class="col">
+						<div class="col-sm-3">
 					<xsl:apply-templates mode="toc" select="/TEI/teiHeader/fileDesc/sourceDesc[@n='table-of-contents']"/>
 					<!-- render the relevant part of the text itself -->
 					<!-- NB the "searchable-content" class will cause it to be indexed --></div>
 						
 					</div>
+				</div>
 				</div>
 			</body>
 		</html>
