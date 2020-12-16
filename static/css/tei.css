@@ -1267,7 +1267,9 @@ details.tei-term[open] summary::after{
 	content: "❎";
 	margin-left: 0.25em;
 }
-details.tei-term summary {
+details.tei-term summary,
+details.tei-choice summary
+{
 	text-decoration: underline;
 }
 details.popup div.expansion {
