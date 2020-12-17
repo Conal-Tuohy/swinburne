@@ -299,7 +299,7 @@
 							']'
 						)"/></xsl:comment>-->
 						<xsl:if test="$count &gt; 0 or $bucket-is-selected">
-							<div class="bucket">
+							<div class=" list-group bucket">
 								<button
 									type="submit"
 									formaction="{
@@ -321,7 +321,7 @@
 										)
 									}"
 									title="{if ($bucket-is-selected) then 'deselect' else 'select'}"
-									class="{if ($bucket-is-selected) then 'selected' else 'unselected'}"
+									class="{if ($bucket-is-selected) then 'selected list-group-item list-group-item-action' else 'unselected list-group-item list-group-item-action'}"
 									name="{$facet/@name}"
 									value="{if ($bucket-is-selected) then '' else $value}">
 									<xsl:value-of select="$label"/>
