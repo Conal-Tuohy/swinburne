@@ -281,7 +281,7 @@
 			<xsl:variable name="solr-facet-key" select="@key"/>
 			<xsl:variable name="facet" select="$facet-definitions[@name=$solr-facet-key]"/>
 			<xsl:if test="$solr-facet"><!-- facet returned some result; this means that Solr results match the facet -->
-				<div class="chart mt-5">
+				<div class="chart list-group mt-5">
 					<h3><xsl:value-of select="$facet/@label"/></h3>
 					<xsl:variable name="selected-values" select="$request/c:param[@name=$solr-facet-key]/@value"/>
 					<xsl:variable name="buckets" select="$solr-facet/f:array[@key='buckets']/f:map[f:string[@key='val']/text()]"/>
@@ -299,7 +299,7 @@
 							']'
 						)"/></xsl:comment>-->
 						<xsl:if test="$count &gt; 0 or $bucket-is-selected">
-							<div class=" list-group bucket">
+							
 								<button
 									type="submit"
 									formaction="{
@@ -321,13 +321,13 @@
 										)
 									}"
 									title="{if ($bucket-is-selected) then 'deselect' else 'select'}"
-									class="list-group-item list-group-item-action {(if ($bucket-is-selected) then 'selected ' else 'unselected'}"
+									class="list-group-item list-group-item-action {if ($bucket-is-selected) then 'selected active' else 'unselected'}"
 									name="{$facet/@name}"
 									value="{if ($bucket-is-selected) then '' else $value}">
 									<xsl:value-of select="$label"/>
 									<span class="bucket-cardinality"> (<xsl:value-of select="$count"/>)</span>
 								</button>
-							</div>
+							
 						</xsl:if>
 					</xsl:for-each>
 				</div>
