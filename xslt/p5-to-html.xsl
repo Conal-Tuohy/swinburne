@@ -115,10 +115,10 @@
 			">
 				<xsl:attribute name="open">open</xsl:attribute>
 			</xsl:if>
-			<summary><xsl:apply-templates mode="toc" select="ref|title"/></summary>
-			<ul>
+			<summary class="btn btn-primary"><xsl:apply-templates mode="toc" select="ref|title"/></summary>
+			<ul class="list-group list-group-flush">
 				<xsl:for-each select="relatedItem">
-					<li>
+					<li class="list-group-item">
 						<xsl:apply-templates select="biblStruct" mode="toc"/>
 					</li>
 				</xsl:for-each>
@@ -137,16 +137,10 @@
 		</cite>
 	</xsl:template>
 	<xsl:template mode="toc" match="ref">
-		<xsl:param name="class" select="'list-group-item list-group-item-action'"/>
 		<a href="{chymistry:expand-reference(@target)}">
-			<xsl:choose>
-				<xsl:when test="substring-after(@target, 'document:') = /TEI/@xml:id">
-				<xsl:attribute name="class"><xsl:value-of select="concat($class,' current')"/></xsl:attribute>
-				</xsl:when>
-				<xsl:otherwise>
-					<xsl:attribute name="class" select="$class"/>	
-				</xsl:otherwise>
-			</xsl:choose>
+			<xsl:if test="substring-after(@target, 'document:') = /TEI/@xml:id">
+				<xsl:attribute name="class">current</xsl:attribute>
+			</xsl:if>
 			<xsl:apply-templates mode="toc"/>
 		</a>
 	</xsl:template>
@@ -159,8 +153,8 @@
 			<xsl:apply-templates select="fileDesc/sourceDesc/msDesc/msContents/msItem/title" />
 			<xsl:apply-templates select="fileDesc/sourceDesc/msDesc/msContents/msItem/note[@type='description']" />
 			<details class="tei-teiHeader">
-				<summary></summary>
-				<div class="expansion">
+				<summary class="btn btn-primary">Document Information</summary>
+				<div class="expansion card card-body mt-3">
 					<xsl:variable name="now" select="current-dateTime()"/>
 					<xsl:apply-templates select="fileDesc/sourceDesc/msDesc/physDesc/objectDesc/supportDesc" />
 					<xsl:apply-templates select="profileDesc/langUsage"/>
