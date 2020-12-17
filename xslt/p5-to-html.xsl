@@ -67,7 +67,7 @@
 					<xsl:apply-templates select="tei:teiHeader"/>
 					<!-- render the table of contents biblStructs -->				</div>
 						</div>
-					<div class="row">
+					<div class="row mt-5">
 						<div class="col-sm-9">
 							<div class="searchable-content">
 								<xsl:apply-templates select="tei:text"/>
@@ -137,10 +137,16 @@
 		</cite>
 	</xsl:template>
 	<xsl:template mode="toc" match="ref">
+		<xsl:param name="class" select="'list-group-item list-group-item-action'"/>
 		<a href="{chymistry:expand-reference(@target)}">
-			<xsl:if test="substring-after(@target, 'document:') = /TEI/@xml:id">
-				<xsl:attribute name="class">current</xsl:attribute>
-			</xsl:if>
+			<xsl:choose>
+				<xsl:when test="substring-after(@target, 'document:') = /TEI/@xml:id">
+				<xsl:attribute name="class"><xsl:value-of select="concat($class,' current')"/></xsl:attribute>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:attribute name="class" select="$class"/>	
+				</xsl:otherwise>
+			</xsl:choose>
 			<xsl:apply-templates mode="toc"/>
 		</a>
 	</xsl:template>
@@ -296,6 +302,8 @@
 		q
 		|
 		quote
+		|
+		biblScope
 	">
 		<xsl:element name="span">
 			<xsl:apply-templates mode="create-attributes" select="."/>

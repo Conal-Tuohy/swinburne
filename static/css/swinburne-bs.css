@@ -8287,4 +8287,13 @@ textarea.form-control-lg {
 .hit-link.badge {
   display: inline; }
 
+.btn-primary a {
+  color: #fff; }
+
+.toc a, .result a {
+  text-decoration: none; }
+
+.toc a:hover, .result a:hover {
+  text-decoration: underline; }
+
 /*# sourceMappingURL=swinburne-bs.css.map */
