@@ -321,7 +321,7 @@
 										)
 									}"
 									title="{if ($bucket-is-selected) then 'deselect' else 'select'}"
-									class="{if ($bucket-is-selected) then 'selected list-group-item list-group-item-action' else 'unselected list-group-item list-group-item-action'}"
+									class="list-group-item list-group-item-action {(if ($bucket-is-selected) then 'selected ' else 'unselected'}"
 									name="{$facet/@name}"
 									value="{if ($bucket-is-selected) then '' else $value}">
 									<xsl:value-of select="$label"/>
