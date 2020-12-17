@@ -321,11 +321,11 @@
 										)
 									}"
 									title="{if ($bucket-is-selected) then 'deselect' else 'select'}"
-									class="list-group-item list-group-item-action {if ($bucket-is-selected) then 'selected active' else 'unselected'}"
+									class="list-group-item list-group-item-action d-flex justify-content-between align-items-center {if ($bucket-is-selected) then 'selected active' else 'unselected'}"
 									name="{$facet/@name}"
 									value="{if ($bucket-is-selected) then '' else $value}">
 									<xsl:value-of select="$label"/>
-									<span class="bucket-cardinality"> (<xsl:value-of select="$count"/>)</span>
+									<span class="bucket-cardinality badge bg-primary rounded-pill text-sansserif"><xsl:value-of select="$count"/></span>
 								</button>
 							
 						</xsl:if>
