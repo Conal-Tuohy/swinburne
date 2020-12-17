@@ -37,10 +37,10 @@
 				<xsl:if test="$snippet-index != $first-snippet-index">
 					<!-- ...then it's not the first snippet, so we can insert a link back to the previous one -->
 					<xsl:variable name="previous-snippet-index" select="$snippet-ordering[.('position') = $snippet-position - 1]('index')"/>
-					<xsl:attribute name="class" select=" 'hit-link' "/>
+					<xsl:attribute name="class" select=" 'hit-link badge bg-secondary text-sansserif' "/>
 					<xsl:attribute name="href" select="concat('#hit', $previous-snippet-index)"/>
 					<xsl:attribute name="title">previous hit</xsl:attribute>
-					<xsl:text>⏪</xsl:text>
+					<xsl:text>&lt;&lt;</xsl:text>
 				</xsl:if>
 			</xsl:element>
 		</xsl:if>
@@ -50,10 +50,10 @@
 			<!-- and it's not the last snippet, so we can insert a link forward to the next one -->
 			<xsl:element name="a">
 				<xsl:variable name="next-snippet-index" select="$snippet-ordering[.('position') = $snippet-position + 1]('index')"/>
-				<xsl:attribute name="class" select=" 'hit-link' "/>
+				<xsl:attribute name="class" select=" 'hit-link badge bg-secondary text-sansserif' "/>
 				<xsl:attribute name="href" select="concat('#hit', $next-snippet-index)"/>
 				<xsl:attribute name="title">next hit</xsl:attribute>
-				<xsl:text>⏩</xsl:text>
+				<xsl:text>>></xsl:text>
 			</xsl:element>
 		</xsl:if>
 	</xsl:template>
