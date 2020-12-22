@@ -8296,4 +8296,8 @@ textarea.form-control-lg {
 .toc a:hover, .result a:hover {
   text-decoration: underline; }
 
-/*# sourceMappingURL=swinburne-bs.css.map */
+*::-webkit-details-marker {
+  display: none; }
+
+.chart .badge {
+  margin-left: 10px; }

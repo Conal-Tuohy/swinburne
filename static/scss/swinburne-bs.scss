@@ -53,3 +53,11 @@ $font-family-base: Georgia,"Times New Roman",Times,serif;
 .toc a:hover, .result a:hover {
  text-decoration: underline;
 }
+
+*::-webkit-details-marker {
+ display:none;
+}
+
+.chart .badge {
+	margin-left: 10px;
+}
