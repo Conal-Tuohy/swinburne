@@ -80,7 +80,7 @@
 					<xsl:apply-templates select="tei:teiHeader"/>
 					<!-- render the table of contents biblStructs -->				</div>
 						</div>
-					<div class="row">
+					<div class="row mt-5">
 						<div class="col-sm-9">
 							<div class="searchable-content">
 								<xsl:apply-templates select="tei:text"/>
@@ -128,10 +128,10 @@
 			">
 				<xsl:attribute name="open">open</xsl:attribute>
 			</xsl:if>
-			<summary><xsl:apply-templates mode="toc" select="ref|title"/></summary>
-			<ul>
+			<summary class="btn btn-primary"><xsl:apply-templates mode="toc" select="ref|title"/></summary>
+			<ul class="list-group list-group-flush">
 				<xsl:for-each select="relatedItem">
-					<li>
+					<li class="list-group-item">
 						<xsl:apply-templates select="biblStruct" mode="toc"/>
 					</li>
 				</xsl:for-each>
@@ -166,8 +166,8 @@
 			<xsl:apply-templates select="fileDesc/sourceDesc/msDesc/msContents/msItem/title" />
 			<xsl:apply-templates select="fileDesc/sourceDesc/msDesc/msContents/msItem/note[@type='description']" />
 			<details class="tei-teiHeader">
-				<summary></summary>
-				<div class="expansion">
+				<summary class="btn btn-primary">Document Information</summary>
+				<div class="expansion card card-body mt-3">
 					<xsl:variable name="now" select="current-dateTime()"/>
 					<xsl:apply-templates select="fileDesc/sourceDesc/msDesc/physDesc/objectDesc/supportDesc" />
 					<xsl:apply-templates select="profileDesc/langUsage"/>
@@ -309,6 +309,8 @@
 		q
 		|
 		quote
+		|
+		biblScope
 	">
 		<xsl:element name="span">
 			<xsl:apply-templates mode="create-attributes" select="."/>

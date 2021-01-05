@@ -119,6 +119,7 @@ ul.tei-list.type-disjunctive {
 	font-size: small;
 }
 /* Manuscript metadata */
+/*
 div.tei-teiHeader {
 	border-style: solid;
 	border-width: 1pt;
@@ -126,6 +127,7 @@ div.tei-teiHeader {
 	padding: 1em;
 	margin-top: 1em;
 }
+*/
 .tei-teiHeader h2,
 .tei-teiHeader .tei-head {
 	font-size: 1em;
@@ -145,10 +147,12 @@ div.tei-teiHeader {
 .inline {
 	display: inline;
 }
+/*
 div.tei-teiHeader details summary::after {
 	content: "more...";
 	font-style: italic;
 }
+*/
 div.tei-teiHeader details[open] summary::after {
 	content: "";
 	font-style: italic;

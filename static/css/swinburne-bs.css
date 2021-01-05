@@ -1,4 +1,4 @@
-/* 
+/*
 $success
 $info
 $warning
@@ -8283,3 +8283,21 @@ textarea.form-control-lg {
 
 .text-sansserif {
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; }
+
+.hit-link.badge {
+  display: inline; }
+
+.btn-primary a {
+  color: #fff; }
+
+.toc a, .result a {
+  text-decoration: none; }
+
+.toc a:hover, .result a:hover {
+  text-decoration: underline; }
+
+*::-webkit-details-marker {
+  display: none; }
+
+.chart .badge {
+  margin-left: 10px; }

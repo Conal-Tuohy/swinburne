@@ -1,12 +1,12 @@
 // Custom.scss
 
 $primary: #75070c;
-/* 
+/*
 $success
 $info
 $warning
 $danger
-*/  
+*/
 $light: #fff3df;
 $dark: #211500;
 
@@ -36,4 +36,28 @@ $font-family-base: Georgia,"Times New Roman",Times,serif;
 
 .text-sansserif {
     font-family: $font-family-sans-serif;
+}
+
+.hit-link.badge {
+	display:inline;
+}
+
+.btn-primary a {
+    color: #fff;
+}
+
+.toc a , .result a {
+ text-decoration: none;
+}
+
+.toc a:hover, .result a:hover {
+ text-decoration: underline;
+}
+
+*::-webkit-details-marker {
+ display:none;
+}
+
+.chart .badge {
+	margin-left: 10px;
 }
