@@ -37,9 +37,22 @@
 							return 
 								let 
 									$properties:=normalize-space(string-join(tokenize($rendition, $css-comment-regex))),
-									$selector:=concat('.rendition-', $rendition/@xml:id, if ($rendition/@scope) then concat(':', $rendition/@scope) else '')
+									$selector-for-elements-which-individually-reference-this-rendition:=concat('.rendition-', $rendition/@xml:id), (: e.g. '.rendition-bold' :)
+									$rendition-reference:=concat('#', $rendition/@xml:id), (: URI a tagUsage/@rendition might use to refer to this rendition, e.g. '#bold' :)
+									$selectors-for-elements-having-this-rendition-as-their-default:= (: e.g. '.tei-head', '.tei-docTitle' :)
+										for $element-name in 
+											teiHeader/encodingDesc/tagsDecl/namespace[@name='http://www.tei-c.org/ns/1.0']/
+												tagUsage[contains-token(@rendition, $rendition-reference)]/@gi
+										return
+											concat('.tei-', $element-name),
+									$scoped-selectors:= (: appends CSS pseudo-element classes e.g. ':before' to selectors, where specified in rendition/@scope  :)
+										for $individual-selector in 
+											($selector-for-elements-which-individually-reference-this-rendition, $selectors-for-elements-having-this-rendition-as-their-default)
+										return
+											string-join(($individual-selector, $rendition/@scope), ':'),
+									$composite-selector:=string-join($scoped-selectors, ', ') (: e.g. '.rendition-bold', '.tei-head', '.tei-docTitle' :)								
 								return concat(
-									$selector,
+									$composite-selector,
 									' {', codepoints-to-string(10),
 									if (matches($properties, '[{}]') or not(matches($properties, $properties-regex))) then (: rules containing media queries not allowed :)
 										'   /* invalid CSS */'
