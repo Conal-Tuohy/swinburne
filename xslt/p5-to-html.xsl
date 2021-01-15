@@ -75,11 +75,11 @@
 					<div class="container">
 					<div class="row">
 						<div class="col">
-					<cite><xsl:value-of select="$title"/></cite>
-					<!-- render the document metadata details -->
-					<xsl:apply-templates select="tei:teiHeader"/>
-					<!-- render the table of contents biblStructs -->				</div>
+							<cite><xsl:value-of select="$title"/></cite>
+							<!-- render the document metadata details -->
+							<xsl:apply-templates select="tei:teiHeader"/>
 						</div>
+					</div>
 					<div class="row mt-5">
 						<div class="col-sm-9">
 							<div class="searchable-content">
@@ -98,31 +98,31 @@
 		</html>
 	</xsl:template>
 	
-	<xsl:template mode="toc" match="sourceDesc[biblStruct]">
+	<xsl:template mode="toc" match="sourceDesc[n='table-of-contents']">
 		<h2>Contents</h2>
 		<div id="toc">
 			<nav class="toc">
-				<xsl:apply-templates select="biblStruct" mode="toc"/>
+				<xsl:apply-templates select="bibl" mode="toc"/>
 			</nav>
 		</div>
 	</xsl:template>
-	<xsl:template mode="toc" match="biblStruct[relatedItem/biblStruct]">
+	<xsl:template mode="toc" match="bibl[relatedItem/bibl]">
 		<!-- 
-		The biblStruct represents a node in a hierarchy of bibliographic items in a volume
+		The bibl represents a node in a hierarchy of bibliographic items in a volume
 		(i.e. a table of contents). 
-		Here we render the biblStruct as an HTML details element, containing renderings
-		of any biblStructs within this biblStruct.
+		Here we render the biblt as an HTML details element, containing renderings
+		of any bibls within this bibl.
 		-->
 		<details>
 			<!-- 
 			The HTML details element should be open (expanded) when this node in the 
-			table of contents hierarchy contains the biblStruct which refers to the current
+			table of contents hierarchy contains the bibl which refers to the current
 			document. This ensures that the current document is visible by default when
 			the web page loads.
 			-->
 			<xsl:if test="
 				some $component-reference in 
-					.//biblStruct/ref/@target
+					.//bibl/ref/@target
 				satisfies 
 					$component-reference => substring-after('document:') = /TEI/@xml:id
 			">
@@ -132,18 +132,18 @@
 			<ul class="list-group list-group-flush">
 				<xsl:for-each select="relatedItem">
 					<li class="list-group-item">
-						<xsl:apply-templates select="biblStruct" mode="toc"/>
+						<xsl:apply-templates select="bibl" mode="toc"/>
 					</li>
 				</xsl:for-each>
 			</ul>
 		</details>
 	</xsl:template>
-	<xsl:template mode="toc" match="biblStruct[not(relatedItem/biblStruct)]"><!-- leaf node -->
+	<xsl:template mode="toc" match="bibl[not(relatedItem/bibl)]"><!-- leaf node -->
 		<xsl:apply-templates mode="toc"/>
 	</xsl:template>
 	<xsl:template mode="toc" match="title">
 		<cite>
-			<xsl:if test="parent::biblStruct/descendant::ref[substring-after(@target, 'document:') = /TEI/@xml:id]">
+			<xsl:if test="parent::bibl/descendant::ref[substring-after(@target, 'document:') = /TEI/@xml:id]">
 				<xsl:attribute name="class">current</xsl:attribute>
 			</xsl:if>
 			<xsl:apply-templates mode="toc"/>

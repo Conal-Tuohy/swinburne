@@ -408,7 +408,7 @@
 		<p:xslt>
 			<p:input port="parameters"><p:empty/></p:input>
 			<p:input port="stylesheet">
-				<p:document href="../xslt/convert-to-p5/generate-bibl-struct-hierarchy.xsl"/>
+				<p:document href="../xslt/convert-to-p5/generate-bibl-hierarchy.xsl"/>
 			</p:input>
 		</p:xslt>
 	</p:declare-step>

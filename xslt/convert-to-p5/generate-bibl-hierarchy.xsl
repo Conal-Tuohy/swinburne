@@ -13,21 +13,21 @@
 			use="(ancestor::*/index/@corresp)[1]"/>
 	-->
 			
-	<!-- create a sourceDesc populated with biblStruct elements which reflect the hierarchy of the source document which was previously expressed with index elements -->
+	<!-- create a sourceDesc populated with bibl elements which reflect the hierarchy of the source document which was previously expressed with index elements -->
 	<xsl:template match="sourceDesc[1]">
 		<sourceDesc n="table-of-contents">
-			<biblStruct>
+			<bibl>
 				<!--<ref target="document:{/TEI/@xml:id}">-->
 				<title><xsl:value-of select="/TEI/teiHeader/fileDesc/titleStmt/title"/></title>
 				<xsl:apply-templates mode="generate-bibl-struct" select="/TEI/text"/>
-			</biblStruct>
+			</bibl>
 		</sourceDesc>
 		<xsl:copy-of select="."/>
 	</xsl:template>
 	
 	<xsl:template match="*[index]" mode="generate-bibl-struct">
-		<!-- Found a section tagged in the index; this should generate a biblStruct containing a reference to the section, 
-		and nested biblStruct elements containing references to nested sections -->
+		<!-- Found a section tagged in the index; this should generate a bibl containing a reference to the section, 
+		and nested bibl elements containing references to nested sections -->
 		<xsl:variable name="document-id" select="head(ancestor-or-self::*[index/@indexName='text'])/@xml:id"/>
 		<xsl:variable name="section-id" select="
 			if (index/@indexName='text') then
@@ -36,7 +36,7 @@
 				concat('#', @xml:id)
 		"/>
 		<relatedItem type="component">
-			<biblStruct>
+			<bibl>
 				<xsl:choose>
 					<xsl:when test="index/@indexName='meta'">
 						<title><xsl:call-template name="get-label"/></title>
@@ -48,7 +48,7 @@
 					</xsl:otherwise>
 				</xsl:choose>
 				<xsl:apply-templates mode="generate-bibl-struct"/>
-			</biblStruct>
+			</bibl>
 		</relatedItem>
 	</xsl:template>
 	
