@@ -201,6 +201,15 @@
 									<p:with-option name="attribute-value" select="concat('../', /xi:include/@href)"/>
 								</p:add-attribute>
 							</p:viewport>
+							<!-- reorganise the biblStruct elements from a list into a hierarchy -->
+							<p:xslt>
+								<p:input port="stylesheet">
+									<p:document href="../xslt/convert-to-p5/rearrange-biblstructs-in-md-files.xsl"/>
+								</p:input>
+								<p:input port="parameters">
+									<p:empty/>
+								</p:input>
+							</p:xslt>
 							<chymistry:assign-schema schema="../../schema/swinburne.rng"/>
 							<p:store name="save-md-file">
 								<p:with-option name="href" select="concat('../p5/metadata/', $file-uri)"/>

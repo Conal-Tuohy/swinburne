@@ -25,29 +25,11 @@ The combo file contains a number of "components" (div and text elements) which a
 						<xi:fallback><xsl:comment>inclusion of ToC metadata from combo file combo/{$resulting-file-uri} failed</xsl:comment></xi:fallback>
 					</xi:include>
 					<sourceDesc>
-						<!-- Copy the relevant biblStruct from the metadata file, and also insert a "relatedItem" link to another biblStruct whose @n is 'original_collection' (if any), unless that's the same biblStruct -->
-						<biblStruct xml:id="{$component-id}-bibl" default="true">
-							<xsl:variable name="source-metadata-file" select="/*/index/@corresp"/>
-							<xsl:variable name="original-collection-bibl-id" select="document($source-metadata-file)//biblStruct[@n='original_collection']/@xml:id"/>
-							<xsl:variable name="component-bibl-id" select="concat(string($component-id), '-bibl')"/>
-							<xi:include href="{$resulting-metadata-file}" xpointer="xmlns(tei=http://www.tei-c.org/ns/1.0) xpath(//tei:biblStruct[@xml:id='{$component-bibl-id}']/*)">
-								<xi:fallback>inclusion of primary biblStruct from {$resulting-metadata-file} failed</xi:fallback>
-							</xi:include>
-							<!-- include a reference to the full text of which this text is a component (unless this text is itself the full text) -->
-							<!--
-							<xsl:comment>source-metadata-file-name = {$source-metadata-file}</xsl:comment>
-							<xsl:comment>source-metadata-file-root-element = {local-name(document($source-metadata-file)/*)}</xsl:comment>
-							<xsl:comment>original_collection bibl id = {$original-collection-bibl-id}</xsl:comment>
-							<xsl:comment>component bibl id = {$component-bibl-id}</xsl:comment>
-							-->
-							<xsl:if test="not(document($source-metadata-file)//biblStruct[@n='original_collection']/@xml:id = concat($component-id, '-bibl'))">
-								<relatedItem type="original_collection">
-									<xi:include href="{$resulting-metadata-file}" xpointer="xmlns(tei=http://www.tei-c.org/ns/1.0) xpath(//tei:biblStruct[@n='original_collection'])">
-										<xi:fallback>inclusion of original_collection biblStruct from {$resulting-metadata-file} failed</xi:fallback>
-									</xi:include>
-								</relatedItem>
-							</xsl:if>
-						</biblStruct>
+						<!-- Copy the relevant biblStructs from the metadata file -->
+						<xsl:variable name="component-bibl-id" select="concat(string($component-id), '-bibl')"/>
+						<xi:include href="{$resulting-metadata-file}" xpointer="xmlns(tei=http://www.tei-c.org/ns/1.0) xpath(//tei:biblStruct[@xml:id='{$component-bibl-id}'])">
+							<xi:fallback>inclusion of primary biblStruct from {$resulting-metadata-file} failed</xi:fallback>
+						</xi:include>
 					</sourceDesc>
 				</fileDesc>
 				<xi:include href="{$resulting-metadata-file}" xpointer="xmlns(tei=http://www.tei-c.org/ns/1.0) xpath(/tei:TEI/tei:teiHeader/tei:fileDesc/following-sibling::*)">
