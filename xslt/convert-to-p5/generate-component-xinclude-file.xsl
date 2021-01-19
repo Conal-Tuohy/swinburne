@@ -15,7 +15,8 @@ The combo file contains a number of "components" (div and text elements) which a
 		<TEI xml:id="{$component-id}">
 			<teiHeader>
 				<fileDesc>
-					<xi:include href="{$resulting-metadata-file}" xpointer="xmlns(tei=http://www.tei-c.org/ns/1.0) xpath(/tei:TEI/tei:teiHeader/tei:fileDesc/*)">
+					<!-- copy metadata from the metadata file's fileDesc, except the sourceDesc, which applies only to the metadata file itself -->
+					<xi:include href="{$resulting-metadata-file}" xpointer="xmlns(tei=http://www.tei-c.org/ns/1.0) xpath(/tei:TEI/tei:teiHeader/tei:fileDesc/*[not(self::tei:sourceDesc)])">
 						<xi:fallback>inclusion of fileDesc from {$resulting-metadata-file} failed</xi:fallback>
 					</xi:include>
 					<!-- Copy the nested biblStruct elements from combo file which define the volume's complete table of contents -->
