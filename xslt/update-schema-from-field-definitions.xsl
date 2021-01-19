@@ -19,7 +19,7 @@
 						"indexAnalyzer":{
 							"tokenizer":{
 								"class":"solr.PatternTokenizerFactory",
-								"pattern":"[\\s|\\p{Punct}]+"
+								"pattern":"[\\s|\\p{Punct}|‘|’]+"
 							},
 							"filters":[
 								{
