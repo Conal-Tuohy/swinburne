@@ -52,7 +52,7 @@
 	<field
 		name="collection"
 		label="Collection"
-		xpath="/TEI/teiHeader/fileDesc/sourceDesc/biblStruct[contains-token(note/@corresp, '#original_collection')]/monogr/title"
+		xpath="/TEI/teiHeader/fileDesc/sourceDesc/biblStruct/monogr/title"
 		type="facet"/>
 	<!-- Date facet -->
 	<field
