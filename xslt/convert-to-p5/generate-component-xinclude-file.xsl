@@ -36,6 +36,9 @@ The combo file contains a number of "components" (div and text elements) which a
 				<xi:include href="{$resulting-metadata-file}" xpointer="xmlns(tei=http://www.tei-c.org/ns/1.0) xpath(/tei:TEI/tei:teiHeader/tei:fileDesc/following-sibling::*)">
 					<xi:fallback>inclusion of remaining children of teiHeader from {$resulting-metadata-file} failed</xi:fallback>
 				</xi:include>
+				<xi:include href="combo/{$resulting-file-uri}" xpointer="xmlns(tei=http://www.tei-c.org/ns/1.0) xpath(/tei:TEI/tei:teiHeader/tei:fileDesc/following-sibling::*)">
+					<xi:fallback>inclusion of remaining children of teiHeader from combo file combo/{$resulting-file-uri} failed</xi:fallback>
+				</xi:include>
 			</teiHeader>
 			<!-- XInclude the textual content, with any necessary wrappers -->
 			<text>
