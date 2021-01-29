@@ -527,7 +527,7 @@
 	</xsl:template>
 	<xsl:template match="graphic">
 		<xsl:element name="img">
-			<xsl:attribute name="src" select="concat('figure/', @url)"/>
+			<xsl:attribute name="src" select="chymistry:expand-reference(@url)"/>
 		</xsl:element>
 	</xsl:template>
 	

@@ -7,6 +7,12 @@
 	
 	<xsl:mode on-no-match="shallow-copy"/>
 	
+	<!-- replace image URL prefix with "image:" prefix -->
+	<xsl:variable name="image-path" select=" '/swinburne/images/swinburne/' "/>
+	<xsl:template match="graphic/@url[starts-with(., $image-path)]">
+		<xsl:attribute name="url" select=" 'image:' || substring-after(., $image-path)"/>
+	</xsl:template>
+	
 	<!-- modify @rendition values -->
 	<!-- replace rendition "parens" with "parens-before parens-after" -->
 	<!--

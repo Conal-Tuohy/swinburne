@@ -31,7 +31,9 @@
 		<xsl:comment>The 'document' reference system identifies a text by id. These references expand to the URL of the text's web page in the Swinburne website. Any URL fragment identifier is preserved.</xsl:comment>
 		<prefixDef ident="document" matchPattern="([^#]+)(.*)" replacementPattern="/text/$1/$2"/>
 		<xsl:comment>The 'glossary' reference system identifies a term by id. These references expand to a reference to a TEI/standoff/entry.</xsl:comment>
-		<prefixDef ident="glossary" matchPattern="(.*)" replacementPattern="#$1"/>
+		<prefixDef ident="glossary" matchPattern="(.+)" replacementPattern="#$1"/>
+		<xsl:comment>The 'image' reference system points to an image resource. These references expand to the URL of the resource in the Swinburne website..</xsl:comment>
+		<prefixDef ident="image" matchPattern="(.+)" replacementPattern="/figure/$1"/>
 	</xsl:template>
 	
 </xsl:stylesheet>
