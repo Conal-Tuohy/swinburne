@@ -234,6 +234,13 @@
 							<cx:message>
 								<p:with-option name="message" select="concat('Ingesting combo file ', $input-file)"/>
 							</cx:message>
+							<!-- insert definitions of the reference systems ("glossary:", "collection:", and "document:") used in the corpus -->
+							<p:xslt name="declare-reference-systems">
+								<p:input port="parameters"><p:empty/></p:input>
+								<p:input port="stylesheet">
+									<p:document href="../xslt/convert-to-p5/declare-reference-systems.xsl"/>
+								</p:input>
+							</p:xslt>
 							<chymistry:extract-hierarchy/>
 							<chymistry:prepare-tei-file-for-subfolder name="normalized-combo-file"/>
 							<!-- Generate Xinclude template file(s) -->
@@ -272,6 +279,13 @@
 							<cx:message>
 								<p:with-option name="message" select="concat('Ingesting ordinary TEI file ', $input-file)"/>
 							</cx:message>
+							<!-- insert definitions of the reference systems ("glossary:", "collection:", and "document:") used in the corpus -->
+							<p:xslt name="declare-reference-systems">
+								<p:input port="parameters"><p:empty/></p:input>
+								<p:input port="stylesheet">
+									<p:document href="../xslt/convert-to-p5/declare-reference-systems.xsl"/>
+								</p:input>
+							</p:xslt>
 							<!-- replace xinclude statements pointing to metadata files ("*-md.xml") with "metadata/blah" since we're moving the metadata files into that subfolder -->
 							<p:viewport match="xi:include[ends-with(@href, '-md.xml')]">
 								<p:add-attribute match="*" attribute-name="href">
