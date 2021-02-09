@@ -218,6 +218,9 @@
 									<p:with-option name="attribute-value" select="concat('../', /xi:include/@href)"/>
 								</p:add-attribute>
 							</p:viewport>
+							<!-- discard xinclude of external tagsDecl, to avoid duplication when the contains of this is transcluded
+							into a TEI file along with metadata from a transcript file which has also transcluded the same tagsDecl -->
+							<p:delete match="xi:include[@href='../includes/tagsDecl.xml']"/>
 							<!-- reorganise the biblStruct elements from a list into a hierarchy -->
 							<p:xslt>
 								<p:input port="stylesheet">
