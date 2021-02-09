@@ -346,9 +346,8 @@
 														<details>
 															<summary><xsl:value-of select="$id"/></summary>
 															<ul class="views">
-																<li><a target="_blank" href="/p5/{$id}/">TEI P5 XML</a></li>
-																<li><a target="_blank" href="/text/{$id}/diplomatic">diplomatic</a></li>
-																<li><a target="_blank" href="/text/{$id}/normalized">normalized</a></li>
+																<li><a target="_blank" href="/p5/{$id}.xml">TEI P5 XML</a></li>
+																<li><a target="_blank" href="/text/{$id}/">normalized HTML</a></li>
 															</ul>
 														</details>
 													</li>
