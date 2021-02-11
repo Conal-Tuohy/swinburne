@@ -483,6 +483,7 @@
 			</p:input>
 		</p:xslt>
 		<p:xslt name="normalized-html">
+			<p:input port="parameters"><p:empty/></p:input>
 			<p:input port="source">
 				<p:pipe step="text" port="result"/>
 			</p:input>
