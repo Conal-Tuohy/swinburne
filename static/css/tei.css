@@ -19,6 +19,9 @@ div.tei-bibl {
 	display: inline;
 }
 
+.tei-figure img {
+	max-width:90%;
+}
 figure.tei-milestone {
 	margin-top: 3em;
 	text-align: center;
