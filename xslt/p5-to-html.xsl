@@ -437,7 +437,11 @@
 	<!-- capture the original version of regularized text in a data-orig attribute  -->
 	<!-- so that the text content is regularized for index, searching, and highlight, -->
 	<!-- but the original is still available so it can be swapped back in at the last minute -->
-	<xsl:template match="choice[orig]" mode="create-attributes" priority="999">
+	<!-- 
+		EXCEPT that the original form is not captured for choices which are about end of line
+		hyphenation; without the data-orig value, the regularized form (without hyphen) will be displayed
+	-->
+	<xsl:template match="choice[not(@n='eol')][orig]" mode="create-attributes" priority="999">
 		<xsl:attribute name="data-orig" select="orig"/>
 		<xsl:next-match/>
 	</xsl:template>
@@ -527,7 +531,7 @@
 	</xsl:template>
 	<xsl:template match="graphic">
 		<xsl:element name="img">
-			<xsl:attribute name="src" select="concat('figure/', @url)"/>
+			<xsl:attribute name="src" select="chymistry:expand-reference(@url)"/>
 		</xsl:element>
 	</xsl:template>
 	

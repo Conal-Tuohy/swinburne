@@ -193,7 +193,7 @@
 		</p:when>
 		<!-- image files corresponding to figures within a text -->
 		<!-- e.g. relative URI = 'text/ALCH000001/figure/foo.gif' -->
-		<p:when test="matches($relative-uri, '^text/.*/figure/.*')">
+		<p:when test="starts-with($relative-uri, 'figure/')">
 			<chymistry:figure>
 				<p:with-option name="relative-uri" select="$relative-uri"/>
 			</chymistry:figure>
@@ -284,13 +284,7 @@
 			<p:with-param name="relative-uri" select="$relative-uri"/>
 			<p:input port="template">
 				<p:inline>
-					<c:request detailed="true" method="get" href="{
-						replace(
-							$relative-uri,
-							'^text/([^/]+)/figure/(.*)',
-							'../figure/$1/$2'
-						)
-					}"/>
+					<c:request detailed="true" method="get" href="../{$relative-uri}"/>
 				</p:inline>
 			</p:input>
 			<p:input port="source">

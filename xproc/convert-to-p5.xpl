@@ -136,6 +136,23 @@
 				<p:with-option name="href" select="$output-file"/>
 			</p:store>
 		</p:for-each>
+		<!-- save a TEI listPrefixDef for xinclusion into the final TEI documents -->
+		<p:store name="save-listPrefixDef" href="../p5/includes/listPrefixDef.xml">
+			<p:input port="source">
+				<p:inline>
+					<listPrefixDef xmlns="http://www.tei-c.org/ns/1.0">
+						<!-- The 'collection' reference system identifies a set of texts by the title of the containing collection. These references expand to the URL of a search result in the Swinburne website. -->
+						<prefixDef ident="collection" matchPattern="(.+)" replacementPattern="/search/?collection=$1"/>
+						<!-- The 'document' reference system identifies a text by id. These references expand to the URL of the text's web page in the Swinburne website. Any URL fragment identifier is preserved. -->
+						<prefixDef ident="document" matchPattern="([^#]+)(.*)" replacementPattern="/text/$1/$2"/>
+						<!-- The 'glossary' reference system identifies a term by id. These references expand to a reference to a TEI/standoff/entry. -->
+						<prefixDef ident="glossary" matchPattern="(.+)" replacementPattern="#$1"/>
+						<!-- The 'image' reference system points to an image resource. These references expand to the URL of the resource in the Swinburne website.. -->
+						<prefixDef ident="image" matchPattern="(.+)" replacementPattern="/figure/$1"/>
+					</listPrefixDef>
+				</p:inline>
+			</p:input>
+		</p:store>
 		
 		<!-- list the files in the acsproj data directory -->
 		<p:directory-list name="list-source-files" include-filter="acs.+\.xml$|swinburneGlossary.xml">
@@ -208,6 +225,9 @@
 									<p:with-option name="attribute-value" select="concat('../', /xi:include/@href)"/>
 								</p:add-attribute>
 							</p:viewport>
+							<!-- discard xinclude of external tagsDecl, to avoid duplication when the contains of this is transcluded
+							into a TEI file along with metadata from a transcript file which has also transcluded the same tagsDecl -->
+							<p:delete match="xi:include[@href='../includes/tagsDecl.xml']"/>
 							<!-- reorganise the biblStruct elements from a list into a hierarchy -->
 							<p:xslt>
 								<p:input port="stylesheet">
@@ -241,6 +261,8 @@
 							<cx:message>
 								<p:with-option name="message" select="concat('Ingesting combo file ', $input-file)"/>
 							</cx:message>
+							<!-- insert definitions of the reference systems ("glossary:", "collection:", and "document:") used in the corpus -->
+							<chymistry:declare-reference-systems/>
 							<chymistry:extract-hierarchy/>
 							<chymistry:prepare-tei-file-for-subfolder name="normalized-combo-file"/>
 							<!-- Generate Xinclude template file(s) -->
@@ -279,6 +301,8 @@
 							<cx:message>
 								<p:with-option name="message" select="concat('Ingesting ordinary TEI file ', $input-file)"/>
 							</cx:message>
+							<!-- insert definitions of the reference systems ("glossary:", "collection:", and "document:") used in the corpus -->
+							<chymistry:declare-reference-systems/>
 							<!-- replace xinclude statements pointing to metadata files ("*-md.xml") with "metadata/blah" since we're moving the metadata files into that subfolder -->
 							<p:viewport match="xi:include[ends-with(@href, '-md.xml')]">
 								<p:add-attribute match="*" attribute-name="href">
@@ -365,7 +389,26 @@
 			</p:input>
 		</p:insert>
 	</p:declare-step>
-
+	
+	<p:declare-step type="chymistry:declare-reference-systems">
+		<p:input port="source"/>
+		<p:output port="result"/>
+		<!-- insert declaration of the reference systems (i.e. pointer schemes) used in the corpus -->
+		<p:insert name="empty-encoding-desc" match="tei:teiHeader[not(tei:encodingDesc)]/tei:fileDesc" position="after">
+			<p:input port="insertion">
+				<p:inline xmlns="http://www.tei-c.org/ns/1.0" exclude-inline-prefixes="#all">
+					<encodingDesc/>
+				</p:inline>
+			</p:input>
+		</p:insert>
+		<p:insert name="listPrefixDef" match="tei:encodingDesc" position="first-child">
+			<p:input port="insertion">
+				<p:inline exclude-inline-prefixes="#all">
+					<xi:include href="includes/listPrefixDef.xml"/>
+				</p:inline>
+			</p:input>  
+		</p:insert>
+	</p:declare-step>
 	
 	<p:declare-step type="chymistry:insert-authority-xinclude">
 		<p:input port="source"/>

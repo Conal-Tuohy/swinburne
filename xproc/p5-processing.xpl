@@ -482,40 +482,8 @@
 				<p:pipe step="indexing-stylesheet" port="result"/>
 			</p:input>
 		</p:xslt>
-		<!--
-		<p:xslt name="introduction-html">
-			<p:with-param name="view" select=" 'introduction' "/>
-			<p:input port="source">
-				<p:pipe step="text" port="result"/>
-			</p:input>
-			<p:input port="stylesheet">
-				<p:document href="../xslt/p5-to-html.xsl"/>
-			</p:input>
-		</p:xslt>
-		<p:xslt name="introduction-field">
-			<p:with-param name="field-name" select=" 'introduction' "/>
-			<p:input port="stylesheet">
-				<p:document href="../xslt/html-to-solr-field.xsl"/>
-			</p:input>
-		</p:xslt>
-		<p:xslt name="diplomatic-html">
-			<p:with-param name="view" select=" 'diplomatic' "/>
-			<p:input port="source">
-				<p:pipe step="text" port="result"/>
-			</p:input>
-			<p:input port="stylesheet">
-				<p:document href="../xslt/p5-to-html.xsl"/>
-			</p:input>
-		</p:xslt>
-		<p:xslt name="diplomatic-field">
-			<p:with-param name="field-name" select=" 'diplomatic' "/>
-			<p:input port="stylesheet">
-				<p:document href="../xslt/html-to-solr-field.xsl"/>
-			</p:input>
-		</p:xslt>
-		-->
 		<p:xslt name="normalized-html">
-			<p:with-param name="view" select=" 'normalized' "/>
+			<p:input port="parameters"><p:empty/></p:input>
 			<p:input port="source">
 				<p:pipe step="text" port="result"/>
 			</p:input>
