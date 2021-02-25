@@ -52,7 +52,13 @@
 	<field
 		name="collection"
 		label="Collection"
-		xpath="/TEI/teiHeader/fileDesc/sourceDesc/biblStruct/monogr/title"
+		xpath="
+			(: select the title of the 'original_collection' if it exists, otherwise fall back to the main title :)
+			(
+				/TEI/teiHeader/fileDesc/sourceDesc/biblStruct/relatedItem/biblStruct[note/@corresp='#original_collection']/monogr/title,
+				/TEI/teiHeader/fileDesc/sourceDesc/biblStruct/monogr/title
+			)[1]
+		"
 		type="facet"/>
 	<!-- Date facet -->
 	<field
