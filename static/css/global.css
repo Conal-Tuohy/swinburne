@@ -153,9 +153,7 @@ button.key {
 	margin: 0.1em;
 	font-family: "Newton Sans";
 }
-img#newton-masthead-image {
-	margin-top: 1em;
-}
+
 @font-face {
   font-family: "Newton Sans";
   src: url("/font/NewtonSans-2015-11-04.ttf");

@@ -193,6 +193,13 @@
 					</p:load>
 					<!-- discard any xml:base attributes because they are spurious -->
 					<p:delete match="@xml:base"/>
+					<!-- insert definitions of the reference systems ("glossary:", "collection:", and "document:") used in the corpus -->
+					<p:xslt name="declare-reference-systems">
+						<p:input port="parameters"><p:empty/></p:input>
+						<p:input port="stylesheet">
+							<p:document href="../xslt/convert-to-p5/declare-reference-systems.xsl"/>
+						</p:input>
+					</p:xslt>
 					<!-- coerce the document into a regular form, fixing any corrigible errors, etc -->
 					<chymistry:regularize-tei name="fix-tei-errors"/>
 					<!-- ensure the document has an xml:id -->
