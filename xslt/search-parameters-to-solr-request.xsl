@@ -16,6 +16,7 @@
 	https://lucene.apache.org/solr/guide/7_6/json-request-api.html -->
 	
 	<!-- The incoming request has been parsed into a set of parameters i.e. c:param-set, and aggregated with the field definitions -->
+	<!-- We construct an HTTP POST request to Solr, containing a query derived from the search parameters received from the HTML search form -->
 	<xsl:template match="/">
 		<c:request method="post" href="{$solr-base-uri}query">
 			<c:body content-type="application/xml">
@@ -25,14 +26,18 @@
 	</xsl:template>
 	
 	<xsl:template match="c:param-set">
+		<!-- The param-set contains the names and values of the fields sent by the HTML search form --> 
+		
+		<!-- The field named "text" is used to query the full text (the other fields are document-level metadata) -->
+		<xsl:variable name="text-query" select="solr:normalize-query-string(c:param[@name='text']/@value)"/>
 		<f:map>
 			<f:map key="params">
-				<xsl:if test="c:param[@name='text']/@value">
-					<!-- only if we have a "text" query parameter, can we can request hit-highlighting: -->
+				<xsl:if test="$text-query">
+					<!-- only if we have a "text" query parameter, and are therefore searching the full text, does it make sense to request hit-highlighting: -->
 					<f:boolean key="hl">true</f:boolean>
-					<f:boolean key="hl.mergeContiguous">true</f:boolean>
-					<f:string key="hl.fl">normalized,diplomatic,introduction</f:string>
-					<f:string key="hl.q">text:<xsl:value-of select="solr:escape-query-string(c:param[@name='text']/@value)"/></f:string>
+					<f:boolean key="hl.mergeContiguous">true</f:boolean><!-- please merge adjacent hits together into one large hit -->
+					<f:string key="hl.fl">normalized</f:string><!-- comma separated list of the full-text fields we want Solr to generate highlights within -->
+					<f:string key="hl.q">text:<xsl:value-of select="$text-query"/></f:string>
 					<f:string key="hl.snippets">10</f:string>
 					<f:number key="hl.maxAnalyzedChars">-1</f:number><!-- analyze the entire text -->
 				</xsl:if>
@@ -51,7 +56,8 @@
 			<!-- impose a sort order; sort by descending score, then by the value of the "sort" field, ascending -->
 			<f:string key="sort">score desc, sort asc</f:string>
 			<f:array key="filter">
-				<xsl:for-each-group group-by="@name" select="$search-fields[normalize-space(@value)]">
+				<!-- loop through all the fields whose normalized query string is non null, and transform to JSON -->
+				<xsl:for-each-group group-by="@name" select="$search-fields[solr:normalize-query-string(@value)]">
 					<!-- the param/@name specifies the field's name; look up the field by name and get field's definition -->
 					<xsl:variable name="field-name" select="@name"/>
 					<xsl:variable name="field-value" select="@value"/>
@@ -84,7 +90,7 @@
 									'{!tag=', $field-name, '}', 
 									string-join(
 										for $field-value in current-group()/@value return concat(
-											$field-name, ':(', solr:escape-query-string($field-value), ')'
+											$field-name, ':(',solr:normalize-query-string($field-value), ')'
 										),
 										' OR '
 									)
@@ -133,7 +139,7 @@
 	Escapes parentheses (i.e. users can not use parentheses to group sub-queries)
 	Strips out double quotes from the query only IF they are unbalanced.
 	-->
-	<xsl:function name="solr:escape-query-string">
+	<xsl:function name="solr:normalize-query-string">
 		<xsl:param name="query-string"/><!-- string may contain quotes, parentheses -->
 		<!-- regex for matching characters which are significant in Solr's DSL; NB these characters are also significant in RegEx, so are escaped here, too -->
 		<xsl:variable name="significant-character" select=" '[\)\(]' "/>
@@ -149,7 +155,7 @@
 			else
 				$quote-stripped-query
 		"/>
-		<xsl:sequence select="$sanitised-quotes"/>
+		<xsl:sequence select="normalize-space($sanitised-quotes)"/>
 	</xsl:function>
 		
 </xsl:stylesheet>
