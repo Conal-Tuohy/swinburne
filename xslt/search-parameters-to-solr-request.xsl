@@ -84,6 +84,19 @@
 								)
 							"/></f:string>
 						</xsl:when>
+						<xsl:when test="$field-definition/@type='facet'">
+							<f:string><xsl:value-of select="
+								concat(
+									'{!tag=', $field-name, '}', 
+									string-join(
+										for $field-value in current-group()/@value return concat(
+											$field-name, ':&quot;',$field-value, '&quot;'
+										),
+										' OR '
+									)
+								)
+							"/></f:string>
+						</xsl:when>
 						<xsl:otherwise>
 							<f:string><xsl:value-of select="
 								concat(
