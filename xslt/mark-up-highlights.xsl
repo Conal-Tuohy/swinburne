@@ -31,59 +31,33 @@
 		</xsl:copy>
 	</xsl:template>
 	
-	<xsl:function name="highlight:locate-snippets-in-text" as="map(*)*">
-		<xsl:param name="text" as="xs:string"/>
-		<xsl:param name="snippets-with-highlights" as="text()*"/>
-		<!-- Solr does not necessarily return the snippets in document order, so here we sort them -->
-		<xsl:for-each select="highlight:locate-snippets-in-text($text, $snippets-with-highlights, 1, 1)">
-			<xsl:sort	select=".('start')"/>
-			<xsl:sequence select="."/>
-		</xsl:for-each>
-	</xsl:function>
 	
 	<xsl:function name="highlight:locate-snippets-in-text" as="map(*)*">
 		<xsl:param name="text" as="xs:string"/>
 		<xsl:param name="snippets-with-highlights" as="text()*"/>
-		<xsl:param name="char-index" as="xs:double"/>
-		<xsl:param name="first-snippet-index" as="xs:double"/>
-		<xsl:variable name="snippet-with-highlights" select="head($snippets-with-highlights)"/>
-		<xsl:variable name="snippet" select="
-			replace(
-				$snippet-with-highlights, 
-				'&lt;em&gt;|&lt;/em&gt;',
-				''
-			)
-		"/>
-		<xsl:variable name="snippet-length" select="string-length($snippet)"/>
-		<xsl:variable name="preface" select="substring-before($text, $snippet)"/>
-		<xsl:variable name="preface-length" select="string-length($preface)"/>
-		<xsl:variable name="span-maps" select="
-			array{
-				highlight:parse-snippet-spans($snippet-with-highlights, $char-index + $preface-length)
-			}
-		"/>
 		<xsl:sequence select="
-			map{
-				'snippet-index': $first-snippet-index,
-				'snippet': $snippet,
-				'snippet-with-highlights': $snippet-with-highlights,
-				'start': $char-index + $preface-length,
-				'end': $char-index + $preface-length + $snippet-length - 1,
-				'spans': $span-maps
-			}
+			for 
+				$snippet-index in (1 to count($snippets-with-highlights))
+			return
+				let 
+					$snippet-with-highlights:= subsequence($snippets-with-highlights, $snippet-index, 1), 
+					$snippet := replace($snippet-with-highlights, '&lt;em&gt;|&lt;/em&gt;', ''),
+					$snippet-length:= string-length($snippet),
+					$preface:= substring-before($text, $snippet),
+					$preface-length:= string-length($preface) + 1,
+					$span-maps:= array{
+						highlight:parse-snippet-spans($snippet-with-highlights, $preface-length)
+					}
+				return
+					map{
+						'snippet-index': $snippet-index,
+						'snippet': $snippet,
+						'snippet-with-highlights': $snippet-with-highlights,
+						'start': $preface-length,
+						'end': $preface-length + $snippet-length - 1,
+						'spans': $span-maps
+					}
 		"/>
-		<xsl:variable name="text-tail" select="substring($text, $preface-length + $snippet-length + 1)"/>
-		<xsl:variable name="snippets-with-highlights-tail" select="tail($snippets-with-highlights)"/>
-		<xsl:if test="$text-tail and $snippets-with-highlights-tail">
-			<xsl:sequence select="
-				highlight:locate-snippets-in-text(
-					$text, 
-					$snippets-with-highlights-tail, 
-					$char-index,
-					$first-snippet-index + 1
-				)
-			"/>
-		</xsl:if>
 	</xsl:function>
 	
 	<xsl:function name="highlight:parse-snippet-spans">

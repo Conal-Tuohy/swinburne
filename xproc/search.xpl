@@ -29,28 +29,18 @@
 							<p:document href="../xslt/measure-text-nodes-for-highlighting.xsl"/>
 						</p:input>
 					</p:xslt>
-					<p:template name="solr-highlight-query">
-						<p:with-param name="view" select=" 'normalized' "/>
+					<p:xslt name="solr-highlight-query">
+						<p:with-param name="view" select=" 'text' "/>
 						<p:with-param name="id" select="$id"/>
 						<p:with-param name="solr-base-uri" select="$solr-base-uri"/>
 						<p:with-param name="highlight" select="$highlight"/>
-						<p:input port="template">
-							<p:inline>
-								<c:request href="{
-									concat(
-										$solr-base-uri, 'query?q=id%3A', $id,
-										'&amp;hl=true',
-										'&amp;hl.mergeContiguous=true',
-										'&amp;hl.q=', $view, '%3A', encode-for-uri($highlight),
-										'&amp;hl.fl=', $view,
-										'&amp;hl.maxAnalyzedChars=-1',
-										'&amp;hl.snippets=20',
-										'&amp;wt=xml'
-									)
-								}" method="GET"/>
-							</p:inline>
+						<p:input port="stylesheet">
+							<p:document href="../xslt/create-solr-highlight-query.xsl"/>
 						</p:input>
-					</p:template>
+						<p:input port="source">
+							<p:inline><dummy/></p:inline>
+						</p:input>
+					</p:xslt>
 					<p:http-request name="solr-highlight-results"/>
 					<p:wrap-sequence wrapper="html-and-highlight-strings">
 						<p:input port="source">
