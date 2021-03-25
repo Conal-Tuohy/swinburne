@@ -8,6 +8,7 @@
 	xmlns:html="http://www.w3.org/1999/xhtml">
 	
 	<p:import href="http://xmlcalabash.com/extension/steps/library-1.0.xpl"/>
+	<p:import href="xproc-z-library.xpl"/>
 	
 	<p:declare-step name="highlight-hits" type="chymistry:highlight-hits">
 		<p:input port="source"/>

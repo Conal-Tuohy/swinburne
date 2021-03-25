@@ -7,6 +7,7 @@
 	xmlns:cx="http://xmlcalabash.com/ns/extensions">
 	
 	<p:import href="http://xmlcalabash.com/extension/steps/library-1.0.xpl"/>
+	<p:import href="xproc-z-library.xpl"/>
 	
 	<p:declare-step name="admin-form" type="chymistry:admin-form">
 		<p:input port="source"/>

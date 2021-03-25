@@ -8,6 +8,7 @@
 	xmlns:tei="http://www.tei-c.org/ns/1.0">
 	
 	<p:import href="http://xmlcalabash.com/extension/steps/library-1.0.xpl"/>
+	<p:import href="xproc-z-library.xpl"/>
 	
 	<p:declare-step name="update-schema" type="chymistry:update-schema">
 		<p:input port="source"/>

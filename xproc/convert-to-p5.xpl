@@ -9,6 +9,7 @@
 	xmlns:cx="http://xmlcalabash.com/ns/extensions">
 	
 	<p:import href="http://xmlcalabash.com/extension/steps/library-1.0.xpl"/>
+	<p:import href="xproc-z-library.xpl"/>
 	
 	<p:declare-step name="download-source" type="chymistry:download-source">
 		<p:input port="source"/>
