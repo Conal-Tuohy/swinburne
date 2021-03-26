@@ -3,16 +3,19 @@
 	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:fn="http://www.w3.org/2005/xpath-functions"
+	xmlns:solr="tag:conaltuohy.com,2021:solr"
 	xmlns:array="http://www.w3.org/2005/xpath-functions/array"
 	xmlns:highlight="highlight">
 	
 	<xsl:preserve-space elements="*"/>
 	
+	<xsl:import href="abbreviate-solr-snippets.xsl"/>
+	
 	<xsl:variable name="debug-json-serializer" select="map{'method': 'json', 'indent': true()}"/>
 
 	<xsl:template match="/html-and-highlight-strings/html:div">
 		<xsl:variable name="text" select="string(.)"/>
-		<xsl:variable name="snippet-strings" select="//lst[@name='highlighting']/lst/arr/str/text()"/>
+		<xsl:variable name="snippet-strings" select="solr:abbreviate-snippets(//lst[@name='highlighting']/lst/arr/str/text())"/>
 		<xsl:variable name="snippets" select="highlight:locate-snippets-in-text($text, $snippet-strings)"/>
 		<xsl:apply-templates mode="highlight" select=".">
 			<xsl:with-param name="text" select="$text"/>
@@ -34,7 +37,7 @@
 	
 	<xsl:function name="highlight:locate-snippets-in-text" as="map(*)*">
 		<xsl:param name="text" as="xs:string"/>
-		<xsl:param name="snippets-with-highlights" as="text()*"/>
+		<xsl:param name="snippets-with-highlights" as="xs:string*"/>
 		<xsl:sequence select="
 			for 
 				$snippet-index in (1 to count($snippets-with-highlights))

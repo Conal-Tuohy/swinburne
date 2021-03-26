@@ -5,9 +5,12 @@
 	xmlns:c="http://www.w3.org/ns/xproc-step"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:map="http://www.w3.org/2005/xpath-functions/map"
+	xmlns:solr="tag:conaltuohy.com,2021:solr"
 	xmlns:dashboard="local-functions"
 	xmlns="http://www.w3.org/1999/xhtml"
 	exclude-result-prefixes="c f dashboard map xs">
+	
+	<xsl:import href="abbreviate-solr-snippets.xsl"/>
 	
 	<!--<xsl:import href="render-metadata.xsl"/>-->
 	<xsl:param name="default-results-limit" required="true"/>
@@ -179,7 +182,7 @@
 					<xsl:sequence select="f:string[@key='metadata-summary'] => parse-xml()"/>
 					<!-- list the snippets of matching text which were found in this particular view -->
 					<ul class="matching-snippets list-group">
-						<xsl:for-each select="$highlighting[@key=$id]/f:array/f:string">
+						<xsl:for-each select="solr:abbreviate-snippets($highlighting[@key=$id]/f:array/f:string)">
 							<li class="matching-snippet list-group-item">
 								<a href="/text/{$id}/?highlight={$request/c:param[@name='text']/@value}#hit{position()}">
 									<!-- Within each snippet, Solr marks up individual matching words with escaped(!) <em> tags -->
