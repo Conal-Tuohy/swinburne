@@ -176,8 +176,8 @@ details div.expansion {
 }
 .tei-l {
 	display: block;
-	float: left;
-	clear: left;
+	/* float: left;
+	clear: left; */
 	width: 100%;
 }
 .tei-l::after {
