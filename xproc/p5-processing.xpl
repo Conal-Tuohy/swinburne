@@ -154,6 +154,7 @@
 					<p:load name="read-p5">
 						<p:with-option name="href" select="$input-file"/>
 					</p:load>
+					<!-- TODO normalize (e.g. evaluate rendition/@selector -->
 					<chymistry:convert-p5-to-solr>
 						<p:with-option name="solr-base-uri" select="$solr-base-uri"/>
 						<p:with-option name="text" select="$file-id"/>
@@ -647,6 +648,12 @@
 		<p:load name="text">
 			<p:with-option name="href" select="concat('../p5/result/', $text)"/>
 		</p:load>
+		<p:xslt name="materialise-rendition-selector-links">
+			<p:input port="parameters"><p:empty/></p:input>
+			<p:input port="stylesheet">
+				<p:document href="../xslt/evaluate-rendition-selectors.xsl"/>
+			</p:input>
+		</p:xslt>
 		<z:make-http-response content-type="application/xml"/>
 	</p:declare-step>
 	
