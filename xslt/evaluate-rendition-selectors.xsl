@@ -8,7 +8,7 @@
 	<xsl:mode on-no-match="shallow-copy"/>
 	
 	<!-- sequence of maps, in descending order of selector specificity, containing an executable version of each rendition[@selector] -->
-	<xsl:variable name="renditions" select="
+	<xsl:variable name="compiled-selectors" select="
 		for $rendition in 
 			/TEI/teiHeader/encodingDesc/tagsDecl/rendition[@selector]
 		return
@@ -74,7 +74,7 @@
 	<!--
 	<xsl:variable name="name" select=" '\p{L}[\p{L}\p{N}-]*' "/>
 	-->
-	<xsl:variable name="name" select=" '[a-zA-Z][a-zA-Z\p{N}-]*' "/><!-- A TEI element or attribute name. NB we don't use '\c' here because it would match ':' -->
+	<xsl:variable name="name" select=" '[a-zA-Z][a-zA-Z\p{N}-_]*' "/><!-- A TEI element or attribute name or xml:id value. NB we don't use '\c' here because it would match ':' -->
 	
 	<!-- combinators -->
 	<xsl:variable name="child-combinator" select=" '\s*&gt;\s*' "/>
@@ -96,6 +96,263 @@
 	<xsl:variable name="attribute-value-suffix-selector">\[{$name}\$='[^']*'\]</xsl:variable>
 	<xsl:variable name="attribute-value-prefix-selector">\[{$name}\^='[^']*'\]</xsl:variable>
 	<xsl:variable name="list-selector" select=" '\s*,\s*' "/>
+	
+	<xsl:variable name="selector-specifications" as="map(*)*" select="
+		(: 
+			Specifications of the various kinds of selector steps and combinators.
+			
+			To add support for a new piece of selector syntax, add a map into this sequence, with the necessary implementation.
+			
+			Each map contains the following properties:
+			
+			'name': purely documentation, not currently used, though it could be used in debugging
+			'xpath-function': an XPath function which accepts a selector token, and returns an XPath function which implements the token
+			'regex': a regular expression which matches a selector token
+			'specificity': an integer value representing the priority ordering of this type of selector, see https://www.w3.org/TR/selectors-3/#specificity
+		:)
+		(
+			map{
+				'name': 'following-sibling-combinator', 
+				'specificity': 0, (: combinators contribute nothing to specificity :)
+				'regex': '\s*~\s*',
+				'xpath-function': function($token as xs:string) as function(element(*)*) as element(*)* {
+					(: function which returns preceding-siblings (not following-siblings, because we're interpreting the selector from right to left) :)
+					function($elements as element()*) {
+						$elements/preceding-sibling::*
+					}
+				}
+			},
+			map{
+				'name': 'next-sibling-combinator', 
+				'specificity': 0, (: combinators contribute nothing to specificity :)
+				'regex': '\s*\+\s*',
+				'xpath-function': function($token as xs:string) as function(element(*)*) as element(*)* { 
+					(: function which returns immediately preceding-sibling (not following-sibling, because we're interpreting the selector from right to left) :)
+					function($elements as element()*) {
+						$elements/preceding-sibling::*[1]
+					}
+				}
+			},
+			map{
+				'name': 'child-combinator', 
+				'specificity': 0, (: combinators contribute nothing to specificity :)
+				'regex': '\s*&gt;\s*',
+				'xpath-function': function($token as xs:string) as function(element(*)*) as element(*)* { 
+					(: function which returns parents of a given set of elements (not children, because we're interpreting the selector from right to left) :)
+					function($elements as element()*) {
+						$elements/parent::*
+					}
+				}
+			},
+			map{
+				'name': 'descendant-combinator', 
+				'specificity': 0, (: combinators contribute nothing to specificity :)
+				'regex': '\s+',
+				'xpath-function': function($token as xs:string) as function(element(*)*) as element(*)* { 
+					(: function which returns ancestors of a given set of elements (not descendants, because we're interpreting the selector from right to left)  :)
+					function($elements as element()*) {
+						$elements/ancestor::*
+					}
+				}
+			},
+			map{
+				'name': 'universal-selector', 
+				'specificity': 0,
+				'regex': '\*',
+				'xpath-function': function($token as xs:string) as function(element(*)*) as element(*)* { 
+					(: function which matches any element; since it's always applied to elements, it just returns the parameter unchanged :)
+					function($elements as element()*) {
+						$elements
+					}
+				}
+			},
+			map{
+				'name': 'first-child-selector', 
+				'specificity': 100, (: pseudo-classes count for 100 :)
+				'regex': ':first-child',
+				'xpath-function': function($token as xs:string) as function(element(*)*) as element(*)* { 
+					(: function which matches any element with no preceding sibling :)
+					function($elements as element()*) {
+						$elements[empty(preceding-sibling::*)]
+					}
+				}
+			},
+			map{
+				'name': 'last-child-selector', 
+				'specificity': 100, (: pseudo-classes count for 100 :)
+				'regex': ':last-child',
+				'xpath-function': function($token as xs:string) as function(element(*)*) as element(*)* { 
+					(: function which matches any element with no following sibling :)
+					function($elements as element()*) {
+						$elements[empty(following-sibling::*)]
+					}
+				}
+			},
+			map{
+				'name': 'attribute-value-substring-selector', 
+				'specificity': 100, (: attributes count for 100 :)
+				'regex': '\[' || $name || '\*=''[^'']*''\]',
+				'xpath-function': function($token as xs:string) as function(element(*)*) as element(*)* { 
+					(: function which matches any element with a given attribute value containing a substring :)
+					let 
+						$attribute-name:= $token => substring-after('[') => substring-before('*='''),
+						$attribute-value:= $token => substring-after('*=''') => substring-before('''')
+					return
+						function($elements as element()*) {
+							$elements[
+								attribute::*
+									[local-name()=$attribute-name]
+									[contains(., $attribute-value)]
+							]
+						}
+				}
+			},
+			map{
+				'name': 'attribute-value-hyphen-selector', 
+				'specificity': 100, (: attributes count for 100 :)
+				'regex': '\[' || $name || '\|=''[^'']*''\]',
+				'xpath-function': function($token as xs:string) as function(element(*)*) as element(*)* { 
+					(: function which matches any element with a given attribute value as the prefix, with an optional hyphenated suffix :)
+					let 
+						$attribute-name:= $token => substring-after('[') => substring-before('|='''),
+						$attribute-value:= $token => substring-after('|=''') => substring-before('''')
+					return
+						function($elements as element()*) {
+							$elements[
+								attribute::*
+									[local-name()=$attribute-name]
+									[(.=$attribute-value) or starts-with(., $attribute-value || '-')]
+							]
+						}
+				}
+			},
+			map{
+				'name': 'attribute-value-word-selector', 
+				'specificity': 100, (: attributes count for 100 :)
+				'regex': '\[' || $name || '~=''[^'']*''\]',
+				'xpath-function': function($token as xs:string) as function(element(*)*) as element(*)* { 
+					(: function which matches any element with a given attribute value as the prefix, with an optional hyphenated suffix :)
+					let 
+						$attribute-name:= $token => substring-after('[') => substring-before('~='''),
+						$attribute-value:= $token => substring-after('~=''') => substring-before('''')
+					return
+						function($elements as element()*) {
+							$elements[
+								attribute::*
+									[local-name()=$attribute-name]
+									[contains-token(., $attribute-value)]
+							]
+						}
+				}
+			},
+			map{
+				'name': 'attribute-value-suffix-selector', 
+				'specificity': 100, (: attributes count for 100 :)
+				'regex': '\[' || $name || '\$=''[^'']*''\]',
+				'xpath-function': function($token as xs:string) as function(element(*)*) as element(*)* { 
+					(: function which matches any element with a given attribute value as the suffix :)
+					let 
+						$attribute-name:= $token => substring-after('[') => substring-before('$='''),
+						$attribute-value:= $token => substring-after('$=''') => substring-before('''')
+					return
+						function($elements as element()*) {
+							$elements[
+								attribute::*
+									[local-name()=$attribute-name]
+									[ends-with(., $attribute-value)]
+							]
+						}
+				}
+			},
+			map{
+				'name': 'attribute-value-prefix-selector', 
+				'specificity': 100, (: attributes count for 100 :)
+				'regex': '\[' || $name || '\^=''[^'']*''\]',
+				'xpath-function': function($token as xs:string) as function(element(*)*) as element(*)* { 
+					(: function which matches any element with a given attribute value as the prefix :)
+					let 
+						$attribute-name:= $token => substring-after('[') => substring-before('^='''),
+						$attribute-value:= $token => substring-after('^=''') => substring-before('''')
+					return
+						function($elements as element()*) {
+							$elements[
+								attribute::*
+									[local-name()=$attribute-name]
+									[starts-with(., $attribute-value)]
+							]
+						}
+				}
+			},
+			map{
+				'name': 'attribute-value-selector', 
+				'specificity': 100, (: attributes count for 100 :)
+				'regex': '\[' || $name || '=''[^'']*''\]',
+				'xpath-function': function($token as xs:string) as function(element(*)*) as element(*)* { 
+					(: function which matches any element with a given attribute value :)
+					let 
+						$attribute-name:= $token => substring-after('[') => substring-before('='''),
+						$attribute-value:= $token => substring-after('=''') => substring-before('''')
+					return
+						function($elements as element()*) {
+							$elements[
+								attribute::*
+									[local-name()=$attribute-name]
+									[.=$attribute-value]
+							]
+						}
+				}
+			},
+			map{
+				'name': 'attribute-name-selector', 
+				'specificity': 100, (: attributes count for 100 :)
+				'regex': '\[' || $name || '\]',
+				'xpath-function': function($token as xs:string) as function(element(*)*) as element(*)* { 
+					(: function which matches any element with a given attribute :)
+					let 
+						$attribute-name:= substring-before(substring-after($token, '['), ']')
+					return
+						function($elements as element()*) {
+							$elements[attribute::*[local-name()=$attribute-name]]
+						}
+				}
+			},
+			map{
+				'name': 'id-selector', 
+				'specificity': 10000, (: id selectors count for 10000 :)
+				'regex': '#' || $name,
+				'xpath-function': function($token as xs:string) as function(element(*)*) as element(*)* { 
+					(: function which matches an element by id :)
+					let 
+						$id:= substring-after($token, '#')
+					return
+						function($elements as element()*) {
+							$elements[@xml:id=$id]
+						}
+				}
+			},
+			map{
+				'name': 'element-selector', 
+				'specificity': 1, (: element type selectors count for just 1 :)
+				'regex': $name,
+				'xpath-function': function($token as xs:string) as function(element(*)*) as element(*)* { 
+					(: function which filters the set of elements to include only those with the required name :)
+					function($elements as element()*) {
+						$elements[local-name()=$token]
+					}
+				}
+			}
+		)
+	"/>
+
+<!-- TODO integrate this in new selector-parsing code -->
+<!-- (: function which throws an error :)
+				function($elements) as element()* {
+					error(
+						xs:QName('css:unsupported-selector-token'),
+						'CSS selector token is not supported: ' || $token
+					)
+				}
+-->
 
 	<!-- utility function for performing exact regex matches (i.e. anchored at start and end) -->
 	<xsl:function name="css:exactly-matches">
@@ -103,154 +360,32 @@
 		<xsl:param name="pattern"/>
 		<xsl:sequence select="matches($string, '^' || $pattern || '$')"/>
 	</xsl:function>
-
+	
 	<!-- convert a CSS selector token into an XPath function which implements it -->
 	<xsl:function name="css:function-from-selector-token">
 		<xsl:param name="token" as="xs:string"/>
-		<xsl:sequence select="	
-			if (css:exactly-matches($token, $following-sibling-combinator)) then
-				(: function which returns preceding-siblings (not following-siblings, because we're interpreting the selector from right to left) :)
-				function($elements as element()*) {
-					$elements/preceding-sibling::*
-				}
-			else if (css:exactly-matches($token, $next-sibling-combinator)) then
-				(: function which returns immediately preceding-sibling (not following-sibling, because we're interpreting the selector from right to left) :)
-				function($elements as element()*) {
-					$elements/preceding-sibling::*[1]
-				}
-			else if (css:exactly-matches($token, $child-combinator)) then
-				(: function which returns parents of a given set of elements (not children, because we're interpreting the selector from right to left) :)
-				function($elements as element()*) {
-					$elements/parent::*
-				}
-			else if (css:exactly-matches($token, $descendant-combinator)) then
-				(: function which returns ancestors of a given set of elements (not descendants, because we're interpreting the selector from right to left)  :)
-				function($elements as element()*) {
-					$elements/ancestor::*
-				}	
-			else if (css:exactly-matches($token, $universal-selector)) then
-				(: function which matches any element; since it's always applied to elements, it just returns the parameter unchanged :)
-				function($elements as element()*) {
-					$elements
-				}
-			else if (css:exactly-matches($token, $first-child-selector)) then
-				(: function which matches any element with no preceding sibling :)
-				function($elements as element()*) {
-					$elements[empty(preceding-sibling::*)]
-				}
-			else if (css:exactly-matches($token, $last-child-selector)) then
-				(: function which matches any element with no following sibling :)
-				function($elements as element()*) {
-					$elements[empty(following-sibling::*)]
-				}
-			else if (css:exactly-matches($token, $attribute-value-substring-selector)) then
-				(: function which matches any element with a given attribute value containing a substring :)
-				let 
-					$attribute-name:= $token => substring-after('[') => substring-before('*='''),
-					$attribute-value:= $token => substring-after('*=''') => substring-before('''')
-				return
-					function($elements as element()*) {
-						$elements[
-							attribute::*
-								[local-name()=$attribute-name]
-								[contains(., $attribute-value)]
-						]
-					}
-			else if (css:exactly-matches($token, $attribute-value-hyphen-selector)) then
-				(: function which matches any element with a given attribute value as the prefix, with an optional hyphenated suffix :)
-				let 
-					$attribute-name:= $token => substring-after('[') => substring-before('|='''),
-					$attribute-value:= $token => substring-after('|=''') => substring-before('''')
-				return
-					function($elements as element()*) {
-						$elements[
-							attribute::*
-								[local-name()=$attribute-name]
-								[(.=$attribute-value) or starts-with(., $attribute-value || '-')]
-						]
-					}
-			else if (css:exactly-matches($token, $attribute-value-word-selector)) then
-				(: function which matches any element with a given attribute value as the prefix, with an optional hyphenated suffix :)
-				let 
-					$attribute-name:= $token => substring-after('[') => substring-before('~='''),
-					$attribute-value:= $token => substring-after('~=''') => substring-before('''')
-				return
-					function($elements as element()*) {
-						$elements[
-							attribute::*
-								[local-name()=$attribute-name]
-								[contains-token(., $attribute-value)]
-						]
-					}
-			else if (css:exactly-matches($token, $attribute-value-suffix-selector)) then
-				(: function which matches any element with a given attribute value as the suffix :)
-				let 
-					$attribute-name:= $token => substring-after('[') => substring-before('$='''),
-					$attribute-value:= $token => substring-after('$=''') => substring-before('''')
-				return
-					function($elements as element()*) {
-						$elements[
-							attribute::*
-								[local-name()=$attribute-name]
-								[ends-with(., $attribute-value)]
-						]
-					}
-			else if (css:exactly-matches($token, $attribute-value-prefix-selector)) then
-				(: function which matches any element with a given attribute value as the prefix :)
-				let 
-					$attribute-name:= $token => substring-after('[') => substring-before('^='''),
-					$attribute-value:= $token => substring-after('^=''') => substring-before('''')
-				return
-					function($elements as element()*) {
-						$elements[
-							attribute::*
-								[local-name()=$attribute-name]
-								[starts-with(., $attribute-value)]
-						]
-					}
-			else if (css:exactly-matches($token, $attribute-value-selector)) then
-				(: function which matches any element with a given attribute value :)
-				let 
-					$attribute-name:= $token => substring-after('[') => substring-before('='''),
-					$attribute-value:= $token => substring-after('=''') => substring-before('''')
-				return
-					function($elements as element()*) {
-						$elements[
-							attribute::*
-								[local-name()=$attribute-name]
-								[.=$attribute-value]
-						]
-					}
-			else if (css:exactly-matches($token, $attribute-name-selector)) then
-				(: function which matches any element with a given attribute :)
-				let 
-					$attribute-name:= substring-before(substring-after($token, '['), ']')
-				return
-					function($elements as element()*) {
-						$elements[attribute::*[local-name()=$attribute-name]]
-					}
-			else if (css:exactly-matches($token, $id-selector)) then
-				(: function which matches an element by id :)
-				let 
-					$id:= substring-after($token, '#')
-				return
-					function($elements as element()*) {
-						$elements[@xml:id=$id]
-					}
-			else if (css:exactly-matches($token, $element-selector)) then
-				(: function which filters the set of elements to include only those with the required name :)
-				function($elements as element()*) {
-					$elements[local-name()=$token]
-				}
-			else 
-				(: function which throws an error :)
-				function($elements) as element()* {
-					error(
-						xs:QName('css:unsupported-selector-token'),
-						'CSS selector token is not supported: ' || $token
-					)
-				}
-		"/>
+		<!-- search the list of selector-specifications to find the one which matches this token -->
+		<xsl:variable name="selector-specification" select="css:selector-specification-matching-selector-token($token, $selector-specifications)"/>
+		<!-- apply the selector-spec's xpath-function function to the token, to generate an xpath function which implements the token -->
+		<!-- Essentially we've recognised the selector token as having a particular type, and then used that type to interpret the token
+		concretely -->
+		<xsl:sequence select="$selector-specification('xpath-function')($token)"/>
+	</xsl:function>
+
+	<!-- return the first selector-specification in the list whose regex matches the given token -->
+	<xsl:function name="css:selector-specification-matching-selector-token">
+		<xsl:param name="token" as="xs:string"/>
+		<xsl:param name="selector-specifications" as="map(*)*"/>
+		<!-- TODO throw error for unrecognised token here -->
+		<xsl:variable name="first-selector-specification" select="head($selector-specifications)"/>
+		<xsl:choose>
+			<xsl:when test="css:exactly-matches($token, $first-selector-specification('regex'))">
+				<xsl:sequence select="$first-selector-specification"/>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:sequence select="css:selector-specification-matching-selector-token($token, tail($selector-specifications))"/>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:function>
 	
 	<xsl:function name="css:get-selectors" as="map(*)*">
@@ -377,13 +512,14 @@
 			<xsl:variable name="current-element" select="."/>
 			<xsl:variable name="matching-rendition-references" select="
 				for 
-					$rendition 
+					$compiled-selector 
 				in 
-					$renditions
+					$compiled-selectors
 				return
-					(: the rendition's 'matches' functions will return an element if the rendition's selector matches the current element :)
-					if (exists($rendition('matches')($current-element))) then
-						'#' || $rendition('id') (: the rendition's selector matched this element, so return a reference to this rendition :)
+					(: the compiled selector's 'matches' functions will return a non-empty set of elements if the CSS selector matches the current element :)
+					if (exists($compiled-selector('matches')($current-element))) then
+						(: the compiled selector matched this element, so return a reference to the source rendition element :)
+						'#' || $compiled-selector('id') 
 					else
 						( )
 			"/>
