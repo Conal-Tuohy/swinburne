@@ -1,0 +1,64 @@
+<!-- Test data for rendition/@selector -->
+<!-- These selectors were originally tested by being applied to the document acs0000514-01.xml -->
+<!-- To visually test the selectors, view the TEI XML output of the pipeline e.g. http://localhost:8080/p5/acs0000514-01.xml -->
+<!-- and search for references to the rendition/@xml:id values, e.g. "#spaces-after-line-breaks" should appear in the @rendition -->
+<!-- attribute of space elements which follow lb elements -->
+<tagsDecl partial="true" xmlns="http://www.tei-c.org/ns/1.0">
+         <rendition selector="text, front, back, body, div, p, ab, *[type='frontispiece']" xml:id="block">
+		display: block;
+	</rendition>
+	<rendition selector="titlePage quote" xml:id="quotes-with-title-page-ancestors">
+		color: blue;
+	</rendition>
+	<rendition selector="epigraph &gt; quote" xml:id="quotes-with-epigraph-parents">
+		color: blue;
+	</rendition>
+	<rendition selector="titlePage epigraph quote" xml:id="quotes-inside-epigraphs-on-title-pages">
+		color: green;
+	</rendition>
+	<rendition selector="lb ~ space" xml:id="spaces-after-line-breaks">
+		font-size: 10pt;
+	</rendition>
+	<rendition selector="figure + lb" xml:id="line-break-immediately-after-figure">
+		font-size: 12pt;
+	</rendition>
+	<rendition selector="*" xml:id="any-element">
+		font-family: sans-serif;
+	</rendition>
+	<rendition selector="#jawalsh" xml:id="john-walsh">
+		font-size: large;
+	</rendition>
+	<rendition selector="*:first-child" xml:id="first-child">
+		font-size: small;
+	</rendition>
+	<rendition selector="l:first-child" xml:id="first-line">
+		font-size: small;
+	</rendition>
+	<rendition selector="*:last-child" xml:id="last-child">
+		font-size: small;
+	</rendition>
+	<rendition selector="div[type='frontispiece']" xml:id="frontispiece">
+		font-size: larger;
+	</rendition>
+	<rendition selector="div[type]" xml:id="typed-div">
+		font-weight: bold;
+	</rendition>
+	<rendition selector="*[lang='la']" xml:id="latin-language">
+		font-style: italic;
+	</rendition>
+	<rendition selector="ptr[target*='wikipedia']" xml:id="wikipedia-link">
+		color: green;
+	</rendition>
+	<rendition selector="*[n~='quotes']" xml:id="n-contains-the-word-QUOTES"><!-- '~=' corresponds to xpath contains-token function -->
+		color: green;
+	</rendition>
+	<rendition selector="*[when|='1792']" xml:id="in-1792"><!-- the '|=' operator implies @when either exactly = '1792' or else starts with '1792-' -->
+		color: green;
+	</rendition>
+	<rendition selector="*[target^='https:']" xml:id="secure-link"><!-- starts with 'https:' -->
+		color: green;
+	</rendition>
+	<rendition selector="*[target$='.html']" xml:id="link-to-html"><!-- ends with '.html' -->
+		color: green;
+	</rendition>
+</tagsDecl>
