@@ -471,9 +471,9 @@
 		<chymistry:generate-indexer name="indexing-stylesheet">
 			<p:with-option name="solr-base-uri" select="$solr-base-uri"/>
 		</chymistry:generate-indexer>
-		<p:load  name="text">
-			<p:with-option name="href" select="concat('../p5/result/', $text, '.xml')"/>
-		</p:load>
+		<chymistry:p5-text>
+			<p:with-option name="text" select="$text"/>
+		</chymistry:p5-text>
 		<p:xslt name="metadata-fields">
 			<p:with-param name="id" select="$text"/>
 			<p:with-param name="solr-base-uri" select="$solr-base-uri"/>
@@ -529,9 +529,9 @@
 		<p:output port="result"/>
 		<p:variable name="base-uri" select="concat(substring-before(/c:request/@href, '/iiif/'), '/iiif/')"/>
 		<p:variable name="text-id" select="substring-before(substring-after(/c:request/@href, '/iiif/'), '/')"/>
-		<p:load name="text">
-			<p:with-option name="href" select="concat('../p5/result/', $text-id, '.xml')"/>
-		</p:load>
+		<chymistry:p5-text>
+			<p:with-option name="text" select="$text-id"/>
+		</chymistry:p5-text>
 		<p:xslt>
 			<p:with-param name="base-uri" select="$base-uri"/>
 			<p:with-param name="text-id" select="$text-id"/>
@@ -566,9 +566,9 @@
 				'/list/'
 			)
 		"/>
-		<p:load name="text">
-			<p:with-option name="href" select="concat('../p5/result/', $text-id, '.xml')"/>
-		</p:load>
+		<chymistry:p5-text>
+			<p:with-option name="text" select="$text-id"/>
+		</chymistry:p5-text>
 		<p:xslt>
 			<p:with-param name="base-uri" select="$base-uri"/>
 			<p:with-param name="text-id" select="$text-id"/>
@@ -609,27 +609,9 @@
 				<p:pipe step="p5-as-html" port="parameters"/>
 			</p:input>
 		</p:parameters>
-		<p:store href="/tmp/configuration.xml">
-			<p:input port="source">
-				<p:pipe step="configuration" port="result"/>
-			</p:input>
-		</p:store>
-		<!--
-		<cx:message>
-			<p:with-option name="message" select="string-join(for $param in //c:param return concat($param/@name, '=', $param/@value), codepoints-to-string(10))"/>
-			<p:input port="source">
-				<p:pipe step="configuration" port="result"/>
-			</p:input>
-		</cx:message>
-		<cx:message>
-			<p:with-option name="message" select="concat('google api key=', /c:param-set/c:param[@name='google-api-key']/@value)"/>
-			<p:input port="source">
-				<p:pipe step="configuration" port="result"/>
-			</p:input>
-		</cx:message>-->
-		<p:load name="text">
-			<p:with-option name="href" select="concat('../p5/result/', $text, '.xml')"/>
-		</p:load>
+		<chymistry:p5-text>
+			<p:with-option name="text" select="$text"/>
+		</chymistry:p5-text>
 		<p:xslt name="text-as-html">
 			<p:with-param name="google-api-key" select="/c:param-set/c:param[@name='google-api-key']/@value">
 				<p:pipe step="configuration" port="result"/>
@@ -644,9 +626,19 @@
 	<p:declare-step name="p5-as-xml" type="chymistry:p5-as-xml">
 		<p:input port="source"/>
 		<p:output port="result"/>
-		<p:variable name="text" select="substring-after(/c:request/@href, '/p5/')"/>
+		<p:variable name="text" select="substring-before(substring-after(/c:request/@href, '/p5/'), '.xml')"/>
+		<chymistry:p5-text name="text">
+			<p:with-option name="text" select="$text"/>
+		</chymistry:p5-text>
+		<z:make-http-response content-type="application/xml"/>
+	</p:declare-step>
+	
+	<p:declare-step name="p5-text" type="chymistry:p5-text">
+		<!-- loads and normalizes a P5 text ready to be converted into other formats -->
+		<p:output port="result"/>
+		<p:option name="text" required="true"/>
 		<p:load name="text">
-			<p:with-option name="href" select="concat('../p5/result/', $text)"/>
+			<p:with-option name="href" select="concat('../p5/result/', $text, '.xml')"/>
 		</p:load>
 		<p:xslt name="materialise-rendition-selector-links">
 			<p:input port="parameters"><p:empty/></p:input>
@@ -654,7 +646,6 @@
 				<p:document href="../xslt/evaluate-rendition-selectors.xsl"/>
 			</p:input>
 		</p:xslt>
-		<z:make-http-response content-type="application/xml"/>
 	</p:declare-step>
 	
 	<p:declare-step name="list-p5" type="chymistry:list-p5">
