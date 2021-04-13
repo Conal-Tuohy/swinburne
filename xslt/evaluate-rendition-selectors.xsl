@@ -26,7 +26,7 @@
 				An XPath function which accepts a selector token, and returns an XPath function which implements the token.
 				When a rendition/@selector is compiled, the selector is tokenized (using a combination of the regexes in these maps),
 				and each token is passed as the parameter to the 'xpath-function' value of the map whose 'regex' matches the token.
-				This function should an XPath function which implements the token's semantics.  
+				This function should return an XPath function which implements the token's semantics.  
 			'regex': 
 				A regular expression which matches a selector token.
 				
@@ -92,11 +92,73 @@
 				}
 			},
 			map{
+				'name': 'language-selector', 
+				'specificity': 100, (: pseudo-classes count for 100 :)
+				'regex': ':lang\([^(]+\)',
+				'xpath-function': function($token as xs:string) as function(element(*)*) as element(*)* { 
+					(: function which matches any element in the specified language :)
+					let 
+						$language:= $token => substring-after(':lang(') => substring-before(')')
+					return
+						function($elements as element()*) {
+							(: check the current @xml:lang in scope matches the required language :)
+							$elements[
+								starts-with(ancestor-or-self::*[@xml:lang][1]/@xml:lang, $language)
+							]
+						}
+				}
+			},
+			map{
+				'name': 'first-of-type-selector', 
+				'specificity': 100, (: pseudo-classes count for 100 :)
+				'regex': ':first-of-type',
+				'xpath-function': function($token as xs:string) as function(element(*)*) as element(*)* { 
+					(: function which matches any element which is the first of its type amongst its siblings :)
+					function($elements as element()*) {
+						$elements[
+							not(
+								local-name() = preceding-sibling::* ! local-name(.)
+							)
+						] 
+					}
+				}
+			},
+			map{
+				'name': 'last-of-type-selector', 
+				'specificity': 100, (: pseudo-classes count for 100 :)
+				'regex': ':last-of-type',
+				'xpath-function': function($token as xs:string) as function(element(*)*) as element(*)* { 
+					(: function which matches any element which is the last of its type amongst its siblings :)
+					function($elements as element()*) {
+						$elements[
+							not(
+								local-name() = following-sibling::* ! local-name(.)
+							)
+						] 
+					}
+				}
+			},
+			map{
+				'name': 'only-of-type-selector', 
+				'specificity': 100, (: pseudo-classes count for 100 :)
+				'regex': ':only-of-type',
+				'xpath-function': function($token as xs:string) as function(element(*)*) as element(*)* { 
+					(: function which matches any element which is the only one of its type amongst its siblings :)
+					function($elements as element()*) {
+						$elements[
+							not(
+								local-name() = (preceding-sibling::*, following-sibling::*) ! local-name(.)
+							)
+						] 
+					}
+				}
+			},
+			map{
 				'name': 'first-child-selector', 
 				'specificity': 100, (: pseudo-classes count for 100 :)
 				'regex': ':first-child',
 				'xpath-function': function($token as xs:string) as function(element(*)*) as element(*)* { 
-					(: function which matches any element with no preceding sibling :)
+					(: function which matches any element which is the first child of its parent :)
 					function($elements as element()*) {
 						$elements[empty(preceding-sibling::*)]
 					}
@@ -107,9 +169,20 @@
 				'specificity': 100, (: pseudo-classes count for 100 :)
 				'regex': ':last-child',
 				'xpath-function': function($token as xs:string) as function(element(*)*) as element(*)* { 
-					(: function which matches any element with no following sibling :)
+					(: function which matches any element which is the last child of its parent :)
 					function($elements as element()*) {
 						$elements[empty(following-sibling::*)]
+					}
+				}
+			},
+			map{
+				'name': 'only-child-selector', 
+				'specificity': 100, (: pseudo-classes count for 100 :)
+				'regex': ':only-child',
+				'xpath-function': function($token as xs:string) as function(element(*)*) as element(*)* { 
+					(: function which matches any element which is the only child of its parent :)
+					function($elements as element()*) {
+						$elements[empty((preceding-sibling::*, following-sibling::*))]
 					}
 				}
 			},
@@ -156,7 +229,7 @@
 				'specificity': 100, (: attributes count for 100 :)
 				'regex': '\[' || $name-regex || '~=''[^'']*''\]',
 				'xpath-function': function($token as xs:string) as function(element(*)*) as element(*)* { 
-					(: function which matches any element with a given attribute value as the prefix, with an optional hyphenated suffix :)
+					(: return elements if the specified word appears among the white-space delimited tokens in the specified attribute value :)
 					let 
 						$attribute-name:= $token => substring-after('[') => substring-before('~='''),
 						$attribute-value:= $token => substring-after('~=''') => substring-before('''')
@@ -271,7 +344,7 @@
 
 	<xsl:mode on-no-match="shallow-copy"/>
 	
-	<!-- sequence of maps, in descending order of selector specificity, containing an executable version of each rendition[@selector] -->
+	<!-- Compile a sequence of maps, in descending order of selector specificity, containing an executable version of each rendition[@selector] -->
 	<xsl:variable name="compiled-selectors" select="
 		for $rendition in 
 			/TEI/teiHeader/encodingDesc/tagsDecl/rendition[@selector]
@@ -279,13 +352,13 @@
 			css:get-selectors($rendition)
 	"/>
 
-	<!-- produce an identifier for a rendition element -->
+	<!-- Utility function to produce an identifier for a rendition element -->
 	<xsl:function name="css:id">
 		<xsl:param name="rendition"/>
 		<xsl:sequence select="if ($rendition/@xml:id) then $rendition/@xml:id else generate-id($rendition)"/>
 	</xsl:function>
 	
-	<!-- utility function to recursively compose a sequence of selector step functions into a chain of functions that implements an entire selector -->
+	<!-- Utility function to recursively compose a sequence of selector step functions into a chain of functions that implements an entire selector -->
 	<!-- given a sequence of functions (a b c d) it produces a single function f = a(b(c(d))) --> 
 	<xsl:function name="css:compose">
 		<xsl:param name="functions" as="function(*)*"/>
@@ -339,16 +412,17 @@
 		</xsl:choose>
 	</xsl:function>
 	
+	<!-- Utility regex for matching a comma with optional white space, used to delimit multiple selectors appearing in a list-->
 	<xsl:variable name="comma-token-regex" select=" '\s*,\s*' "/>
 
-	<!-- utility function for performing exact regex matches (i.e. anchored at start and end) -->
+	<!-- Utility function for performing exact regex matches (i.e. anchored at start and end) -->
 	<xsl:function name="css:exactly-matches">
 		<xsl:param name="string"/>
 		<xsl:param name="pattern"/>
 		<xsl:sequence select="matches($string, '^' || $pattern || '$')"/>
 	</xsl:function>
 	
-	<!-- convert a CSS selector token into an XPath function which implements it -->
+	<!-- Convert a CSS selector token into an XPath function which implements it -->
 	<xsl:function name="css:function-from-selector-token">
 		<xsl:param name="token" as="xs:string"/>
 		<!-- search the list of selector-specifications to find the one which matches this token -->
@@ -363,11 +437,10 @@
 	<xsl:function name="css:selector-specification-matching-selector-token" as="map(*)">
 		<xsl:param name="token" as="xs:string"/>
 		<xsl:param name="selector-specifications" as="map(*)*"/>
-		<!-- TODO throw error for unrecognised token here -->
 		<xsl:variable name="first-selector-specification" select="head($selector-specifications)"/>
 		<xsl:choose>
 			<xsl:when test="empty($first-selector-specification)">
-				<!-- no more selector specifications which might match this token, so treat it as unsupported selector syntax -->
+				<!-- There are no more selector specifications which might have matched this token, so reject the token as unsupported -->
 				<xsl:sequence select="
 					(: The error is wrapped in a map so that it matches the function signature :)
 					map{
@@ -379,9 +452,11 @@
 				"/>
 			</xsl:when>
 			<xsl:when test="css:exactly-matches($token, $first-selector-specification('regex'))">
+				<!-- found the selector-specification map which matches this token! -->
 				<xsl:sequence select="$first-selector-specification"/>
 			</xsl:when>
 			<xsl:otherwise>
+				<!-- keep looking through the remainder of the list of selector specifications -->
 				<xsl:sequence select="css:selector-specification-matching-selector-token($token, tail($selector-specifications))"/>
 			</xsl:otherwise>
 		</xsl:choose>
@@ -402,7 +477,7 @@
 		<xsl:param name="rendition"/>
 		<xsl:variable name="selector" select="$rendition/@selector"/>
 
-		<!-- the regular expressions we need, to tokenize a selector, are the all the regexes in the list of 
+		<!-- The regular expressions we need, to tokenize a selector, are the all the regexes in the list of 
 		selector-specifications, plus a regex to recognise a comma token, which is used to join a bunch
 		of selectors into a list -->
 		<xsl:variable name="css-token-regexes" select="
@@ -412,7 +487,7 @@
 			)
 		"/>
 		
-		<!-- construct a regex for parsing a full selector as a sequence of one or more of these selector tokens -->		
+		<!-- Construct a regex for parsing a full selector as a sequence of one or more of these selector tokens -->		
 		<xsl:variable name="css-selector-tokenizer" select="
 			string-join(
 				for $regex in $css-token-regexes return '(' || $regex || ')',
@@ -434,7 +509,8 @@
 		<xsl:variable name="parsed-selector" select="analyze-string($rendition/@selector, $css-selector-tokenizer)"/>
 		<xsl:variable name="css-selector-tokens" as="xs:string*" select="$parsed-selector//text()"/>
 		<!-- Parse the sequence of tokens into a sequence of compiled-selector maps. 
-		The sequence can contain comma tokens which divide the sequence into independent selectors.
+		The sequence can contain comma tokens which divide the sequence into independent selectors;
+		e.g. the sequence ('titlePage', ', ', 'div') will produce two selector maps; one for 'titlePage', and one for 'div'.
 		For convenience of processing, we append a sentinel comma to terminate the sequence of tokens. -->
 		<xsl:variable name="selector-maps" select="css:get-selectors-from-tokens($rendition, ($css-selector-tokens, ','))"/>
 		<!-- these selector maps each contain an XPath functions, an id, and a computed specificity, but in addition they need 
@@ -451,7 +527,7 @@
 		each of the selectors specified in the stream of tokens--> 
 		<xsl:param name="rendition" as="element(rendition)"/>
 		<xsl:param name="selector-tokens" as="xs:string*"/>
-		<!-- find the ',' tokens which mark the end of the first selector within the sequence of tokens -->
+		<!-- find the ',' tokens which mark the end of each selector within the overall sequence of tokens -->
 		<xsl:variable name="comma-positions" select="
 			(
 				for $index in 
@@ -463,32 +539,35 @@
 						( )
 			)
 		"/>
+		<!-- Count how many selectors are defined in what remains of the sequence of tokens; this
+		number will provide a unique identifier for the current selector within the set of selectors
+		defined in this one rendition/@selector -->
 		<xsl:variable name="number-of-remaining-selectors" select="count($comma-positions)"/>
 		<xsl:variable name="comma-position" select="head($comma-positions)"/>
-		<xsl:if test="exists($comma-position)">
+		<xsl:if test="exists($comma-position)"><!-- There is at least one more selector defined in this sequence -->
 			<!-- get the subsequence of tokens which define the first selector -->
 			<xsl:variable name="first-selector-tokens" select="subsequence($selector-tokens, 1, $comma-position - 1)"/>
-			<!-- convert the sequence of tokens in the first selector into a sequence of XPath functions, in reverse order -->
+			<!-- convert the sequence of tokens in the first selector into a sequence of XPath functions -->
 			<xsl:variable name="selector-functions" as="function(*)*" select="($first-selector-tokens) ! css:function-from-selector-token(.)"/>
-			<!-- compose the sequence of functions in a pipeline -->
+			<!-- compose the sequence of functions into a pipeline -->
 			<xsl:variable name="composed-selector-function" select="css:compose($selector-functions)"/>
 			<!-- compute the specificity of this selector -->
 			<xsl:variable name="specificity" select="css:specificity($first-selector-tokens)"/>
 			<!-- generate an identifier for the selector -->
 			<!-- NB a given rendition may contain many selectors, so the selector's id has to be more than just the rendition's @xml:id -->
-			<xsl:variable name="id" select="css:id($rendition)"/>
+			<xsl:variable name="id" select="css:id($rendition)  || '-' || $number-of-remaining-selectors"/>
 			<!-- package the XPath function, specificity value, and identifier as a map -->
 			<xsl:variable name="first-selector" select="
 				map{
 					'matches': $composed-selector-function,
 					'specificity': $specificity,
 					'debug-selector': $first-selector-tokens,
-					'id': $id || '-' || $number-of-remaining-selectors
+					'id': $id
 				}
 			"/>
 			<!-- get the remaining tokens which weren't part of the first selector -->
 			<xsl:variable name="remaining-selector-tokens" select="subsequence($selector-tokens, $comma-position + 1)"/>
-			<!-- recursively parse the remaining selectors from the sequence of tokens -->
+			<!-- recursively parse any remaining selectors from the remaining sequence of tokens -->
 			<!-- and return them along with the selector we just parsed -->
 			<xsl:sequence select="
 				($first-selector, css:get-selectors-from-tokens($rendition, $remaining-selector-tokens))
@@ -514,11 +593,10 @@
 						( )
 			"/>
 			<xsl:if test="exists($matching-rendition-references)">
-				<!-- TODO sort renditions by specificity -->
 				<!-- add a @rendition pointing to any pre-existing renditions, and the references to the selector-based renditions as discovered above -->
 				<xsl:attribute name="rendition" select="
 					string-join(
-						distinct-values((@rendition, $matching-rendition-references)), 
+						distinct-values((tokenize(@rendition), $matching-rendition-references)), 
 						' '
 					)
 				"/>
@@ -527,15 +605,14 @@
 		</xsl:copy>
 	</xsl:template>
 	
+	<!-- Replace the rendition[@selector] elements with new rendition elements generated from the compiled versions -->
 	<xsl:template match="tagsDecl[rendition/@selector]">
 		<!-- 
 		If there are renditions with selectors, we need to ensure they are listed in ascending order of specificity,
-		and followed by the other renditions (the ones with no @selector).
-		This will ensure that when these renditions are rendered as CSS class-based rules, the general selectors are
+		and then followed by the other renditions (the ones with no @selector).
+		This will ensure that when these renditions are rendered as CSS class-based rules, the more general selectors are
 		overridden by more specific selectors, and both are overridden by renditions which were explicitly referenced
 		using @rendition attributes.
-		Where a rendition/@selector contains multiple (comma-separated) selectors, the rendition will be duplicated
-		and appear in multiple places in this ordering.
 		-->
 		<xsl:copy>
 			<xsl:copy-of select="@*"/>
@@ -548,9 +625,12 @@
 					<xsl:value-of select=".('rules')"/>
 				</xsl:element>
 			</xsl:for-each>
-			<!-- copy all the renditions which don't have selectors because they may be referred to by @rendition in the text -->
-			<xsl:apply-templates select="rendition[not(@selector)] | *[not(self::rendition)]"/>
+			<!-- process remaining children of tagsDecl -->
+			<xsl:apply-templates/>
 		</xsl:copy>
 	</xsl:template>
+	
+	<!-- Remove any renditions without @xml:id, since they can't have been referred to explicitly -->
+	<xsl:template match="rendition[not(@xml:id)]"/>
 	
 </xsl:stylesheet>
