@@ -626,7 +626,7 @@
 	<p:declare-step name="p5-as-xml" type="chymistry:p5-as-xml">
 		<p:input port="source"/>
 		<p:output port="result"/>
-		<p:variable name="text" select="substring-before(substring-after(/c:request/@href, '/p5/'), '.xml')"/>
+		<p:variable name="text" select="substring-after(/c:request/@href, '/p5/')"/>
 		<chymistry:p5-text name="text">
 			<p:with-option name="text" select="$text"/>
 		</chymistry:p5-text>
