@@ -471,7 +471,7 @@
 		<chymistry:generate-indexer name="indexing-stylesheet">
 			<p:with-option name="solr-base-uri" select="$solr-base-uri"/>
 		</chymistry:generate-indexer>
-		<chymistry:p5-text>
+		<chymistry:p5-text name="text">
 			<p:with-option name="text" select="$text"/>
 		</chymistry:p5-text>
 		<p:xslt name="metadata-fields">
