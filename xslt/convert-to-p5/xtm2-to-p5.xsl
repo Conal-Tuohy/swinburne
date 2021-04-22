@@ -239,7 +239,7 @@
 		</xsl:call-template>
 	</xsl:template>
 	
-	<xsl:template match="xtm2:occurrence[xtm2:type/xtm2:topicRef/@href='#article']">
+	<xsl:template match="xtm2:occurrence[xtm2:type/xtm2:topicRef/@href='#article']" priority="100">
 		<bibl>
 			<ptr target="{xtm2:resourceRef/@href}"/>
 		</bibl>
