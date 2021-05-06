@@ -49,7 +49,7 @@
 			<!--<f:string key="fl">id title introduction</f:string>-->
 			<!-- the Solr 'offset' and 'limit' query parameters control pagination -->
 			<!-- if 'page' is blank, then it counts as 1. e.g. if $default-results-limit=2 and page=1 then offset=2*(1-1)=0 -->
-			<xsl:variable name="page" select=" (c:param[@name='page']/@value, 1)[1] "/>
+			<xsl:variable name="page" select=" number((c:param[@name='page']/@value, 1)[1]) "/>
 			<f:number key="offset"><xsl:value-of select="$default-results-limit * ($page - 1)"/></f:number>
 			<f:number key="limit"><xsl:value-of select="$default-results-limit"/></f:number>
 			<!-- Any parameter other than 'page' is assumed to a field in Solr -->
