@@ -41,61 +41,49 @@
 	<xsl:variable name="search-base-url" select=" '/search/' "/>
 	
 	<xsl:template match="/">
-		<html class="h-100">
+		<html class="search">
 			<head>
 				<title>Search</title>
-				
 				<link rel="stylesheet" href="/css/tei.css" type="text/css"/>
 			</head>
-			<body class="d-flex flex-column h-100">
-				<main role="main" class="flex-shrink-0">
-					<div class="container">
-					<div class="search">
-						<!-- the main search button submits all the current facet values as URL parameters; if the user
-						clicks a facet button instead, then a different set of facet values are posted -->
-						<xsl:variable name="url-parameters" select="
-							string-join(
-								(
-									for $parameter 
-									in $request/c:param
-										[@name=$facet-definitions/@name] 
-										[normalize-space(@value)]
-									return concat(
-										encode-for-uri($parameter/@name), '=', encode-for-uri($parameter/@value)
-									)
-								),
-								'&amp;'
-							)
-						"/>
-						<form id="advanced-search" method="POST" action="{
-							string-join(
-								(
-									$search-base-url,
-									$url-parameters[normalize-space()]
-								), 
-								'?'
-							)
-						}">
-								<div class="row">
-									<div class="col-8">
-										<div class="results mt-5 pe-5">
-											<xsl:call-template name="render-results"/>
-										</div>
-									</div>
-									<div class="col-4">
-										<div class="fields mt-5">
-											<h1>Search</h1>
-											<xsl:call-template name="render-search-fields"/>
-										</div>
-										<div class="facets mt-5">
-											<xsl:call-template name="render-facets"/>
-										</div>
-									</div>
-
-								</div>
-						</form>
-					</div>
-					</div>
+			<body class="search">
+				<main role="main" class="search">
+					<!-- the main search button submits all the current facet values as URL parameters; if the user
+					clicks a facet button instead, then a different set of facet values are posted -->
+					<xsl:variable name="url-parameters" select="
+						string-join(
+							(
+								for $parameter 
+								in $request/c:param
+									[@name=$facet-definitions/@name] 
+									[normalize-space(@value)]
+								return concat(
+									encode-for-uri($parameter/@name), '=', encode-for-uri($parameter/@value)
+								)
+							),
+							'&amp;'
+						)
+					"/>
+					<form id="advanced-search" method="POST" action="{
+						string-join(
+							(
+								$search-base-url,
+								$url-parameters[normalize-space()]
+							), 
+							'?'
+						)
+					}">
+						<div class="results">
+							<xsl:call-template name="render-results"/>
+						</div>
+						<div class="fields">
+							<h1>Search</h1>
+							<xsl:call-template name="render-search-fields"/>
+						</div>
+						<div class="facets">
+							<xsl:call-template name="render-facets"/>
+						</div>
+					</form>
 				</main>
 			</body>
 		</html>
@@ -131,39 +119,30 @@
 		<xsl:if test="$last-page &gt; 1">
 			<!-- there are multiple pages of results -->
 			<nav aria-label="Page navigation">
-				<ul class="pagination justify-content-center text-sansserif">
-				<xsl:if test="$current-page &gt; 1">
-					
-					<xsl:for-each select="1 to $current-page - 1">
-						<li class="page-item">
-						<a class="page-link" href="{
-							string-join(
-								(
-									concat($search-base-url, '?page=', .),
-									$search-field-url-parameters
-								),
-								'&amp;'
-							)
-						}"><xsl:value-of select="."/></a></li>
+				<ul class="pagination">
+					<xsl:for-each select="1 to $last-page">
+						<xsl:choose>
+							<xsl:when test=".=$current-page">
+								<li class="page-item active" aria-current="page">
+									<a class="page-link" href="#"><xsl:value-of select="."/></a>
+								</li>
+							</xsl:when>
+							<xsl:otherwise>
+								<li class="page-item">
+									<a class="page-link" href="{
+										string-join(
+											(
+												concat($search-base-url, '?page=', .),
+												$search-field-url-parameters
+											),
+											'&amp;'
+										)
+									}"><xsl:value-of select="."/></a>
+								</li>
+							</xsl:otherwise>
+						</xsl:choose>
 					</xsl:for-each>
-					
-				</xsl:if>
-				<li class="page-item active" aria-current="page"><a class="page-link" href="#"><xsl:value-of select="$current-page"/><span class="visually-hidden">(current)</span></a></li>
-				<xsl:if test="$current-page &lt; $last-page">
-					<xsl:for-each select="$current-page + 1 to $last-page">
-						<li class="page-item">
-						<a class="page-link" href="{
-							string-join(
-								(
-									concat($search-base-url, '?page=', .),
-									$search-field-url-parameters
-								),
-								'&amp;'
-							)
-						}"><xsl:value-of select="."/></a></li>
-					</xsl:for-each>
-				</xsl:if>
-	</ul>			
+				</ul>
 			</nav>
 		</xsl:if>
 	</xsl:template>
@@ -181,7 +160,7 @@
 					<!-- The Solr record contains a summary of the metadata pre-rendered as an HTML summary widget -->
 					<xsl:sequence select="f:string[@key='metadata-summary'] => parse-xml()"/>
 					<!-- list the snippets of matching text which were found in this particular view -->
-					<ul class="matching-snippets list-group">
+					<ul class="matching-snippets">
 						<xsl:for-each select="solr:abbreviate-snippets($highlighting[@key=$id]/f:array/f:string)">
 							<li class="matching-snippet list-group-item">
 								<a href="/text/{$id}/?highlight={$request/c:param[@name='text']/@value}#hit{position()}">
@@ -213,13 +192,15 @@
 		<xsl:call-template name="render-pagination-links"/>
 	</xsl:template>
 	
+	<!-- render a search field onto the form with the value which was previously sought -->
 	<xsl:template name="render-field">
 		<xsl:param name="name"/>
 		<xsl:param name="label"/>
+		<!-- the value which the user's search request had for this field -->
 		<xsl:variable name="field-value-sought" select="$request/c:param[@name=$name]/@value"/>
-		<div class="mb-3">
-		<label for="{$name}"><xsl:value-of select="$label"/></label>
-		<input type="text" class="form-control" id="{$name}" name="{$name}" value="{$field-value-sought}"/>
+		<div class="field">
+			<label for="{$name}"><xsl:value-of select="$label"/></label>
+			<input type="text" class="form-control" id="{$name}" name="{$name}" value="{$field-value-sought}"/>
 		</div>
 	</xsl:template>
 	
@@ -274,7 +255,7 @@
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:for-each>
-		<button class="btn btn-primary">search</button>
+		<button class="search">search</button>
 	</xsl:template>
 	
 	<xsl:template name="render-facets">
@@ -284,7 +265,7 @@
 			<xsl:variable name="solr-facet-key" select="@key"/>
 			<xsl:variable name="facet" select="$facet-definitions[@name=$solr-facet-key]"/>
 			<xsl:if test="$solr-facet"><!-- facet returned some result; this means that Solr results match the facet -->
-				<div class="chart list-group mt-5">
+				<div class="facet">
 					<h3><xsl:value-of select="$facet/@label"/></h3>
 					<xsl:variable name="selected-values" select="$request/c:param[@name=$solr-facet-key]/@value"/>
 					<xsl:variable name="buckets" select="$solr-facet/f:array[@key='buckets']/f:map[f:string[@key='val']/text()]"/>
@@ -324,11 +305,11 @@
 										)
 									}"
 									title="{if ($bucket-is-selected) then 'deselect' else 'select'}"
-									class="list-group-item list-group-item-action d-flex justify-content-between align-items-center {if ($bucket-is-selected) then 'selected active' else 'unselected'}"
+									class="bucket {if ($bucket-is-selected) then 'selected active' else 'unselected'}"
 									name="{$facet/@name}"
 									value="{if ($bucket-is-selected) then '' else $value}">
 									<xsl:value-of select="$label"/>
-									<span class="bucket-cardinality badge bg-primary rounded-pill text-sansserif"><xsl:value-of select="$count"/></span>
+									<span class="bucket-cardinality"><xsl:value-of select="$count"/></span>
 								</button>
 							
 						</xsl:if>

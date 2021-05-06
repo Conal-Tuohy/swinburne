@@ -18,7 +18,7 @@
 	<xsl:variable name="embedded-manifest-uri" select="/TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/altIdentifier/idno[@type='iiif-manifest']"/>
 	
 	<xsl:template match="/tei:TEI">
-		<html class="h-100">
+		<html class="tei">
 			<head>
 				<title><xsl:value-of select="$title"/></title>
 				<link href="/css/tei.css" rel="stylesheet" type="text/css"/>
@@ -70,36 +70,21 @@
 					"/>
 				</style>
 			</head>
-			<body class="d-flex flex-column h-100">
+			<body class="tei">
 				<div class="tei">
-					<div class="container">
-					<div class="row">
-						<div class="col">
-							<cite><xsl:value-of select="$title"/></cite>
-							<!-- render the document metadata details -->
-							<xsl:apply-templates select="tei:teiHeader"/>
-						</div>
+					<cite><xsl:value-of select="$title"/></cite>
+					<!-- render the document metadata details -->
+					<xsl:apply-templates select="tei:teiHeader"/>
+					<div class="searchable-content">
+						<xsl:apply-templates select="tei:text"/>
 					</div>
-					<div class="row mt-5">
-						<div class="col-sm-9">
-							<div class="searchable-content">
-								<xsl:apply-templates select="tei:text"/>
-							</div>
-						</div>
-						<div class="col-sm-3">
 					<xsl:apply-templates mode="toc" select="/TEI/teiHeader/fileDesc/sourceDesc[@n='table-of-contents']"/>
-					<!-- render the relevant part of the text itself -->
-					<!-- NB the "searchable-content" class will cause it to be indexed --></div>
-						
-					</div>
-				</div>
 				</div>
 			</body>
 		</html>
 	</xsl:template>
 	
-	<xsl:template mode="toc" match="sourceDesc[n='table-of-contents']">
-		<h2>Contents</h2>
+	<xsl:template mode="toc" match="sourceDesc[@n='table-of-contents']">
 		<div id="toc">
 			<nav class="toc">
 				<xsl:apply-templates select="bibl" mode="toc"/>
@@ -114,6 +99,7 @@
 		of any bibls within this bibl.
 		-->
 		<details>
+			<xsl:apply-templates select="." mode="create-attributes"/>
 			<!-- 
 			The HTML details element should be open (expanded) when this node in the 
 			table of contents hierarchy contains the bibl which refers to the current
@@ -128,10 +114,10 @@
 			">
 				<xsl:attribute name="open">open</xsl:attribute>
 			</xsl:if>
-			<summary class="btn btn-primary"><xsl:apply-templates mode="toc" select="ref|title"/></summary>
-			<ul class="list-group list-group-flush">
+			<summary><xsl:apply-templates mode="toc" select="ref|title"/></summary>
+			<ul>
 				<xsl:for-each select="relatedItem">
-					<li class="list-group-item">
+					<li>
 						<xsl:apply-templates select="bibl" mode="toc"/>
 					</li>
 				</xsl:for-each>
@@ -166,8 +152,8 @@
 			<xsl:apply-templates select="fileDesc/sourceDesc/msDesc/msContents/msItem/title" />
 			<xsl:apply-templates select="fileDesc/sourceDesc/msDesc/msContents/msItem/note[@type='description']" />
 			<details class="tei-teiHeader">
-				<summary class="btn btn-primary">Document Information</summary>
-				<div class="expansion card card-body mt-3">
+				<summary>Document Information</summary>
+				<div>
 					<xsl:variable name="now" select="current-dateTime()"/>
 					<xsl:apply-templates select="fileDesc/sourceDesc/msDesc/physDesc/objectDesc/supportDesc" />
 					<xsl:apply-templates select="profileDesc/langUsage"/>

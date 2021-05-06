@@ -3,7 +3,8 @@
 	xmlns="http://www.w3.org/1999/xhtml" 
 	xmlns:map="http://www.w3.org/2005/xpath-functions/map"
 	xpath-default-namespace="http://www.w3.org/1999/xhtml"
-	exclude-result-prefixes="fn map">
+	exclude-result-prefixes="fn map"
+	 expand-text="true">
 	<!-- embed the page in global navigation -->
 	<xsl:param name="current-uri"/>
 	<xsl:variable name="menus" select="json-to-xml(unparsed-text('../menus.json'))"/>
@@ -36,7 +37,7 @@
 	<!-- insert boiler plate into the body -->
 	<xsl:template match="body">
 		<xsl:copy>
-			<xsl:copy-of select="@*"/>
+			<xsl:apply-templates select="@*"/>
 			<!-- masthead -->
 			<header>
 				
@@ -63,12 +64,12 @@
 					<section class="content">
 						<xsl:copy-of select="$sub-menu"/>
 						<div>
-							<xsl:copy-of select="node()"/>
+							<xsl:apply-templates select="node()"/>
 						</div>
 					</section>
 				</xsl:when>
 				<xsl:otherwise>
-					<xsl:copy-of select="node()"/>
+					<xsl:apply-templates select="node()"/>
 				</xsl:otherwise>
 			</xsl:choose>
 			<!-- footer -->
@@ -128,4 +129,166 @@
 			</div>
 		</footer>
 	</xsl:template>
+	
+	<!-- add wrapper div elements for bootstrap-based layout -->
+	<xsl:template match="div[@class='tei']">
+		<xsl:copy>
+			<xsl:copy-of select="@*"/>
+			<div class="container">
+				<!-- wrap the <cite> containing the page title, and the <div> containing the teiHeader-based metadata -->
+				<div class="row">
+					<div class="col">
+						<xsl:apply-templates select="cite | child::div[@class='tei-teiHeader']"/>
+					</div>
+				</div>
+				<!-- arrange the 'searchable-content' (i.e. the actual text) and the table of contents in a single row -->
+				<div class="row mt-5">
+					<div class="col-sm-9">
+						<xsl:apply-templates select="child::div[@class='searchable-content']"/>
+					</div>
+					<div class="col-sm-3">
+						<xsl:apply-templates select="child::div[@id='toc']"/>
+					</div>
+				</div>
+			</div>
+		</xsl:copy>
+	</xsl:template>
+	
+	<!-- add wrapper divs in the search and browse page -->
+	<xsl:template match="main[@class='search']">
+		<xsl:copy>
+			<xsl:copy-of select="@*"/>
+			<div class="container">
+				<div class="search">
+					<xsl:apply-templates/>
+				</div>
+			</div>
+		</xsl:copy>
+	</xsl:template>
+	<!-- rearrange the content of the advanced-search form -->
+	<xsl:template match="form[@id='advanced-search']">
+		<xsl:copy>
+			<xsl:copy-of select="@*"/>
+			<div class="row">
+				<div class="col-8">
+					<div class="results mt-5 pe-5">
+						<xsl:apply-templates select="div[@class='results']/node()"/>
+					</div>
+				</div>
+				<div class="col-4">
+					<div class="fields mt-5">
+						<xsl:apply-templates select="div[@class='fields']/node()"/>
+					</div>
+					<div class="facets mt-5">
+						<xsl:apply-templates select="div[@class='facets']/node()"/>
+					</div>
+				</div>
+			</div>
+		</xsl:copy>
+	</xsl:template>
+		
+	<!-- this default template copies elements and uses a "replace-class" mode to add bootstrap @class attributes -->
+	<xsl:template match="*">
+		<xsl:copy>
+			<xsl:copy-of select="@*"/>
+			<!-- some elements can acquire some bootstrap decoration here  -->
+			<xsl:apply-templates select="." mode="replace-class"/>
+			<xsl:apply-templates/>
+		</xsl:copy>
+	</xsl:template>
+	<!-- the default bootstrap decoration is to do nothing; anything that needs decoration will have its own template below --> 
+	<xsl:template mode="replace-class" match="*"/>
+	
+	<!-- map semantic @class values to bootstrap @class values -->
+
+	<xsl:template mode="replace-class" match="html[@class='admin']">
+		<xsl:attribute name="class">h-100</xsl:attribute>
+	</xsl:template>
+	<xsl:template mode="replace-class" match="div[@class='tei']/div[@class='search']">
+		<xsl:attribute name="class">search h-100</xsl:attribute>
+	</xsl:template>
+	<xsl:template mode="replace-class" match="html[@class='search']">
+		<xsl:attribute name="class">search h-100</xsl:attribute>
+	</xsl:template>
+	<xsl:template mode="replace-class" match="html[@class='tei']">
+		<xsl:attribute name="class">h-100</xsl:attribute>
+	</xsl:template>
+	<xsl:template mode="replace-class" match="body[@class='tei']">
+		<xsl:attribute name="class">d-flex flex-column h-100</xsl:attribute>
+	</xsl:template>
+	<xsl:template mode="replace-class" match="body[@class='admin']">
+		<xsl:attribute name="class">d-flex flex-column h-100</xsl:attribute>
+	</xsl:template>
+	<xsl:template mode="replace-class" match="body[@class='search']">
+		<xsl:attribute name="class">search d-flex flex-column h-100</xsl:attribute>
+	</xsl:template>
+	<xsl:template mode="replace-class" match="main[@class='search']">
+		<xsl:attribute name="class">search flex-shrink-0</xsl:attribute>
+	</xsl:template>
+	<xsl:template mode="replace-class" match="main[@class='main']">
+		<xsl:attribute name="class">flex-shrink-0</xsl:attribute>
+	</xsl:template>
+	<xsl:template mode="replace-class" match="ul[@class='matching-snippets']">
+		 <xsl:attribute name="class">matching-snippets list-group</xsl:attribute>
+	</xsl:template>
+	<xsl:template mode="replace-class" match="span[@class='bucket-cardinality']">
+		<xsl:attribute name="class">bucket-cardinality badge bg-primary rounded-pill text-sansserif</xsl:attribute>
+	</xsl:template>
+	<xsl:template mode="replace-class" match="ul[@class='pagination']">
+		<xsl:attribute name="class">pagination justify-content-center text-sansserif</xsl:attribute>
+	</xsl:template>
+	<xsl:template mode="replace-class" match="div[@class='field']">
+		<xsl:attribute name="class">mb-3</xsl:attribute>
+	</xsl:template>
+	<xsl:template mode="replace-class" match="button[@class='search']">
+		<xsl:attribute name="class">btn btn-primary</xsl:attribute>
+	 </xsl:template>
+	 <!-- admin page -->
+	 <xsl:template mode="replace-class" match="html[@class='admin']//button">
+	 	<xsl:attribute name="class">btn btn-outline-primary my-1</xsl:attribute>
+	 </xsl:template>
+	
+	<!-- Re-style elements created by p5-to-html.xsl -->
+	
+	<!-- bibliographic popups -->
+	<xsl:template mode="replace-class" match="details[contains-token(@class, 'tei-bibl')]/summary">
+		<xsl:attribute name="class">btn btn-primary</xsl:attribute>
+	</xsl:template>
+	<xsl:template mode="replace-class" match="details[contains-token(@class, 'tei-bibl')]/ul">
+		<xsl:attribute name="class">list-group list-group-flush</xsl:attribute>
+	</xsl:template>
+	<xsl:template mode="replace-class" match="details[contains-token(@class, 'tei-bibl')]/ul/li">
+		<xsl:attribute name="class">list-group-item</xsl:attribute>
+	</xsl:template>
+	
+	<!-- teiHeader summary -->
+	<xsl:template mode="replace-class" match="details[contains-token(@class, 'tei-teiHeader')]/summary">
+		<xsl:attribute name="class">btn btn-primary</xsl:attribute>
+	</xsl:template>
+	<xsl:template mode="replace-class" match="details[contains-token(@class, 'tei-teiHeader')]/div">
+		<xsl:attribute name="class">expansion card card-body mt-3</xsl:attribute>
+	</xsl:template>
+	
+	<!-- hyperlinks which point to the next and previous search highlight -->
+	<xsl:template mode="replace-class" match="a[@class = 'hit-link']">
+		<xsl:attribute name="class">hit-link badge bg-secondary text-sansserif</xsl:attribute>
+	</xsl:template>
+	
+	<!-- search and browse page -->
+	<xsl:template mode="replace-class" match="button[contains-token(@class, 'bucket')]">
+		<xsl:attribute name="class">{@class} list-group-item list-group-item-action d-flex justify-content-between align-items-center</xsl:attribute>
+	</xsl:template>
+	
+	<xsl:template mode="replace-class" match="div[@class = 'facet']">
+		<xsl:attribute name="class">facet chart list-group mt-5</xsl:attribute>
+	</xsl:template>
+	
+	<xsl:template match="li[@class='page-item active']/a[@class='page-link']">
+		<xsl:copy>
+			<xsl:copy-of select="@*"/>
+			<xsl:apply-templates/>
+			<span class="visually-hidden">(current)</span>
+		</xsl:copy>
+	</xsl:template>
+	
 </xsl:stylesheet>
