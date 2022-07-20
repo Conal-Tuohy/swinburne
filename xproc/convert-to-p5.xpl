@@ -93,14 +93,23 @@
 		<!-- source data location is specified here -->
 		<p:variable name="acsproj-data" select=" '../../acsproj/data/' "/>
 		
+		<!-- output data location is here -->
+		<p:variable name="imported-data" select=" '../p5/' "/> 
+		
 		<!-- convert topic maps -->
 		<p:group name="convert-topic-maps">
 			<chymistry:convert-xtm2-to-tei href="../../acsproj/data/swinburne.xtm" name="swinburne"/>
-			<p:store href="../p5/includes/swinburne-xtm.xml" indent="true"/>
+			<p:store indent="true">
+			 	<p:with-option name="href" select="concat($imported-data, 'includes/swinburne-xtm.xml')"/>
+			 </p:store>
 			<chymistry:convert-xtm1-to-tei href="../../acsproj/data/tristram.xtm" name="tristram"/>
-			<p:store href="../p5/includes/tristram-xtm.xml" indent="true"/>
+			<p:store indent="true">
+			 	<p:with-option name="href" select="concat($imported-data, 'includes/tristram-xtm.xml')"/>
+			 </p:store>
 			<chymistry:convert-xtm1-to-tei href="../../acsproj/data/arthurian.xtm" name="arthurian"/>
-			<p:store href="../p5/includes/arthurian-xtm.xml" indent="true"/>
+			<p:store indent="true">
+			 	<p:with-option name="href" select="concat($imported-data, 'includes/arthurian-xtm.xml')"/>
+			 </p:store>
 			<p:wrap-sequence wrapper="teiCorpus" wrapper-namespace="http://www.tei-c.org/ns/1.0">
 				<p:input port="source">
 					<p:pipe step="swinburne" port="result"/>
@@ -114,7 +123,9 @@
 					<p:document href="../xslt/convert-to-p5/merge-authority-files.xsl"/>
 				</p:input>
 			</p:xslt>
-			<p:store href="../p5/authority.xml" indent="true"/>
+			<p:store indent="true">
+			 	<p:with-option name="href" select="concat($imported-data, 'authority.xml')"/>
+			 </p:store>
 		</p:group>
 	
 		<!-- next copy the "includes" folder -->
@@ -125,7 +136,7 @@
 			<p:variable name="file-name" select="/c:file/@name"/>
 			<p:variable name="file-uri" select="encode-for-uri($file-name)"/>
 			<p:variable name="input-file" select="resolve-uri($file-uri, /c:file/@xml:base)"/>
-			<p:variable name="output-file" select="concat('../p5/includes/', $file-uri)"/>
+			<p:variable name="output-file" select="concat($imported-data, 'includes/', $file-uri)"/>
 			<cx:message>
 				<p:with-option name="message" select="concat('copying file from ', $input-file, ' to ', $output-file, '...')"/>
 			</cx:message>
@@ -138,7 +149,8 @@
 			</p:store>
 		</p:for-each>
 		<!-- save a TEI listPrefixDef for xinclusion into the final TEI documents -->
-		<p:store name="save-listPrefixDef" href="../p5/includes/listPrefixDef.xml">
+		<p:store name="save-listPrefixDef">
+			 <p:with-option name="href" select="concat($imported-data, 'includes/listPrefixDef.xml')"/>
 			<p:input port="source">
 				<p:inline>
 					<listPrefixDef xmlns="http://www.tei-c.org/ns/1.0">
@@ -174,21 +186,23 @@
 			<p:try>
 				<p:group>
 					<p:documentation>
-						process the source files according to the following classification:
+						Process the source files from acsproj and store them within the $imported-data folder, as follows:
+						Source files are processed differently according to the following classification:
 						• *-md.xml files contain metadata which is to be transcluded into a full TEI text
-							• File them in "p5/metadata" folder
+							• File them in "metadata" subfolder
 						• acs0000001-0{n}.xml files are components which are to be transcluded into a full TEI text acs0000001-00.xml
-							• File them in "p5/component" folder						
+							• File them in "component" subfolder						
 						• "combo" files, which are other .xml files containing tei:index/@corresp, which contain transcriptions to be transcluded into individual TEI texts
-							• File them in "p5/combo" folder
-							• Generate XInclude template files in "p5" folder for each tei:index/@corresp, containing xinclude references to:
+							• File them in "combo" subfolder
+							• Generate XInclude template files in $imported-data folder for each tei:index/@corresp, containing xinclude references to:
 								the corresponding combo section 
 								the metadata record
 								the div[@xml:id='commentary'] (if any) in the metadata file:
 						• other regular TEI files
 							• Insert xinclude for corpus-level metadata (personography, bibliography, gazetteer)
-							• File them in "p5" folder
+							• File them in $imported-data folder
 					</p:documentation>
+					<!-- read the file from acsproj -->
 					<p:load name="read-source">
 						<p:with-option name="href" select="$input-file"/>
 					</p:load>
@@ -207,11 +221,7 @@
 					<p:add-attribute match="/tei:TEI[not(@xml:id)]" attribute-name="xml:id">
 						<p:with-option name="attribute-value" select="substring-before($file-name, '.xml')"/>
 					</p:add-attribute>
-					<!-- for each each of the "combo" files generate a sequence of template files containing xinclude statements which select:
-						part of the combo file
-						the corresponding piece of metadata from the -md.xml metadata file
-						The "combo" files are the files which use tei:index/@corresp to point to -md.xml files:
-					-->
+					<!-- now process the document differently depending on what kind of document it is ... -->
 					<p:choose>
 						<p:when test="ends-with($file-name, '-md.xml')">
 							<!-- this is a bibliographic metadata file which describes a section of one or more of the "combo" files -->
@@ -240,7 +250,7 @@
 							</p:xslt>
 							<chymistry:assign-schema schema="../../schema/swinburne.rng"/>
 							<p:store name="save-md-file">
-								<p:with-option name="href" select="concat('../p5/metadata/', $file-uri)"/>
+								<p:with-option name="href" select="concat($imported-data, 'metadata/', $file-uri)"/>
 							</p:store>
 						</p:when>
 							<!-- this is a "component" file which is a component part of the source file acs0000001-00.xml -->
@@ -255,6 +265,11 @@
 								<p:with-option name="href" select="concat('../p5/component/', $file-uri)"/>
 							</p:store>
 						</p:when>
+						-->
+						<!-- for each each of the "combo" files generate a sequence of template files containing xinclude statements which select:
+							part of the combo file
+							the corresponding piece of metadata from the -md.xml metadata file
+							The "combo" files are the files which use tei:index/@corresp to point to -md.xml files:
 						-->
 						<p:when test="//tei:index[ends-with(@corresp, '-md.xml')]">
 							<!-- this is a "combo" file which contains references to a metadata file -->
@@ -287,14 +302,14 @@
 								<chymistry:insert-authority-xinclude/>
 								<chymistry:insert-glossary-xinclude/>
 								<p:store name="save-combo-part" indent="true">
-									<p:with-option name="href" select="concat('../p5/', $component-id, '.xml')"/>
+									<p:with-option name="href" select="concat($imported-data, $component-id, '.xml')"/>
 								</p:store>
 							</p:for-each>
 							<p:store name="save-combo-file">
 								<p:input port="source">
 									<p:pipe step="normalized-combo-file" port="result"/>
 								</p:input>
-								<p:with-option name="href" select="concat('../p5/combo/', $file-uri)"/>
+								<p:with-option name="href" select="concat($imported-data, 'combo/', $file-uri)"/>
 							</p:store>
 						</p:when>
 						<p:otherwise>
@@ -329,7 +344,7 @@
 								</p:otherwise>
 							</p:choose>
 							<p:store name="save-ordinary-text">
-								<p:with-option name="href" select="concat('../p5/', $file-uri)"/>
+								<p:with-option name="href" select="concat($imported-data, $file-uri)"/>
 							</p:store>
 						</p:otherwise>
 					</p:choose>
