@@ -149,7 +149,7 @@
 					<p:variable name="input-file" select="resolve-uri($file-uri, /c:file/@xml:base)"/>
 					<p:variable name="output-file" select="concat('../p5/', $file-uri)"/>
 					<cx:message>
-						<p:with-option name="message" select="$file-name"/>
+						<p:with-option name="message" select="concat('Reindexing ', $file-name, '...')"/>
 					</cx:message>
 					<p:load name="read-p5">
 						<p:with-option name="href" select="$input-file"/>
@@ -231,9 +231,18 @@
 				<!--
 				<p:directory-list name="list-p5-files" path="../p5/" include-filter="acs0000005-01\.xml$"/>
 				-->
-				<p:directory-list name="list-p5-files" path="../p5/" include-filter=".+\.xml$"/>
-				
+				<p:variable name="source-data" select=" resolve-uri('../source/') "/>
+				<p:variable name="target-data" select=" resolve-uri('../p5/') "/>
 
+
+				<chymistry:copy-directory name="files-copied">
+					<p:with-option name="source" select="$source-data"/>
+					<p:with-option name="target" select="$target-data"/>
+				</chymistry:copy-directory>
+				<p:directory-list name="list-p5-files" include-filter=".+\.xml$">
+					<p:with-option name="path" select="$target-data"/>
+				</p:directory-list>
+				
 				<p:add-xml-base relative="false" all="true"/>
 				<p:viewport name="file" match="c:file">
 					<p:variable name="file-name" select="/c:file/@name"/>
@@ -659,6 +668,53 @@
 			</p:input>
 		</p:xslt>
 		<z:make-http-response content-type="application/xhtml+xml"/>
+	</p:declare-step>
+	
+	<p:declare-step name="copy-directory" type="chymistry:copy-directory">
+		<!-- 
+		copies a directory
+		-->
+		<p:option name="source" required="true"/><!-- a directory containing the files to be copied -->
+		<p:option name="target" required="true"/><!-- a location to copy the files to -->
+		<p:directory-list name="source-directory-list">
+			<p:with-option name="path" select="$source"/>
+		</p:directory-list>
+		<p:add-xml-base/>
+		<p:group>
+			<p:variable name="source-directory" select="/c:directory/@xml:base"/>
+			<p:add-attribute match="/c:directory" attribute-name="xml:base">
+				<p:with-option name="attribute-value" select="$target"/>
+			</p:add-attribute>
+			<p:for-each name="source-directory-files">
+				<p:iteration-source select="/c:directory/*"/>
+				<p:variable name="name" select="/*/@name"/>
+				<p:variable name="source" select="resolve-uri($name, $source-directory)"/>
+				<p:variable name="target" select="resolve-uri($name, $target)"/>
+				<cx:message>
+					<p:with-option name="message" select="concat('copying ', $source, ' to ', $target, ' ...')"/>
+				</cx:message>
+				<p:choose>
+					<p:when test="/c:file">
+						<file:copy xmlns:file="http://exproc.org/proposed/steps/file">
+							<p:with-option name="href" select="$source"/>
+							<p:with-option name="target" select="$target"/>
+						</file:copy>
+					</p:when>
+					<p:otherwise>
+						<cx:message>
+							<p:with-option name="message" select="concat('found subfolder ', $target)"/>
+						</cx:message>
+						<file:mkdir xmlns:file="http://exproc.org/proposed/steps/file" fail-on-error="false">
+							<p:with-option name="href" select="$target"/>
+						</file:mkdir>
+						<chymistry:copy-directory>
+							<p:with-option name="source" select="$source"/>
+							<p:with-option name="target" select="concat($target, '/', $name)"/>
+						</chymistry:copy-directory>
+					</p:otherwise>
+				</p:choose>
+			</p:for-each>
+		</p:group>
 	</p:declare-step>
 
 </p:library>

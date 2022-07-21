@@ -11,6 +11,18 @@
 	<p:import href="http://xmlcalabash.com/extension/steps/library-1.0.xpl"/>
 	<p:import href="xproc-z-library.xpl"/>
 	
+	<!-- 
+	This library contains pipelines responsible for importing legacy TEI P4 and XML Topic Maps from the acsproj project, 
+	converting them into TEI P5 format, and organising them into a folder hierarchy where the main folder contains 
+	individual documents as they would be published on the website (i.e. individual literary works), each of which uses 
+	XInclude statements to transclude	content from files containing metadata or entire volume transcriptions, located 
+	in 'metadata' and 'combo' subfolders.
+	
+	This library only exists to serve as an interface to the acsproj data; at the point where acsproj is retired, the files
+	which this library produces can serve as the "source of truth" and be edited in place, and this XProc library will have
+	no further useful purpose.
+	-->
+	
 	<p:declare-step name="download-source" type="chymistry:download-source">
 		<p:input port="source"/>
 		<p:output port="result"/>
@@ -94,7 +106,7 @@
 		<p:variable name="acsproj-data" select=" '../../acsproj/data/' "/>
 		
 		<!-- output data location is here -->
-		<p:variable name="imported-data" select=" '../p5/' "/> 
+		<p:variable name="imported-data" select=" '../source/' "/> 
 		
 		<!-- convert topic maps -->
 		<p:group name="convert-topic-maps">
