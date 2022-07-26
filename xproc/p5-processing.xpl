@@ -697,15 +697,12 @@
 			<p:with-option name="href" select="concat('../p5/', $text, '.xml')"/>
 		</p:load>
 		<!-- TODO re-enable and debug -->
-		<!--
-		<chymistry:xslt name="materialise-rendition-selector-links">
+		<p:xslt name="materialise-rendition-selector-links">
 			<p:input port="parameters"><p:empty/></p:input>
-			<p:with-option name="message" select=" 'materialise-rendition-selector-links' "/>
 			<p:input port="stylesheet">
 				<p:document href="../xslt/evaluate-rendition-selectors.xsl"/>
 			</p:input>
-		</chymistry:xslt>
-		-->
+		</p:xslt>
 	</p:declare-step>
 	
 	<p:declare-step name="list-p5" type="chymistry:list-p5">
