@@ -4,7 +4,9 @@
 # debug logging
 /debug
 
-# The XML files in "p5" are (currently) just derivatives of TEI files stored in the acsproj repository
+# The XML files in "source" are (currently) just derivatives of TEI files stored in the acsproj repository
+/source
+# The XML files in "p5" and its subfolders are just a cache of files in "source", after transclusion
 /p5
 
 # Backup files automatically created by JEdit text editor

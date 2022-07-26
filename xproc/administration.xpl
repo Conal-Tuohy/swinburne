@@ -34,10 +34,10 @@
 										<div class="col">
 												<h1>Administration</h1>
 												<form method="post" action="p5/">
-													<button title="Make normalized copy of source data files">Ingest source TEI and XTM from <code>acsproj/data</code> to <code>p5/</code></button>
+													<button title="Make normalized copy of source data files">Ingest source TEI and XTM from <code>acsproj/data</code> to <code>source</code></button>
 												</form>
 												<form method="post" action="xinclude/">
-													<button>Perform xincludes on files in <code>p5/</code> and save to <code>p5/result/</code></button>
+													<button>Perform xincludes on files in <code>source</code> and save to <code>p5</code></button>
 												</form>
 												<form method="post" action="admin/purge">
 													<button title="Remove all documents from the Solr index">Purge Solr index</button>

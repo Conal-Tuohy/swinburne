@@ -147,7 +147,7 @@
 			<chymistry:add-site-navigation/>
 		</p:when>
 		<p:when test="$relative-uri = 'xinclude/' ">
-			<!-- perform xincludes and save results in p5/result -->
+			<!-- perform xincludes and save results in p5 -->
 			<chymistry:xinclude/>
 			<chymistry:add-site-navigation/>
 		</p:when>

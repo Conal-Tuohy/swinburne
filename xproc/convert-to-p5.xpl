@@ -360,7 +360,7 @@
 							</p:store>
 						</p:otherwise>
 					</p:choose>
-					<!-- TODO move this flag (which just records whether a particular input file was processed successfully) into each of the options within the <choose> above, or use try/catch -->
+					<!-- this flag records that the current input file was processed successfully. If it wasn't, we'd have already crashed out of this p:try into the p:catch below -->
 					<p:add-attribute match="/*" attribute-name="converted" attribute-value="true">
 						<p:input port="source">
 							<p:pipe step="source-file" port="current"/>
