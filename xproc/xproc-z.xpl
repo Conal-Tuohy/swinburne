@@ -146,10 +146,97 @@
 			</p:choose>
 			<chymistry:add-site-navigation/>
 		</p:when>
-		<p:when test="$relative-uri = 'xinclude/' ">
-			<!-- perform xincludes and save results in p5 -->
-			<chymistry:xinclude/>
-			<chymistry:add-site-navigation/>
+		<p:when test="starts-with($relative-uri, 'xinclude/')">
+			<!-- xinclude pipelines read and write a status page from a temporary file whose location is determined here -->
+			<!--
+			<c:param name="java.io.tmpdir" namespace="tag:conaltuohy.com,2015:java-system-properties" value="/tmp/tomcat8-tomcat8-tmp"/>
+			-->
+			<p:variable name="xinclude-status-filename" select="
+				concat(
+					/c:param-set/c:param[@name='java.io.tmpdir'][@namespace='tag:conaltuohy.com,2015:java-system-properties']/@value,
+					'/xinclude-status.xml'
+				)
+			">
+				<p:pipe step="configuration" port="result"/>
+			</p:variable>
+			<p:variable name="status-update-interval" select=" '10' "/>
+			<p:choose>
+				<p:when test="$relative-uri = 'xinclude/' ">
+					<!--  
+					if method is POST then 
+						create the "XInclude started..." HTML file
+						return it to the browser
+						and also launch a background request to perform XIncludes
+					else if GET then 
+						simply return the HTML file (which the background thread
+						is responsible for updating) 
+					-->
+					<p:choose>
+						<p:when test="/c:request/@method='POST'">
+							<!-- create a message to say the XInclude has started -->
+							<chymistry:xinclude-status-page name="xinclude-started-message"
+								title="XInclude processing is starting"
+								message="Please wait.">
+								<p:with-option name="update-interval" select="2"/>
+							</chymistry:xinclude-status-page>
+							<!-- save this report of the initial state of the XInclude process, 
+							in case the browser attempts a refresh before the background
+							thread has updated it -->
+							<p:store>
+								<p:with-option name="href" select="$xinclude-status-filename"/>
+							</p:store>
+							<chymistry:add-site-navigation name="xinclude-started-response">
+								<p:input port="source">
+									<p:pipe step="xinclude-started-message" port="result"/>
+								</p:input>
+							</chymistry:add-site-navigation>
+							<!-- Finally, return both the c:response and the c:request in sequence: -->
+							<!-- the c:response will be returned to the browser, while the c:request
+							will be handled by XProc-Z like any other browser request -->
+							<p:identity name="xinclude-started-message-and-xinclude-launch">
+								<p:input port="source">
+									<!-- the initial "XInclude started" web page -->
+									<p:pipe step="xinclude-started-response" port="result"/>
+									<!-- an internal request to XProc-Z to launch the XInclude 
+									process in a background thread -->
+									<p:inline>
+										<c:request href="http://localhost/xinclude/run" method="POST"/>
+									</p:inline>
+								</p:input>
+							</p:identity>
+						</p:when>
+						<p:otherwise>
+							<!-- The browser has not made a POST; they just want to GET the current
+							status of the XInclude processing, so we just return the current status page,
+							which is being updated in the background by another thread. -->
+							<p:load>
+								<p:with-option name="href" select="$xinclude-status-filename"/>
+							</p:load>
+							<chymistry:add-site-navigation/>
+						</p:otherwise>
+					</p:choose>
+				</p:when>
+				<p:when test="$relative-uri = 'xinclude/run' ">
+					<!-- The http request for this pipeline is (typically) made by another pipeline which itself
+					was responding to an http request from a browser. That pipeline will have already 
+					terminated, so this request will not typically have any active client waiting for a response.
+					The chymistry:xinclude pipeline below will repeatedly update a status report page as it
+					works through the corpus performing xincludes, during which time, a browser may make 
+					multiple requests for that status page using the request URI 'xinclude/' (see just above).
+					Although there's no client waiting for a response, we return the status page here anyway,
+					for the sake of form, and just in case this pipeline ever is actually invoked by an HTTP client.
+					-->
+					<chymistry:xinclude>
+						<p:with-option name="status-page-href" select="$xinclude-status-filename"/>
+						<p:with-option name="status-update-interval" select="$status-update-interval"/>
+					</chymistry:xinclude>
+					<!-- Read the final result from the status page file and return it -->
+					<p:load>
+						<p:with-option name="href" select="$xinclude-status-filename"/>
+					</p:load>
+					<chymistry:add-site-navigation/>
+				</p:when>
+			</p:choose>
 		</p:when>
 		<p:when test="starts-with($relative-uri, 'solr/')">
 			<chymistry:p5-as-solr>
