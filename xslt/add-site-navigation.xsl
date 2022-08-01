@@ -172,15 +172,15 @@
 			<div class="row">
 				<div class="col-8">
 					<div class="results mt-5 pe-5">
-						<xsl:apply-templates select="div[@class='results']/node()"/>
+						<xsl:apply-templates select="child::div[@class='results']/node()"/>
 					</div>
 				</div>
 				<div class="col-4">
 					<div class="fields mt-5">
-						<xsl:apply-templates select="div[@class='fields']/node()"/>
+						<xsl:apply-templates select="child::div[@class='fields']/node()"/>
 					</div>
 					<div class="facets mt-5">
-						<xsl:apply-templates select="div[@class='facets']/node()"/>
+						<xsl:apply-templates select="child::div[@class='facets']/node()"/>
 					</div>
 				</div>
 			</div>
