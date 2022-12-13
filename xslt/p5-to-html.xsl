@@ -207,9 +207,9 @@
 								'&quot;.'
 							)
 						"/>
-						<em>The Chymistry of Isaac Newton</em>
+						<em>The Algernon Charles Swinburne Project</em>
 						<xsl:text>.  Ed. </xsl:text>
-						<xsl:value-of select="titleStmt/respStmt/name[@type='editor']"/>
+						<xsl:value-of select="titleStmt/editor/persName"/>
 						<xsl:text>&#160;</xsl:text>
 						<xsl:value-of select="fileDesc/publicationStmt/date"/>
 						<xsl:text>. Retrieved </xsl:text>
